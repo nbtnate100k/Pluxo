@@ -1,0 +1,3809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pluxo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --black-light: #141414;
+            --black-lighter: #1a1a1a;
+            --blue: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-glow: rgba(37, 99, 235, 0.4);
+            --white: #ffffff;
+            --gray: #a1a1a1;
+            --gray-dark: #666;
+            --gray-border: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        /* ==================== LOGIN PAGE ==================== */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            background: var(--black);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(ellipse, var(--blue-glow) 0%, transparent 60%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .login-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand {
+            margin-bottom: 60px;
+        }
+
+        .brand h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: var(--gray);
+            font-size: 15px;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-field {
+            width: 100%;
+            max-width: 380px;
+            padding: 16px 20px;
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px var(--blue-glow);
+        }
+
+        .input-field::placeholder {
+            color: var(--gray-dark);
+        }
+
+        .input-wrapper {
+            position: relative;
+            max-width: 380px;
+        }
+
+        .toggle-pass {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .toggle-pass:hover {
+            color: var(--blue-light);
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 380px;
+            margin-bottom: 24px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .remember input {
+            display: none;
+        }
+
+        .remember .box {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--gray-border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .remember input:checked + .box {
+            background: var(--blue);
+            border-color: var(--blue);
+        }
+
+        .remember .box::after {
+            content: '✓';
+            color: white;
+            font-size: 11px;
+            opacity: 0;
+        }
+
+        .remember input:checked + .box::after {
+            opacity: 1;
+        }
+
+        .forgot {
+            color: var(--blue-light);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .forgot:hover {
+            color: var(--white);
+        }
+
+        .captcha-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            max-width: 380px;
+        }
+
+        .captcha-q {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            white-space: nowrap;
+            background: var(--black-lighter);
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--gray-border);
+        }
+
+        .captcha-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .captcha-input:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            max-width: 380px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--blue-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--blue-glow);
+        }
+
+        .btn-secondary {
+            background: var(--black-lighter);
+            color: var(--white);
+            border: 1px solid var(--gray-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gray);
+            background: var(--black-light);
+        }
+
+        .login-right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .graphic {
+            width: 400px;
+            height: 400px;
+            position: relative;
+        }
+
+        .graphic-ring {
+            position: absolute;
+            border: 2px solid var(--gray-border);
+            border-radius: 50%;
+            animation: spin 20s linear infinite;
+        }
+
+        .graphic-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .graphic-ring:nth-child(2) {
+            width: 75%;
+            height: 75%;
+            top: 12.5%;
+            left: 12.5%;
+            border-color: var(--blue);
+            opacity: 0.5;
+            animation-direction: reverse;
+            animation-duration: 15s;
+        }
+
+        .graphic-ring:nth-child(3) {
+            width: 50%;
+            height: 50%;
+            top: 25%;
+            left: 25%;
+            animation-duration: 10s;
+        }
+
+        .graphic-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Syne', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--blue);
+            text-shadow: 0 0 40px var(--blue-glow);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Register Modal */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-bg.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--black-light);
+            border: 1px solid var(--gray-border);
+            border-radius: 16px;
+            padding: 40px;
+            width: 90%;
+            max-width: 420px;
+            position: relative;
+        }
+
+        .modal-box h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: var(--white);
+        }
+
+        .modal-box .form-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-box .input-field {
+            max-width: 100%;
+        }
+
+        .modal-box .btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* ==================== DASHBOARD ==================== */
+        .dashboard-page {
+            display: none;
+            min-height: 100vh;
+            background: var(--black);
+        }
+
+        .top-bar {
+            background: var(--black-light);
+            border-bottom: 1px solid var(--gray-border);
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .top-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .top-brand {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--blue);
+        }
+
+        .top-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .top-info span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .top-info .value {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .balance-display {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .balance-amount {
+            font-size: 15px;
+        }
+
+        .balance-amount .value {
+            color: var(--blue-light);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-sm:hover {
+            background: var(--blue-light);
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cart-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .cart-btn:hover {
+            color: var(--white);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--blue);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .logout-btn:hover {
+            color: #ef4444;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            display: flex;
+            background: var(--black-light);
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 16px 24px;
+            color: var(--gray);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item:hover {
+            color: var(--white);
+            background: var(--black-lighter);
+        }
+
+        .nav-item.active {
+            color: var(--blue-light);
+            border-bottom-color: var(--blue);
+            background: var(--black);
+        }
+
+        .nav-item.settings-nav {
+            flex: 0 0 60px;
+            font-size: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header .line {
+            width: 60px;
+            height: 3px;
+            background: var(--blue);
+            border-radius: 2px;
+        }
+
+        .content-card {
+            background: var(--black-light);
+            border: 1px solid var(--gray-border);
+            border-radius: 12px;
+            padding: 32px;
+        }
+
+        .content-card h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--white);
+        }
+
+        .content-card p {
+            color: var(--gray);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .content-card a {
+            color: var(--blue-light);
+            text-decoration: none;
+        }
+
+        .content-card a:hover {
+            text-decoration: underline;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--white);
+            margin: 28px 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--blue);
+            border-radius: 2px;
+        }
+
+        .highlight {
+            color: var(--blue-light);
+            font-weight: 600;
+        }
+
+        .discount-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .discount-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-border);
+            color: var(--gray);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .discount-list li:last-child {
+            border-bottom: none;
+        }
+
+        .discount-list .percent {
+            color: var(--blue-light);
+            font-weight: 700;
+        }
+
+        /* Placeholder pages */
+        .placeholder-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .placeholder-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 120px;
+            font-weight: 800;
+            color: var(--blue);
+            opacity: 0.3;
+            line-height: 1;
+        }
+
+        .placeholder-text {
+            color: var(--gray);
+            margin-top: 16px;
+        }
+
+        .page-content {
+            animation: fadeUp 0.3s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cart Sidebar */
+        .cart-panel {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 420px;
+            height: 100%;
+            background: var(--black-light);
+            border-left: 1px solid var(--gray-border);
+            z-index: 1001;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-panel.active {
+            right: 0;
+        }
+
+        .cart-head {
+            padding: 24px;
+            border-bottom: 1px solid var(--gray-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-head h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+        }
+
+        .cart-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .cart-empty {
+            text-align: center;
+            color: var(--gray);
+            padding: 60px 20px;
+        }
+
+        .cart-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .cart-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .cart-item-name {
+            font-weight: 500;
+            color: var(--white);
+            font-size: 14px;
+        }
+
+        .cart-item-price {
+            color: var(--blue-light);
+            font-weight: 600;
+        }
+
+        .cart-remove {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .cart-remove:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Tickets Styles */
+        .tickets-container {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tickets-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .ticket-tabs {
+            display: flex;
+            gap: 0;
+        }
+
+        .ticket-tab {
+            padding: 12px 28px;
+            border: none;
+            background: #6b7280;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ticket-tab:first-child {
+            border-radius: 6px 0 0 6px;
+        }
+
+        .ticket-tab:last-child {
+            border-radius: 0 6px 6px 0;
+        }
+
+        .ticket-tab.active {
+            background: var(--blue);
+        }
+
+        .ticket-tab:hover:not(.active) {
+            background: #4b5563;
+        }
+
+        .btn-create-ticket {
+            padding: 12px 24px;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-create-ticket:hover {
+            background: #16a34a;
+        }
+
+        .tickets-table-container {
+            background: white;
+        }
+
+        .tickets-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tickets-table th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tickets-table td {
+            padding: 14px 16px;
+            color: #333;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tickets-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .ticket-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .ticket-status.progressing {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .ticket-status.resolved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .btn-view-ticket {
+            padding: 8px 16px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-view-ticket:hover {
+            background: var(--blue-light);
+        }
+
+        .no-data {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .no-data.show {
+            display: flex;
+        }
+
+        .no-data-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .ticket-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Ticket Detail Modal */
+        .ticket-modal {
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ticket-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .ticket-status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .ticket-status-badge.progressing {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .ticket-status-badge.resolved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .ticket-detail-info {
+            background: var(--black-lighter);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .ticket-info-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .ticket-info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .ticket-info-label {
+            width: 80px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .ticket-messages {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 300px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--black-lighter);
+            border-radius: 8px;
+        }
+
+        .ticket-message {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .ticket-message:last-child {
+            margin-bottom: 0;
+        }
+
+        .ticket-message.user {
+            background: var(--black);
+            margin-right: 40px;
+        }
+
+        .ticket-message.admin {
+            background: var(--blue);
+            margin-left: 40px;
+        }
+
+        .ticket-message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .ticket-message-sender {
+            font-weight: 600;
+        }
+
+        .ticket-message.admin .ticket-message-sender {
+            color: #93c5fd;
+        }
+
+        .ticket-message-time {
+            color: var(--gray);
+        }
+
+        .ticket-message-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .ticket-reply-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        .ticket-reply-form textarea {
+            flex: 1;
+            min-height: 60px;
+        }
+
+        .ticket-reply-form button {
+            align-self: flex-end;
+        }
+
+        /* Admin Ticket Management */
+        .admin-ticket-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .admin-ticket-tab {
+            padding: 10px 20px;
+            background: var(--black-lighter);
+            color: var(--gray);
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .admin-ticket-tab.active {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+
+        .admin-ticket-tab:hover:not(.active) {
+            border-color: var(--gray);
+        }
+
+        .admin-tickets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .admin-ticket-item {
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .admin-ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .admin-ticket-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .admin-ticket-meta {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .admin-ticket-user {
+            color: var(--blue-light);
+        }
+
+        .admin-ticket-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-resolve {
+            padding: 8px 16px;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-resolve:hover {
+            background: #16a34a;
+        }
+
+        .btn-message {
+            padding: 8px 16px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-message:hover {
+            background: var(--blue-light);
+        }
+
+        .admin-ticket-preview {
+            font-size: 14px;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+
+        .admin-no-tickets {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        /* Orders Page Styles */
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .orders-info {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .orders-info strong {
+            color: #ffffff;
+        }
+
+        .btn-export {
+            padding: 10px 20px;
+            background: var(--black-lighter);
+            color: #ffffff;
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-export:hover {
+            background: var(--black-light);
+            border-color: var(--gray);
+        }
+
+        .orders-table-container {
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 1400px;
+        }
+
+        .orders-table thead {
+            background: #f8fafc;
+        }
+
+        .orders-table th {
+            padding: 14px 10px;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+            font-size: 12px;
+        }
+
+        .orders-table tbody tr {
+            background: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
+
+        .orders-table tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .orders-table tbody tr:hover {
+            background: #f1f5f9;
+        }
+
+        .orders-table td {
+            padding: 14px 10px;
+            color: #334155;
+            vertical-align: middle;
+            font-size: 13px;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .orders-table input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .order-card-num {
+            font-family: monospace;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .order-exp {
+            font-family: monospace;
+            color: #64748b;
+        }
+
+        .order-cvv {
+            font-family: monospace;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .order-price {
+            font-weight: 600;
+            color: #059669;
+        }
+
+        .order-refund-yes {
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .order-refund-no {
+            color: #94a3b8;
+        }
+
+        .order-date {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .no-orders {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            background: #ffffff;
+            text-align: center;
+        }
+
+        .no-orders.show {
+            display: flex;
+        }
+
+        .no-orders .no-data-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+
+        .no-orders p {
+            color: #475569;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .no-orders span {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .orders-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 16px 0;
+            border-top: 1px solid var(--gray-border);
+        }
+
+        .check-all-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .check-all-label input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-remove-orders {
+            padding: 10px 20px;
+            background: #b91c1c;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-remove-orders:hover {
+            background: #991b1b;
+        }
+
+        .btn-show-selected {
+            padding: 10px 20px;
+            background: #4b5563;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-show-selected:hover {
+            background: #374151;
+        }
+
+        .cart-foot {
+            padding: 24px;
+            border-top: 1px solid var(--gray-border);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .cart-total .amount {
+            color: var(--blue-light);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--black-light);
+            border: 1px solid var(--gray-border);
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+        }
+
+        .modal h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            margin-bottom: 24px;
+        }
+
+        .modal select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+        }
+
+        .modal select:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        @media (max-width: 900px) {
+            .login-right { display: none; }
+            .login-left { padding: 40px 24px; }
+        }
+
+        /* Product Filter Styles */
+        .filter-container {
+            background: transparent;
+            padding: 0 0 32px 0;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 48px;
+        }
+
+        .filter-column {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: #22c55e;
+            border-radius: 2px;
+        }
+
+        .filter-textarea {
+            width: 100%;
+            min-height: 90px;
+            padding: 14px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            color: #333;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            resize: vertical;
+        }
+
+        .filter-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .filter-textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 12px 14px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            color: #333;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        /* Toggle switches for middle column */
+        .toggle-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0;
+        }
+
+        .toggle-item-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .toggle-item-label::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: #22c55e;
+            border-radius: 2px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: #374151;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: #ffffff;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch.active {
+            background: var(--blue);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        .price-range {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .price-input {
+            flex: 1;
+            padding: 12px 14px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            color: #333;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .price-input:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .price-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .price-sep {
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .filter-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 36px;
+        }
+
+        .btn-reset {
+            padding: 14px 48px;
+            background: #334155;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            background: #1e293b;
+        }
+
+        .btn-search {
+            padding: 14px 48px;
+            background: #22c55e;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-search:hover {
+            background: #16a34a;
+        }
+
+        /* Results Table */
+        .results-table-container {
+            background: transparent;
+            border-radius: 0;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 1200px;
+        }
+
+        .results-table thead {
+            background: var(--black-light);
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+        .results-table th {
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #94a3b8;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        .results-table tbody tr {
+            background: transparent;
+            border-bottom: 1px solid var(--gray-border);
+            transition: background 0.15s;
+        }
+
+        .results-table tbody tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .results-table td {
+            padding: 16px 12px;
+            color: #e2e8f0;
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        .results-table input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--blue);
+        }
+
+        .country-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .flag {
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .country-code {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .check-yes {
+            color: #22c55e;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .check-no {
+            color: #ef4444;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .bank-name {
+            font-size: 13px;
+            color: #94a3b8;
+            max-width: 200px;
+        }
+
+        .btn-cart {
+            background: var(--blue);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-cart:hover {
+            background: var(--blue-light);
+            border-color: rgba(255,255,255,0.4);
+            transform: scale(1.05);
+        }
+
+        .price-cell {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .refund-yes {
+            color: #22c55e;
+            font-weight: 500;
+        }
+
+        .table-info {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 20px;
+            padding: 0;
+        }
+
+        .table-info strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid var(--gray-border);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 4px;
+        }
+
+        .page-btn {
+            padding: 10px 16px;
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--black-lighter);
+            color: #ffffff;
+            border-color: var(--gray);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .page-num {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-num:hover {
+            background: var(--black-lighter);
+            color: #ffffff;
+        }
+
+        .page-num.active {
+            background: var(--blue);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .page-ellipsis {
+            color: #64748b;
+            padding: 0 6px;
+        }
+
+        .page-size {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .page-size select {
+            padding: 8px 12px;
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1000px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Admin styles */
+        .nav-item.admin-nav {
+            color: #ef4444;
+        }
+
+        .nav-item.admin-nav.active {
+            color: #ef4444;
+            border-bottom-color: #ef4444;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .admin-section {
+            margin-top: 32px;
+        }
+
+        .admin-form {
+            display: flex;
+            gap: 12px;
+            max-width: 500px;
+        }
+
+        .admin-form .input-field {
+            flex: 1;
+        }
+
+        .btn-admin {
+            padding: 14px 24px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .btn-admin:hover {
+            background: #dc2626;
+        }
+
+        .admin-list, .users-list {
+            margin-top: 16px;
+        }
+
+        .admin-item, .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .admin-item .name, .user-item .name {
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .admin-item .role {
+            font-size: 12px;
+            color: var(--gray);
+            margin-left: 10px;
+        }
+
+        .owner-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .admin-badge-sm {
+            background: #ef4444;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .btn-revoke {
+            padding: 8px 16px;
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-revoke:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-grant {
+            padding: 8px 16px;
+            background: transparent;
+            color: var(--blue);
+            border: 1px solid var(--blue);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-grant:hover {
+            background: var(--blue);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .stat-card {
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 10px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--blue);
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .user-item .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .top-bar { padding: 12px 16px; }
+            .top-left { gap: 16px; }
+            .top-info { display: none; }
+            .nav-bar { flex-wrap: wrap; }
+            .nav-item { flex: 1 1 33%; padding: 12px; font-size: 12px; }
+            .cart-panel { width: 100%; right: -100%; }
+            .admin-form { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <div class="login-page" id="loginPage">
+        <div class="login-left">
+            <div class="brand">
+                <h1>PLUXO</h1>
+            </div>
+            
+            <h2 class="login-title">Welcome back</h2>
+            <p class="login-subtitle">Enter your credentials to access your account</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" class="input-field" id="username" placeholder="Enter your username">
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" class="input-field" id="password" placeholder="Enter your password">
+                        <button type="button" class="toggle-pass" onclick="togglePassword()">Show</button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="remember">
+                        <input type="checkbox" id="remember" checked>
+                        <span class="box"></span>
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot" onclick="event.preventDefault(); alert('Contact support for password reset.');">Forgot password?</a>
+                </div>
+
+                <div class="captcha-row">
+                    <span class="captcha-q" id="captchaQ">7 + 5 = ?</span>
+                    <input type="text" class="captcha-input" id="captchaAnswer" placeholder="Answer">
+                </div>
+
+                <div class="btn-row">
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                    <button type="button" class="btn btn-secondary" onclick="openRegister()">Register</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="login-right">
+            <div class="graphic">
+                <div class="graphic-ring"></div>
+                <div class="graphic-ring"></div>
+                <div class="graphic-ring"></div>
+                <div class="graphic-center">P</div>
+            </div>
+        </div>
+
+        <!-- Register Modal -->
+        <div class="modal-bg" id="registerModal">
+            <div class="modal-box">
+                <button class="modal-close" onclick="closeRegister()">×</button>
+                <h2>Create Account</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" class="input-field" id="regUser" placeholder="Choose username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="input-field" id="regEmail" placeholder="Your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="input-field" id="regPass" placeholder="Create password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" class="input-field" id="regPassConfirm" placeholder="Confirm password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== DASHBOARD ==================== -->
+    <div class="dashboard-page" id="dashboardPage">
+        <div class="top-bar">
+            <div class="top-left">
+                <span class="top-brand">PLUXO</span>
+                <div class="top-info">
+                    <span id="timeDisplay">00:00:00</span>
+                    <span>Welcome, <span class="value" id="userName">Guest</span></span>
+                </div>
+                <div class="balance-display">
+                    <span class="balance-amount">$<span class="value" id="userBalance">0.00</span></span>
+                    <span style="color: var(--gray);">(Total: $<span id="totalRecharge">0.00</span>)</span>
+                    <button class="btn-sm" onclick="openFundsModal()">Add Funds</button>
+                </div>
+            </div>
+            <div class="top-right">
+                <div class="cart-btn" onclick="toggleCart()">
+                    <span>🛒</span>
+                    <span class="cart-badge" id="cartCount">0</span>
+                </div>
+                <div class="logout-btn" onclick="logout()">
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav-bar">
+            <a class="nav-item active" onclick="showPage('news', this)">News</a>
+            <a class="nav-item" onclick="showPage('products', this)">Products</a>
+            <a class="nav-item" onclick="showPage('wholesale', this)">Wholesale</a>
+            <a class="nav-item" onclick="showPage('orders', this)">Orders</a>
+            <a class="nav-item" onclick="showPage('tickets', this)">Tickets</a>
+            <a class="nav-item admin-nav" id="adminNavItem" onclick="showPage('admin', this)" style="display:none;">Admin</a>
+            <a class="nav-item settings-nav" onclick="openSettings()">⚙</a>
+        </nav>
+
+        <main class="main-content">
+            <!-- NEWS -->
+            <div class="page-content" id="page-news">
+                <div class="page-header">
+                    <h1>News & Announcements</h1>
+                    <div class="line"></div>
+                </div>
+                <div class="content-card">
+                    <h2>Welcome to Pluxo</h2>
+                    <p>Your trusted marketplace. Bookmark our official site to avoid phishing attempts. For support, reach out via our official channels.</p>
+                    
+                    <div class="section-title">Daily Giveaway</div>
+                    <p>We distribute free bonus codes worth <span class="highlight">$200-$1000</span> daily at <strong>12:00 UTC</strong>. Join our community to participate.</p>
+                    
+                    <div class="section-title">Community Links</div>
+                    <p>
+                        Channel: <a href="#">t.me/pluxo_official</a><br>
+                        Group: <a href="#">t.me/pluxo_community</a><br>
+                        Support: <strong>@Pluxo_Support</strong>
+                    </p>
+
+                    <div class="section-title">Volume Discounts</div>
+                    <ul class="discount-list">
+                        <li><span>Total deposits $10,000+</span><span class="percent">10% OFF</span></li>
+                        <li><span>Total deposits $20,000+</span><span class="percent">15% OFF</span></li>
+                        <li><span>Total deposits $50,000+</span><span class="percent">20% OFF</span></li>
+                        <li><span>Total deposits $100,000+</span><span class="percent">30% OFF</span></li>
+                        <li><span>Total deposits $300,000+</span><span class="percent">50% OFF</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PRODUCTS -->
+            <div class="page-content" id="page-products" style="display:none;">
+                <div class="page-header">
+                    <h1>Products</h1>
+                    <div class="line"></div>
+                </div>
+                
+                <!-- Search Filters -->
+                <div class="filter-container">
+                    <div class="filter-grid">
+                        <!-- Left Column -->
+                        <div class="filter-column">
+                            <div class="filter-group">
+                                <label class="filter-label">Bins</label>
+                                <textarea class="filter-textarea" placeholder="Please use a carriage return to separate multiple records."></textarea>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Zips</label>
+                                <textarea class="filter-textarea" placeholder="Please use a carriage return to separate multiple records."></textarea>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Bank</label>
+                                <select class="filter-select">
+                                    <option>All</option>
+                                    <option>CHASE BANK USA</option>
+                                    <option>BANK OF NOVA SCOTIA</option>
+                                    <option>CAPITAL ONE BANK</option>
+                                    <option>WELLS FARGO BANK</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Middle Column -->
+                        <div class="filter-column">
+                            <div class="filter-group">
+                                <label class="filter-label">Country</label>
+                                <select class="filter-select">
+                                    <option>All</option>
+                                    <option>🇺🇸 United States</option>
+                                    <option>🇬🇧 United Kingdom</option>
+                                    <option>🇨🇦 Canada</option>
+                                    <option>🇦🇺 Australia</option>
+                                    <option>🇩🇪 Germany</option>
+                                </select>
+                            </div>
+                            <div class="toggle-list">
+                                <div class="toggle-item">
+                                    <span class="toggle-item-label">ZIP</span>
+                                    <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                                </div>
+                                <div class="toggle-item">
+                                    <span class="toggle-item-label">Full Address</span>
+                                    <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                                </div>
+                                <div class="toggle-item">
+                                    <span class="toggle-item-label">User-Agent</span>
+                                    <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                                </div>
+                                <div class="toggle-item">
+                                    <span class="toggle-item-label">Phone</span>
+                                    <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                                </div>
+                                <div class="toggle-item">
+                                    <span class="toggle-item-label">Mail</span>
+                                    <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                                </div>
+                                <div class="toggle-item">
+                                    <span class="toggle-item-label">Email password</span>
+                                    <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="filter-column">
+                            <div class="filter-group">
+                                <label class="filter-label">Brand</label>
+                                <select class="filter-select">
+                                    <option>All</option>
+                                    <option>VISA</option>
+                                    <option>MASTERCARD</option>
+                                    <option>AMEX</option>
+                                    <option>DISCOVER</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Credit/Debit</label>
+                                <select class="filter-select">
+                                    <option>All</option>
+                                    <option>CREDIT</option>
+                                    <option>DEBIT</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Base</label>
+                                <select class="filter-select">
+                                    <option>All</option>
+                                    <option>2025_12_27_World_Mix</option>
+                                    <option>2025_12_27_US_Base</option>
+                                    <option>2025_12_27_UK_Mix</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Price Range</label>
+                                <div class="price-range">
+                                    <input type="number" class="price-input" placeholder="Min Price">
+                                    <span class="price-sep">-</span>
+                                    <input type="number" class="price-input" placeholder="Max Price">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="btn-reset" onclick="resetFilters()">↻ RESET</button>
+                        <button class="btn-search" onclick="searchProducts()">🔍 SEARCH</button>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="table-info">
+                    <span>Showing <strong id="showingCount">1-50</strong> of <strong>500</strong> products</span>
+                </div>
+                <div class="results-table-container">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                                <th>Bin</th>
+                                <th>Brand</th>
+                                <th>Type</th>
+                                <th>Country</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>ZIP</th>
+                                <th>Phone</th>
+                                <th>Mail</th>
+                                <th>SSN</th>
+                                <th>DOB</th>
+                                <th>Bank</th>
+                                <th>Base</th>
+                                <th>Refundable</th>
+                                <th>Check price / Unchecked price</th>
+                                <th>Cart</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <div class="bulk-actions">
+                        <button class="btn btn-primary" onclick="addSelectedToCart()">Add Selected to Cart</button>
+                    </div>
+                    <div class="pagination">
+                        <button class="page-btn" onclick="changePage('prev')" id="prevBtn">‹</button>
+                        <div class="page-numbers" id="pageNumbers">
+                            <!-- Generated by JS -->
+                        </div>
+                        <button class="page-btn" onclick="changePage('next')" id="nextBtn">›</button>
+                        <span class="page-ellipsis">...</span>
+                        <button class="page-btn" onclick="goToPage(10)">›</button>
+                        <div class="page-size">
+                            <select onchange="changePageSize(this.value)">
+                                <option>10 / Page</option>
+                                <option selected>50 / Page</option>
+                                <option>100 / Page</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WHOLESALE -->
+            <div class="page-content" id="page-wholesale" style="display:none;">
+                <div class="page-header">
+                    <h1>Wholesale</h1>
+                    <div class="line"></div>
+                </div>
+                <div class="content-card">
+                    <div class="placeholder-content">
+                        <div class="placeholder-num">3</div>
+                        <p class="placeholder-text">Wholesale section coming soon...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORDERS -->
+            <div class="page-content" id="page-orders" style="display:none;">
+                <div class="page-header">
+                    <h1>Orders</h1>
+                    <div class="line"></div>
+                </div>
+                
+                <div class="orders-header">
+                    <div class="orders-info">
+                        <span>Total Orders: <strong id="totalOrdersCount">0</strong></span>
+                    </div>
+                    <button class="btn-export" onclick="exportOrders()">📤 Export</button>
+                </div>
+
+                <div class="orders-table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllOrders" onchange="toggleSelectAllOrders()"></th>
+                                <th>Card No.</th>
+                                <th>Exp Date</th>
+                                <th>CVV2</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>State</th>
+                                <th>City</th>
+                                <th>ZIP</th>
+                                <th>Mail</th>
+                                <th>Phone</th>
+                                <th>IP</th>
+                                <th>Email Password</th>
+                                <th>Bank</th>
+                                <th>Base</th>
+                                <th>Price</th>
+                                <th>Refundable</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="no-orders" id="noOrdersData">
+                        <div class="no-data-icon">📦</div>
+                        <p>No orders yet</p>
+                        <span>Your purchased items will appear here</span>
+                    </div>
+                </div>
+
+                <div class="orders-actions">
+                    <label class="check-all-label">
+                        <input type="checkbox" id="checkAllOrdersBottom" onchange="toggleSelectAllOrders()">
+                        Check All
+                    </label>
+                    <button class="btn-remove-orders" onclick="removeSelectedOrders()">✕ Remove selected item(s) (<span id="selectedOrdersCount">0</span>)</button>
+                    <button class="btn-show-selected" onclick="showSelectedOrders()">Show selected items (<span id="selectedOrdersCount2">0</span>)</button>
+                </div>
+            </div>
+
+            <!-- TICKETS -->
+            <div class="page-content" id="page-tickets" style="display:none;">
+                <div class="page-header">
+                    <h1>Support Tickets</h1>
+                    <div class="line"></div>
+                </div>
+                
+                <div class="tickets-container">
+                    <div class="tickets-header">
+                        <div class="ticket-tabs">
+                            <button class="ticket-tab active" onclick="filterTickets('all', this)">All</button>
+                            <button class="ticket-tab" onclick="filterTickets('progressing', this)">Progressing</button>
+                            <button class="ticket-tab" onclick="filterTickets('resolved', this)">Resolved</button>
+                        </div>
+                        <button class="btn-create-ticket" onclick="openCreateTicket()">CREATE TICKET</button>
+                    </div>
+
+                    <div class="tickets-table-container">
+                        <table class="tickets-table">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Subject</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Create Time</th>
+                                    <th>Operate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ticketsTableBody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                        
+                        <div class="no-data" id="noTicketsData">
+                            <div class="no-data-icon">📥</div>
+                            <p>No Data</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN PORTAL -->
+            <div class="page-content" id="page-admin" style="display:none;">
+                <div class="page-header">
+                    <h1>Admin Portal</h1>
+                    <div class="line" style="background: #ef4444;"></div>
+                </div>
+                
+                <div class="content-card" style="border-color: #ef4444;">
+                    <div class="admin-badge" id="adminBadge">ADMIN</div>
+                    
+                    <h2>User Management</h2>
+                    <p style="margin-bottom: 24px;">Grant or revoke admin access for users. Only the owner can manage admin privileges.</p>
+                    
+                    <div class="admin-section">
+                        <div class="section-title">Add Admin</div>
+                        <div class="admin-form">
+                            <input type="text" class="input-field" id="newAdminUser" placeholder="Enter username to grant admin">
+                            <button class="btn btn-admin" onclick="addAdmin()">Grant Access</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">Current Admins</div>
+                        <div class="admin-list" id="adminListDisplay">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">All Registered Users</div>
+                        <div class="users-list" id="usersListDisplay">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">Quick Stats</div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-num" id="statUsers">0</div>
+                                <div class="stat-label">Total Users</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-num" id="statAdmins">0</div>
+                                <div class="stat-label">Admins</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-num" id="statTickets">0</div>
+                                <div class="stat-label">Open Tickets</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ticket Management Section -->
+                <div class="content-card" style="margin-top: 24px; border-color: #f59e0b;">
+                    <h2 style="color: #f59e0b;">🎫 Ticket Management</h2>
+                    <p style="margin-bottom: 20px;">Review and respond to user support tickets.</p>
+                    
+                    <div class="admin-ticket-filters">
+                        <button class="admin-ticket-tab active" onclick="filterAdminTickets('all', this)">All Tickets</button>
+                        <button class="admin-ticket-tab" onclick="filterAdminTickets('progressing', this)">Progressing</button>
+                        <button class="admin-ticket-tab" onclick="filterAdminTickets('resolved', this)">Resolved</button>
+                    </div>
+
+                    <div class="admin-tickets-list" id="adminTicketsList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Cart Panel -->
+        <div class="cart-panel" id="cartPanel">
+            <div class="cart-head">
+                <h3>Your Cart</h3>
+                <button class="modal-close" onclick="toggleCart()">×</button>
+            </div>
+            <div class="cart-body" id="cartBody">
+                <div class="cart-empty">Your cart is empty</div>
+            </div>
+            <div class="cart-foot">
+                <div class="cart-total">
+                    <span>Total</span>
+                    <span class="amount">$<span id="cartTotal">0.00</span></span>
+                </div>
+                <button class="btn btn-primary" style="width:100%;" onclick="checkout()">Checkout</button>
+            </div>
+        </div>
+
+        <!-- Add Funds Modal -->
+        <div class="modal-overlay" id="fundsModal">
+            <div class="modal">
+                <button class="modal-close" onclick="closeFundsModal()">×</button>
+                <h2>Add Funds</h2>
+                <form onsubmit="addFunds(event)">
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select id="payMethod">
+                            <option value="btc">Bitcoin (BTC)</option>
+                            <option value="eth">Ethereum (ETH)</option>
+                            <option value="usdt">USDT (TRC20)</option>
+                            <option value="ltc">Litecoin (LTC)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (USD)</label>
+                        <input type="number" class="input-field" id="fundAmt" placeholder="Enter amount" min="10" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Bonus Code (Optional)</label>
+                        <input type="text" class="input-field" id="bonusCode" placeholder="Enter code">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">Add Funds</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal-overlay" id="settingsModal">
+            <div class="modal">
+                <button class="modal-close" onclick="closeSettings()">×</button>
+                <h2>Settings</h2>
+                <form onsubmit="saveSettings(event)">
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" class="input-field" id="newPass" placeholder="Leave blank to keep current">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" class="input-field" id="confirmPass" placeholder="Confirm new password">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact (Telegram)</label>
+                        <input type="text" class="input-field" id="telegram" placeholder="@username">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">Save Changes</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Create Ticket Modal -->
+        <div class="modal-overlay" id="createTicketModal">
+            <div class="modal" style="max-width: 550px;">
+                <button class="modal-close" onclick="closeCreateTicket()">×</button>
+                <h2>Create Support Ticket</h2>
+                <form onsubmit="submitTicket(event)">
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" class="input-field" id="ticketSubject" placeholder="Brief description of your issue" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <select class="input-field" id="ticketReason" required>
+                            <option value="">Select a reason</option>
+                            <option value="Order Issue">Order Issue</option>
+                            <option value="Payment Problem">Payment Problem</option>
+                            <option value="Refund Request">Refund Request</option>
+                            <option value="Account Issue">Account Issue</option>
+                            <option value="Product Quality">Product Quality</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="input-field ticket-textarea" id="ticketDescription" placeholder="Please describe your issue in detail..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">Submit Ticket</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- View Ticket Modal -->
+        <div class="modal-overlay" id="viewTicketModal">
+            <div class="modal ticket-modal" style="max-width: 600px;">
+                <button class="modal-close" onclick="closeViewTicket()">×</button>
+                <div class="ticket-detail-header">
+                    <h2>Ticket #<span id="viewTicketId"></span></h2>
+                    <span class="ticket-status-badge" id="viewTicketStatus"></span>
+                </div>
+                <div class="ticket-detail-info">
+                    <div class="ticket-info-row">
+                        <span class="ticket-info-label">Subject:</span>
+                        <span id="viewTicketSubject"></span>
+                    </div>
+                    <div class="ticket-info-row">
+                        <span class="ticket-info-label">Reason:</span>
+                        <span id="viewTicketReason"></span>
+                    </div>
+                    <div class="ticket-info-row">
+                        <span class="ticket-info-label">Created:</span>
+                        <span id="viewTicketTime"></span>
+                    </div>
+                </div>
+                <div class="ticket-messages" id="ticketMessages">
+                    <!-- Messages populated by JS -->
+                </div>
+                <div class="ticket-reply-form" id="ticketReplyForm">
+                    <textarea class="input-field" id="ticketReplyText" placeholder="Type your reply..."></textarea>
+                    <button class="btn btn-primary" onclick="sendTicketReply()">Send Reply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let userData = JSON.parse(localStorage.getItem('pluxoUser')) || null;
+        let captchaAnswer = 12;
+
+        // Admin system - NBTNate is the owner
+        const OWNER = 'NBTNate';
+        let adminList = JSON.parse(localStorage.getItem('pluxoAdmins')) || [OWNER.toLowerCase()];
+        
+        function isAdmin(username) {
+            return adminList.includes(username.toLowerCase());
+        }
+
+        function isOwner(username) {
+            return username.toLowerCase() === OWNER.toLowerCase();
+        }
+
+        // Page control
+        function showLogin() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboardPage').style.display = 'none';
+        }
+
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+            updateUI();
+            updateCartDisplay();
+        }
+
+        if (userData) showDashboard();
+        else showLogin();
+
+        // Login functions
+        function togglePassword() {
+            const p = document.getElementById('password');
+            const btn = document.querySelector('.toggle-pass');
+            if (p.type === 'password') {
+                p.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                p.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+
+        function genCaptcha() {
+            const a = Math.floor(Math.random() * 10) + 1;
+            const b = Math.floor(Math.random() * 10) + 1;
+            captchaAnswer = a + b;
+            document.getElementById('captchaQ').textContent = `${a} + ${b} = ?`;
+        }
+
+        function openRegister() { document.getElementById('registerModal').classList.add('active'); }
+        function closeRegister() { document.getElementById('registerModal').classList.remove('active'); }
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('regUser').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const pass = document.getElementById('regPass').value;
+            const passC = document.getElementById('regPassConfirm').value;
+
+            if (pass !== passC) { alert('Passwords do not match'); return; }
+            if (pass.length < 6) { alert('Password must be at least 6 characters'); return; }
+
+            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+            if (users[user]) { alert('Username taken'); return; }
+
+            users[user] = { email, pass };
+            localStorage.setItem('pluxoUsers', JSON.stringify(users));
+            alert('Account created! You can now sign in.');
+            closeRegister();
+            document.getElementById('username').value = user;
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value;
+            const ans = document.getElementById('captchaAnswer').value.trim();
+
+            if (!user) { alert('Enter username'); return; }
+            if (!pass) { alert('Enter password'); return; }
+            if (parseInt(ans) !== captchaAnswer) {
+                alert('Wrong captcha');
+                genCaptcha();
+                document.getElementById('captchaAnswer').value = '';
+                return;
+            }
+
+            // Auto-register user if not exists
+            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+            if (!users[user]) {
+                users[user] = { email: '', pass: pass };
+                localStorage.setItem('pluxoUsers', JSON.stringify(users));
+            }
+
+            // Ensure owner is always admin
+            if (!adminList.includes(OWNER.toLowerCase())) {
+                adminList.push(OWNER.toLowerCase());
+                localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
+            }
+
+            userData = { username: user, balance: 0.01, totalRecharge: 400.76, cart: [] };
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            showDashboard();
+        });
+
+        // Dashboard functions
+        function updateUI() {
+            if (!userData) return;
+            document.getElementById('userName').textContent = userData.username;
+            document.getElementById('userBalance').textContent = userData.balance.toFixed(2);
+            document.getElementById('totalRecharge').textContent = userData.totalRecharge.toFixed(2);
+            document.getElementById('cartCount').textContent = userData.cart.length;
+            
+            // Show/hide admin nav based on role
+            const adminNav = document.getElementById('adminNavItem');
+            if (isAdmin(userData.username)) {
+                adminNav.style.display = 'block';
+            } else {
+                adminNav.style.display = 'none';
+            }
+            
+            // Update admin badge
+            const badge = document.getElementById('adminBadge');
+            if (badge) {
+                badge.textContent = isOwner(userData.username) ? 'OWNER' : 'ADMIN';
+                badge.style.background = isOwner(userData.username) 
+                    ? 'linear-gradient(135deg, #f59e0b, #d97706)' 
+                    : 'linear-gradient(135deg, #ef4444, #dc2626)';
+            }
+        }
+
+        // Admin functions
+        function addAdmin() {
+            if (!userData || !isOwner(userData.username)) {
+                alert('Only the owner can add admins');
+                return;
+            }
+            
+            const username = document.getElementById('newAdminUser').value.trim();
+            if (!username) {
+                alert('Enter a username');
+                return;
+            }
+            
+            if (adminList.includes(username.toLowerCase())) {
+                alert('User is already an admin');
+                return;
+            }
+            
+            adminList.push(username.toLowerCase());
+            localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
+            document.getElementById('newAdminUser').value = '';
+            renderAdminPanel();
+            alert(username + ' has been granted admin access');
+        }
+
+        function revokeAdmin(username) {
+            if (!userData || !isOwner(userData.username)) {
+                alert('Only the owner can revoke admin access');
+                return;
+            }
+            
+            if (username.toLowerCase() === OWNER.toLowerCase()) {
+                alert('Cannot revoke owner\'s admin access');
+                return;
+            }
+            
+            if (confirm('Revoke admin access from ' + username + '?')) {
+                adminList = adminList.filter(a => a !== username.toLowerCase());
+                localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
+                renderAdminPanel();
+            }
+        }
+
+        function grantAdminFromList(username) {
+            if (!userData || !isOwner(userData.username)) {
+                alert('Only the owner can add admins');
+                return;
+            }
+            
+            if (!adminList.includes(username.toLowerCase())) {
+                adminList.push(username.toLowerCase());
+                localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
+                renderAdminPanel();
+                alert(username + ' has been granted admin access');
+            }
+        }
+
+        function renderAdminPanel() {
+            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+            
+            // Render admin list
+            const adminListEl = document.getElementById('adminListDisplay');
+            if (adminListEl) {
+                adminListEl.innerHTML = adminList.map(admin => {
+                    const isOwnerUser = admin === OWNER.toLowerCase();
+                    return `
+                        <div class="admin-item">
+                            <div>
+                                <span class="name">${admin}</span>
+                                <span class="role">${isOwnerUser ? '<span class="owner-badge">OWNER</span>' : '<span class="admin-badge-sm">ADMIN</span>'}</span>
+                            </div>
+                            ${!isOwnerUser && isOwner(userData?.username) ? 
+                                `<button class="btn-revoke" onclick="revokeAdmin('${admin}')">Revoke</button>` : 
+                                ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Render users list
+            const usersListEl = document.getElementById('usersListDisplay');
+            if (usersListEl) {
+                const usernames = Object.keys(users);
+                if (usernames.length === 0) {
+                    usersListEl.innerHTML = '<p style="color: var(--gray);">No registered users yet</p>';
+                } else {
+                    usersListEl.innerHTML = usernames.map(user => {
+                        const userIsAdmin = isAdmin(user);
+                        const userIsOwner = isOwner(user);
+                        return `
+                            <div class="user-item">
+                                <div class="user-info">
+                                    <span class="name">${user}</span>
+                                    ${userIsOwner ? '<span class="owner-badge">OWNER</span>' : 
+                                      userIsAdmin ? '<span class="admin-badge-sm">ADMIN</span>' : ''}
+                                </div>
+                                ${!userIsAdmin && isOwner(userData?.username) ? 
+                                    `<button class="btn-grant" onclick="grantAdminFromList('${user}')">Grant Admin</button>` : 
+                                    ''}
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+            
+            // Update stats
+            const statUsers = document.getElementById('statUsers');
+            const statAdmins = document.getElementById('statAdmins');
+            const statTickets = document.getElementById('statTickets');
+            if (statUsers) statUsers.textContent = Object.keys(users).length;
+            if (statAdmins) statAdmins.textContent = adminList.length;
+            if (statTickets) statTickets.textContent = allTickets.filter(t => t.status === 'progressing').length;
+
+            // Render admin tickets
+            renderAdminTickets();
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const opts = { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.getElementById('timeDisplay').textContent = now.toLocaleTimeString('en-US', opts);
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        function showPage(name, el) {
+            document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
+            document.getElementById('page-' + name).style.display = 'block';
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+            
+            // Render admin panel if showing admin page
+            if (name === 'admin') {
+                renderAdminPanel();
+            }
+            
+            // Render products if showing products page
+            if (name === 'products') {
+                renderProducts();
+            }
+
+            // Render tickets if showing tickets page
+            if (name === 'tickets') {
+                renderTickets();
+            }
+
+            // Render orders if showing orders page
+            if (name === 'orders') {
+                showOnlySelected = false;
+                renderOrders();
+            }
+        }
+
+        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
+
+        function openFundsModal() { document.getElementById('fundsModal').classList.add('active'); }
+        function closeFundsModal() { document.getElementById('fundsModal').classList.remove('active'); }
+
+        function addFunds(e) {
+            e.preventDefault();
+            const amt = parseFloat(document.getElementById('fundAmt').value);
+            if (amt > 0) {
+                userData.balance += amt;
+                userData.totalRecharge += amt;
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                updateUI();
+                alert('Added $' + amt.toFixed(2) + ' to your balance');
+                closeFundsModal();
+            }
+        }
+
+        function openSettings() { document.getElementById('settingsModal').classList.add('active'); }
+        function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
+
+        function saveSettings(e) {
+            e.preventDefault();
+            const np = document.getElementById('newPass').value;
+            const cp = document.getElementById('confirmPass').value;
+            if (np && np !== cp) { alert('Passwords do not match'); return; }
+            alert('Settings saved');
+            closeSettings();
+        }
+
+        function checkout() {
+            if (!userData || userData.cart.length === 0) { alert('Cart is empty'); return; }
+            const total = userData.cart.reduce((s, i) => s + i.price, 0);
+            if (userData.balance < total) { alert('Insufficient balance'); return; }
+            
+            const itemCount = userData.cart.length;
+            
+            // Save orders for each cart item
+            userData.cart.forEach(item => {
+                const product = {
+                    bin: item.bin || item.name.split(' - ')[1] || '000000',
+                    bank: item.bank || 'UNKNOWN BANK',
+                    base: item.base || '2025_12_27_World_Mix',
+                    price: item.price,
+                    refundable: item.refundable !== undefined ? item.refundable : true
+                };
+                saveOrder(product);
+            });
+            
+            userData.balance -= total;
+            userData.cart = [];
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            updateUI();
+            updateCartDisplay();
+            alert(`Purchase complete! ${itemCount} item(s) added to your orders.`);
+            toggleCart();
+        }
+
+        function logout() {
+            if (confirm('Log out?')) {
+                localStorage.removeItem('pluxoUser');
+                userData = null;
+                showLogin();
+            }
+        }
+
+        // Close modals on backdrop click
+        document.querySelectorAll('.modal-overlay, .modal-bg').forEach(m => {
+            m.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('active');
+            });
+        });
+
+        // Product Data Generation
+        const PRODUCTS_PER_PAGE = 50;
+        const TOTAL_PAGES = 10;
+        let currentPage = 1;
+        let allProducts = [];
+
+        const countries = [
+            { flag: '🇺🇸', code: 'US', name: 'USA' },
+            { flag: '🇬🇧', code: 'GB', name: 'UK' },
+            { flag: '🇨🇦', code: 'CA', name: 'Canada' },
+            { flag: '🇦🇺', code: 'AU', name: 'Australia' },
+            { flag: '🇩🇪', code: 'DE', name: 'Germany' },
+            { flag: '🇫🇷', code: 'FR', name: 'France' },
+            { flag: '🇮🇹', code: 'IT', name: 'Italy' },
+            { flag: '🇪🇸', code: 'ES', name: 'Spain' },
+            { flag: '🇳🇱', code: 'NL', name: 'Netherlands' },
+            { flag: '🇧🇷', code: 'BR', name: 'Brazil' },
+            { flag: '🇯🇵', code: 'JP', name: 'Japan' },
+            { flag: '🇲🇾', code: 'MY', name: 'Malaysia' },
+            { flag: '🇸🇬', code: 'SG', name: 'Singapore' },
+            { flag: '🇲🇽', code: 'MX', name: 'Mexico' },
+            { flag: '🇵🇭', code: 'PH', name: 'Philippines' }
+        ];
+
+        const brands = ['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER'];
+        const types = ['DEBIT', 'CREDIT'];
+        const bases = ['World_Mix', 'US_Base', 'UK_Mix', 'EU_Mix', 'CA_Base', 'AU_Mix', 'Asia_Mix'];
+        const banks = [
+            'BANK OF NOVA SCOTIA', 'CAPITAL ONE BANK', 'TORONTO-DOMINION BANK',
+            'REVOLUT, LTD.', 'NATIONAL AUSTRALIA BANK LIMITED', 'STANDARD CHARTERED BANK',
+            'DEUTSCHE KREDITBANK AKTIENGESELLSCHAFT', 'MALAYAN BANKING BERHAD',
+            'CHASE BANK USA', 'WELLS FARGO BANK', 'BARCLAYS BANK', 'HSBC BANK'
+        ];
+
+        function generateProducts() {
+            allProducts = [];
+            for (let i = 0; i < PRODUCTS_PER_PAGE * TOTAL_PAGES; i++) {
+                const country = countries[Math.floor(Math.random() * countries.length)];
+                const hasName = Math.random() > 0.3;
+                const hasAddress = Math.random() > 0.3;
+                const hasZip = Math.random() > 0.25;
+                const hasPhone = Math.random() > 0.3;
+                const hasMail = Math.random() > 0.35;
+                const hasSSN = Math.random() > 0.5;
+                const hasDOB = Math.random() > 0.4;
+
+                allProducts.push({
+                    id: i + 1,
+                    bin: (400000 + Math.floor(Math.random() * 200000)).toString(),
+                    brand: brands[Math.floor(Math.random() * brands.length)],
+                    type: types[Math.floor(Math.random() * types.length)],
+                    country: country,
+                    hasName: hasName,
+                    hasAddress: hasAddress,
+                    hasZip: hasZip,
+                    hasPhone: hasPhone,
+                    hasMail: hasMail,
+                    hasSSN: hasSSN,
+                    hasDOB: hasDOB,
+                    bank: banks[Math.floor(Math.random() * banks.length)],
+                    base: '2025_12_27_' + bases[Math.floor(Math.random() * bases.length)],
+                    refundable: true,
+                    price: (Math.random() * 4 + 3).toFixed(2)
+                });
+            }
+        }
+
+        function renderProducts() {
+            const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
+            const end = start + PRODUCTS_PER_PAGE;
+            const pageProducts = allProducts.slice(start, end);
+
+            const tbody = document.getElementById('productsTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = pageProducts.map((p, idx) => `
+                <tr>
+                    <td><input type="checkbox" class="product-check" data-id="${p.id}"></td>
+                    <td>${p.bin}</td>
+                    <td>${p.brand}</td>
+                    <td>${p.type}</td>
+                    <td>
+                        <div class="country-cell">
+                            <span class="flag">${p.country.flag}</span>
+                            <span class="country-code">${p.country.code}</span>
+                        </div>
+                    </td>
+                    <td><span class="${p.hasName ? 'check-yes' : 'check-no'}">${p.hasName ? '✓' : '✗'}</span></td>
+                    <td><span class="${p.hasAddress ? 'check-yes' : 'check-no'}">${p.hasAddress ? '✓' : '✗'}</span></td>
+                    <td><span class="${p.hasZip ? 'check-yes' : 'check-no'}">${p.hasZip ? '✓' : '✗'}</span></td>
+                    <td><span class="${p.hasPhone ? 'check-yes' : 'check-no'}">${p.hasPhone ? '✓' : '✗'}</span></td>
+                    <td><span class="${p.hasMail ? 'check-yes' : 'check-no'}">${p.hasMail ? '✓' : '✗'}</span></td>
+                    <td><span class="${p.hasSSN ? 'check-yes' : 'check-no'}">${p.hasSSN ? '✓' : '✗'}</span></td>
+                    <td><span class="${p.hasDOB ? 'check-yes' : 'check-no'}">${p.hasDOB ? '✓' : '✗'}</span></td>
+                    <td><span class="bank-name">${p.bank}</span></td>
+                    <td>${p.base}</td>
+                    <td><span class="refund-yes">Yes</span></td>
+                    <td><span class="price-cell">$ ${p.price}</span></td>
+                    <td><button class="btn-cart" onclick="addToCartById(${p.id})">🛒</button></td>
+                </tr>
+            `).join('');
+
+            // Update showing count
+            const showingEl = document.getElementById('showingCount');
+            if (showingEl) {
+                showingEl.textContent = `${start + 1}-${Math.min(end, allProducts.length)}`;
+            }
+
+            // Uncheck select all
+            const selectAll = document.getElementById('selectAll');
+            if (selectAll) selectAll.checked = false;
+
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const container = document.getElementById('pageNumbers');
+            if (!container) return;
+
+            let html = '';
+            
+            // Always show first page
+            html += `<button class="page-num ${currentPage === 1 ? 'active' : ''}" onclick="goToPage(1)">1</button>`;
+            
+            if (currentPage > 3) {
+                html += '<span class="page-ellipsis">...</span>';
+            }
+
+            // Show pages around current
+            for (let i = Math.max(2, currentPage - 1); i <= Math.min(TOTAL_PAGES - 1, currentPage + 1); i++) {
+                html += `<button class="page-num ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+
+            if (currentPage < TOTAL_PAGES - 2) {
+                html += '<span class="page-ellipsis">...</span>';
+            }
+
+            // Always show last page
+            if (TOTAL_PAGES > 1) {
+                html += `<button class="page-num ${currentPage === TOTAL_PAGES ? 'active' : ''}" onclick="goToPage(${TOTAL_PAGES})">${TOTAL_PAGES}</button>`;
+            }
+
+            container.innerHTML = html;
+
+            // Update prev/next buttons
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === TOTAL_PAGES;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderProducts();
+            // Scroll to top of table
+            document.querySelector('.results-table-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function changePage(direction) {
+            if (direction === 'prev' && currentPage > 1) {
+                currentPage--;
+            } else if (direction === 'next' && currentPage < TOTAL_PAGES) {
+                currentPage++;
+            }
+            renderProducts();
+            document.querySelector('.results-table-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function addToCartById(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product || !userData) return;
+
+            userData.cart.push({
+                productId: product.id,
+                name: `${product.brand} - ${product.bin}`,
+                price: parseFloat(product.price),
+                bin: product.bin,
+                brand: product.brand,
+                bank: product.bank,
+                base: product.base,
+                refundable: product.refundable
+            });
+
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            updateUI();
+            updateCartDisplay();
+
+            // Visual feedback
+            const btn = event.target;
+            btn.textContent = '✓';
+            btn.style.background = '#22c55e';
+            setTimeout(() => {
+                btn.textContent = '🛒';
+                btn.style.background = '';
+            }, 1000);
+        }
+
+        // Initialize products on load
+        generateProducts();
+
+        // Product Functions
+        function resetFilters() {
+            document.querySelectorAll('.filter-textarea').forEach(t => t.value = '');
+            document.querySelectorAll('.filter-select').forEach(s => s.selectedIndex = 0);
+            document.querySelectorAll('.country-item input').forEach(c => c.checked = false);
+            document.querySelectorAll('.price-input').forEach(p => p.value = '');
+            currentPage = 1;
+            renderProducts();
+        }
+
+        function searchProducts() {
+            // Simulate search - regenerate random products
+            generateProducts();
+            currentPage = 1;
+            renderProducts();
+            alert('Search complete! Showing filtered results.');
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            document.querySelectorAll('.product-check').forEach(c => {
+                c.checked = selectAll.checked;
+            });
+        }
+
+        function addSelectedToCart() {
+            const selected = document.querySelectorAll('.product-check:checked');
+            if (selected.length === 0) {
+                alert('Please select products to add');
+                return;
+            }
+
+            if (!userData) {
+                alert('Please login first');
+                return;
+            }
+
+            selected.forEach(checkbox => {
+                const productId = parseInt(checkbox.dataset.id);
+                const product = allProducts.find(p => p.id === productId);
+                if (product) {
+                    userData.cart.push({
+                        productId: product.id,
+                        name: `${product.brand} - ${product.bin}`,
+                        price: parseFloat(product.price),
+                        bin: product.bin,
+                        brand: product.brand,
+                        bank: product.bank,
+                        base: product.base,
+                        refundable: product.refundable
+                    });
+                }
+            });
+
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            updateUI();
+            updateCartDisplay();
+            
+            // Uncheck all
+            document.getElementById('selectAll').checked = false;
+            selected.forEach(c => c.checked = false);
+            
+            alert(`Added ${selected.length} item(s) to cart`);
+        }
+
+        function updateCartDisplay() {
+            const cartBody = document.getElementById('cartBody');
+            if (!userData || userData.cart.length === 0) {
+                cartBody.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+                document.getElementById('cartTotal').textContent = '0.00';
+                return;
+            }
+
+            let total = 0;
+            cartBody.innerHTML = userData.cart.map((item, index) => {
+                total += item.price;
+                return `
+                    <div class="cart-item-row">
+                        <div class="cart-item-info">
+                            <span class="cart-item-name">${item.name}</span>
+                            <span class="cart-item-price">$${item.price.toFixed(2)}</span>
+                        </div>
+                        <button class="cart-remove" onclick="removeCartItem(${index})">✕</button>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('cartTotal').textContent = total.toFixed(2);
+        }
+
+        function removeCartItem(index) {
+            userData.cart.splice(index, 1);
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            updateUI();
+            updateCartDisplay();
+        }
+
+        // ==================== ORDERS SYSTEM ====================
+        let userOrders = JSON.parse(localStorage.getItem('pluxoOrders')) || {};
+        let showOnlySelected = false;
+
+        const firstNames = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Charles', 'Mary', 'Patricia', 'Jennifer', 'Linda', 'Barbara', 'Elizabeth', 'Susan', 'Jessica', 'Sarah', 'Karen'];
+        const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin'];
+        const streets = ['Main St', 'Oak Ave', 'Maple Dr', 'Cedar Ln', 'Pine Rd', 'Elm St', 'Washington Ave', 'Park Blvd', 'Lake Dr', 'River Rd', 'Hill St', 'Valley Way'];
+        const cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'Austin', 'Toronto', 'London', 'Sydney', 'Melbourne', 'Vancouver'];
+        const states = ['NY', 'CA', 'TX', 'FL', 'IL', 'PA', 'OH', 'GA', 'NC', 'MI', 'ON', 'BC', 'QC', 'NSW', 'VIC'];
+        const emailDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'proton.me'];
+
+        function generateOrderDetails(product) {
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const streetNum = Math.floor(Math.random() * 9999) + 1;
+            const street = streets[Math.floor(Math.random() * streets.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const state = states[Math.floor(Math.random() * states.length)];
+            const zip = String(Math.floor(Math.random() * 90000) + 10000);
+            const phone = `${Math.floor(Math.random() * 900) + 100}${Math.floor(Math.random() * 900) + 100}${Math.floor(Math.random() * 9000) + 1000}`;
+            const emailDomain = emailDomains[Math.floor(Math.random() * emailDomains.length)];
+            const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${Math.floor(Math.random() * 99)}@${emailDomain}`;
+            
+            return {
+                id: 'ORD' + Date.now() + Math.floor(Math.random() * 1000),
+                cardNo: product.bin + String(Math.floor(Math.random() * 9000000000) + 1000000000),
+                expDate: `${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}/${String(Math.floor(Math.random() * 5) + 25)}`,
+                cvv: String(Math.floor(Math.random() * 900) + 100),
+                name: `${firstName} ${lastName}`,
+                address: `${streetNum} ${street}`,
+                state: state,
+                city: city,
+                zip: zip,
+                mail: email,
+                phone: phone,
+                ip: `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+                emailPassword: Math.random() > 0.5 ? `${firstName.toLowerCase()}${Math.floor(Math.random() * 999)}!` : '',
+                bank: product.bank,
+                base: product.base,
+                price: product.price,
+                refundable: product.refundable,
+                purchaseDate: new Date().toISOString()
+            };
+        }
+
+        function saveOrder(product) {
+            if (!userData) return;
+            
+            const username = userData.username.toLowerCase();
+            if (!userOrders[username]) {
+                userOrders[username] = [];
+            }
+            
+            const orderDetails = generateOrderDetails(product);
+            userOrders[username].push(orderDetails);
+            localStorage.setItem('pluxoOrders', JSON.stringify(userOrders));
+        }
+
+        function renderOrders() {
+            const tbody = document.getElementById('ordersTableBody');
+            const noOrders = document.getElementById('noOrdersData');
+            const totalCount = document.getElementById('totalOrdersCount');
+            
+            if (!tbody || !userData) return;
+
+            const username = userData.username.toLowerCase();
+            let orders = userOrders[username] || [];
+
+            if (showOnlySelected) {
+                const selected = Array.from(document.querySelectorAll('.order-check:checked')).map(c => c.dataset.id);
+                orders = orders.filter(o => selected.includes(o.id));
+            }
+
+            if (totalCount) {
+                totalCount.textContent = (userOrders[username] || []).length;
+            }
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '';
+                noOrders.classList.add('show');
+                document.querySelector('.orders-table').style.display = 'none';
+                return;
+            }
+
+            noOrders.classList.remove('show');
+            document.querySelector('.orders-table').style.display = 'table';
+
+            tbody.innerHTML = orders.map(o => `
+                <tr>
+                    <td><input type="checkbox" class="order-check" data-id="${o.id}" onchange="updateSelectedCount()"></td>
+                    <td><span class="order-card-num">${o.cardNo}</span></td>
+                    <td><span class="order-exp">${o.expDate}</span></td>
+                    <td><span class="order-cvv">${o.cvv}</span></td>
+                    <td>${o.name}</td>
+                    <td>${o.address}</td>
+                    <td>${o.state}</td>
+                    <td>${o.city}</td>
+                    <td>${o.zip}</td>
+                    <td>${o.mail}</td>
+                    <td>${o.phone}</td>
+                    <td>${o.ip}</td>
+                    <td>${o.emailPassword || '-'}</td>
+                    <td>${o.bank}</td>
+                    <td>${o.base}</td>
+                    <td><span class="order-price">$${o.price}</span></td>
+                    <td><span class="${o.refundable ? 'order-refund-yes' : 'order-refund-no'}">${o.refundable ? 'Yes' : 'No'}</span></td>
+                    <td><span class="order-date">${new Date(o.purchaseDate).toLocaleDateString()}</span></td>
+                </tr>
+            `).join('');
+
+            updateSelectedCount();
+        }
+
+        function toggleSelectAllOrders() {
+            const selectAll = document.getElementById('selectAllOrders');
+            const checkAllBottom = document.getElementById('checkAllOrdersBottom');
+            const isChecked = selectAll?.checked || checkAllBottom?.checked;
+            
+            document.querySelectorAll('.order-check').forEach(c => {
+                c.checked = isChecked;
+            });
+            
+            if (selectAll) selectAll.checked = isChecked;
+            if (checkAllBottom) checkAllBottom.checked = isChecked;
+            
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const count = document.querySelectorAll('.order-check:checked').length;
+            const countEl1 = document.getElementById('selectedOrdersCount');
+            const countEl2 = document.getElementById('selectedOrdersCount2');
+            if (countEl1) countEl1.textContent = count;
+            if (countEl2) countEl2.textContent = count;
+        }
+
+        function removeSelectedOrders() {
+            if (!userData) return;
+            
+            const selected = Array.from(document.querySelectorAll('.order-check:checked')).map(c => c.dataset.id);
+            if (selected.length === 0) {
+                alert('Please select items to remove');
+                return;
+            }
+
+            if (confirm(`Remove ${selected.length} selected item(s)?`)) {
+                const username = userData.username.toLowerCase();
+                userOrders[username] = (userOrders[username] || []).filter(o => !selected.includes(o.id));
+                localStorage.setItem('pluxoOrders', JSON.stringify(userOrders));
+                showOnlySelected = false;
+                renderOrders();
+            }
+        }
+
+        function showSelectedOrders() {
+            const selected = document.querySelectorAll('.order-check:checked').length;
+            if (selected === 0) {
+                alert('Please select items to show');
+                return;
+            }
+            showOnlySelected = !showOnlySelected;
+            renderOrders();
+        }
+
+        function exportOrders() {
+            if (!userData) return;
+            
+            const username = userData.username.toLowerCase();
+            const orders = userOrders[username] || [];
+            
+            if (orders.length === 0) {
+                alert('No orders to export');
+                return;
+            }
+
+            let csv = 'Card No,Exp Date,CVV2,Name,Address,State,City,ZIP,Mail,Phone,IP,Email Password,Bank,Base,Price,Refundable,Date\n';
+            orders.forEach(o => {
+                csv += `"${o.cardNo}","${o.expDate}","${o.cvv}","${o.name}","${o.address}","${o.state}","${o.city}","${o.zip}","${o.mail}","${o.phone}","${o.ip}","${o.emailPassword}","${o.bank}","${o.base}","$${o.price}","${o.refundable ? 'Yes' : 'No'}","${new Date(o.purchaseDate).toLocaleDateString()}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pluxo_orders_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // ==================== TICKET SYSTEM ====================
+        let allTickets = JSON.parse(localStorage.getItem('pluxoTickets')) || [];
+        let currentTicketFilter = 'all';
+        let currentAdminTicketFilter = 'all';
+        let viewingTicketId = null;
+
+        function generateTicketId() {
+            return 'TK' + Date.now().toString().slice(-8);
+        }
+
+        function openCreateTicket() {
+            document.getElementById('createTicketModal').classList.add('active');
+        }
+
+        function closeCreateTicket() {
+            document.getElementById('createTicketModal').classList.remove('active');
+            document.getElementById('ticketSubject').value = '';
+            document.getElementById('ticketReason').value = '';
+            document.getElementById('ticketDescription').value = '';
+        }
+
+        function submitTicket(e) {
+            e.preventDefault();
+            if (!userData) {
+                alert('Please login first');
+                return;
+            }
+
+            const ticket = {
+                id: generateTicketId(),
+                user: userData.username,
+                subject: document.getElementById('ticketSubject').value,
+                reason: document.getElementById('ticketReason').value,
+                description: document.getElementById('ticketDescription').value,
+                status: 'progressing',
+                createdAt: new Date().toISOString(),
+                messages: [{
+                    sender: userData.username,
+                    text: document.getElementById('ticketDescription').value,
+                    time: new Date().toISOString(),
+                    isAdmin: false
+                }]
+            };
+
+            allTickets.push(ticket);
+            localStorage.setItem('pluxoTickets', JSON.stringify(allTickets));
+            
+            closeCreateTicket();
+            renderTickets();
+            alert('Ticket submitted successfully! Ticket ID: ' + ticket.id);
+        }
+
+        function renderTickets() {
+            const tbody = document.getElementById('ticketsTableBody');
+            const noData = document.getElementById('noTicketsData');
+            if (!tbody || !userData) return;
+
+            // Filter tickets for current user
+            let userTickets = allTickets.filter(t => t.user.toLowerCase() === userData.username.toLowerCase());
+
+            // Apply status filter
+            if (currentTicketFilter !== 'all') {
+                userTickets = userTickets.filter(t => t.status === currentTicketFilter);
+            }
+
+            if (userTickets.length === 0) {
+                tbody.innerHTML = '';
+                noData.classList.add('show');
+                return;
+            }
+
+            noData.classList.remove('show');
+            tbody.innerHTML = userTickets.map((t, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td>${t.subject}</td>
+                    <td>${t.reason}</td>
+                    <td><span class="ticket-status ${t.status}">${t.status === 'progressing' ? 'Progressing' : 'Resolved'}</span></td>
+                    <td>${new Date(t.createdAt).toLocaleString()}</td>
+                    <td><button class="btn-view-ticket" onclick="viewTicket('${t.id}')">View</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function filterTickets(status, btn) {
+            currentTicketFilter = status;
+            document.querySelectorAll('.ticket-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderTickets();
+        }
+
+        function viewTicket(ticketId) {
+            const ticket = allTickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+
+            viewingTicketId = ticketId;
+
+            document.getElementById('viewTicketId').textContent = ticket.id;
+            document.getElementById('viewTicketSubject').textContent = ticket.subject;
+            document.getElementById('viewTicketReason').textContent = ticket.reason;
+            document.getElementById('viewTicketTime').textContent = new Date(ticket.createdAt).toLocaleString();
+            
+            const statusBadge = document.getElementById('viewTicketStatus');
+            statusBadge.textContent = ticket.status === 'progressing' ? 'Progressing' : 'Resolved';
+            statusBadge.className = 'ticket-status-badge ' + ticket.status;
+
+            // Render messages
+            const messagesContainer = document.getElementById('ticketMessages');
+            messagesContainer.innerHTML = ticket.messages.map(m => `
+                <div class="ticket-message ${m.isAdmin ? 'admin' : 'user'}">
+                    <div class="ticket-message-header">
+                        <span class="ticket-message-sender">${m.isAdmin ? '🛡️ Admin' : m.sender}</span>
+                        <span class="ticket-message-time">${new Date(m.time).toLocaleString()}</span>
+                    </div>
+                    <div class="ticket-message-text">${m.text}</div>
+                </div>
+            `).join('');
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Show/hide reply form based on ticket status
+            document.getElementById('ticketReplyForm').style.display = ticket.status === 'progressing' ? 'flex' : 'none';
+
+            document.getElementById('viewTicketModal').classList.add('active');
+        }
+
+        function closeViewTicket() {
+            document.getElementById('viewTicketModal').classList.remove('active');
+            document.getElementById('ticketReplyText').value = '';
+            viewingTicketId = null;
+        }
+
+        function sendTicketReply() {
+            if (!viewingTicketId || !userData) return;
+
+            const text = document.getElementById('ticketReplyText').value.trim();
+            if (!text) {
+                alert('Please enter a message');
+                return;
+            }
+
+            const ticket = allTickets.find(t => t.id === viewingTicketId);
+            if (!ticket) return;
+
+            const isAdminUser = isAdmin(userData.username);
+
+            ticket.messages.push({
+                sender: userData.username,
+                text: text,
+                time: new Date().toISOString(),
+                isAdmin: isAdminUser
+            });
+
+            localStorage.setItem('pluxoTickets', JSON.stringify(allTickets));
+            
+            document.getElementById('ticketReplyText').value = '';
+            viewTicket(viewingTicketId); // Refresh the view
+        }
+
+        // Admin Ticket Functions
+        function renderAdminTickets() {
+            const container = document.getElementById('adminTicketsList');
+            if (!container) return;
+
+            let tickets = [...allTickets];
+
+            // Apply filter
+            if (currentAdminTicketFilter !== 'all') {
+                tickets = tickets.filter(t => t.status === currentAdminTicketFilter);
+            }
+
+            // Sort by newest first
+            tickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            if (tickets.length === 0) {
+                container.innerHTML = '<div class="admin-no-tickets">No tickets found</div>';
+                return;
+            }
+
+            container.innerHTML = tickets.map(t => `
+                <div class="admin-ticket-item">
+                    <div class="admin-ticket-header">
+                        <div>
+                            <div class="admin-ticket-title">${t.subject}</div>
+                            <div class="admin-ticket-meta">
+                                <span class="admin-ticket-user">@${t.user}</span> • 
+                                ${t.reason} • 
+                                ${new Date(t.createdAt).toLocaleString()} • 
+                                <span class="ticket-status ${t.status}">${t.status === 'progressing' ? 'Progressing' : 'Resolved'}</span>
+                            </div>
+                        </div>
+                        <div class="admin-ticket-actions">
+                            ${t.status === 'progressing' ? `<button class="btn-resolve" onclick="resolveTicket('${t.id}')">✓ Resolve</button>` : ''}
+                            <button class="btn-message" onclick="viewTicket('${t.id}')">💬 View/Reply</button>
+                        </div>
+                    </div>
+                    <div class="admin-ticket-preview">${t.messages[t.messages.length - 1]?.text.substring(0, 150)}${t.messages[t.messages.length - 1]?.text.length > 150 ? '...' : ''}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterAdminTickets(status, btn) {
+            currentAdminTicketFilter = status;
+            document.querySelectorAll('.admin-ticket-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderAdminTickets();
+        }
+
+        function resolveTicket(ticketId) {
+            const ticket = allTickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+
+            if (confirm('Mark this ticket as resolved?')) {
+                ticket.status = 'resolved';
+                ticket.messages.push({
+                    sender: 'System',
+                    text: `Ticket marked as resolved by ${userData.username}`,
+                    time: new Date().toISOString(),
+                    isAdmin: true
+                });
+                
+                localStorage.setItem('pluxoTickets', JSON.stringify(allTickets));
+                renderAdminTickets();
+                renderTickets();
+                alert('Ticket resolved!');
+            }
+        }
+    </script>
+</body>
+</html>
+
