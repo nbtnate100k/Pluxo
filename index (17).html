@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pluxo</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css">
     <style>
         :root {
             --black: #0a0a0a;
@@ -1733,6 +1734,22 @@
         .flag {
             font-size: 22px;
             line-height: 1;
+            display: inline-block;
+            width: 24px;
+            height: 18px;
+            vertical-align: middle;
+        }
+        
+        .flag-icon {
+            width: 24px;
+            height: 18px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+        
+        /* Improve emoji rendering in select dropdowns */
+        select {
+            font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', 'DM Sans', sans-serif;
         }
 
         .country-code {
@@ -2626,8 +2643,7 @@
                         <label>Payment Method</label>
                         <select id="payMethod">
                             <option value="btc">Bitcoin (BTC)</option>
-                            <option value="eth">Ethereum (ETH)</option>
-                            <option value="usdt">USDT (TRC20)</option>
+                            <option value="cashapp">CashApp</option>
                             <option value="ltc">Litecoin (LTC)</option>
                         </select>
                     </div>
@@ -3099,21 +3115,21 @@
         let allProducts = [];
 
         const countries = [
-            { flag: '🇺🇸', code: 'US', name: 'USA' },
-            { flag: '🇬🇧', code: 'GB', name: 'UK' },
-            { flag: '🇨🇦', code: 'CA', name: 'Canada' },
-            { flag: '🇦🇺', code: 'AU', name: 'Australia' },
-            { flag: '🇩🇪', code: 'DE', name: 'Germany' },
-            { flag: '🇫🇷', code: 'FR', name: 'France' },
-            { flag: '🇮🇹', code: 'IT', name: 'Italy' },
-            { flag: '🇪🇸', code: 'ES', name: 'Spain' },
-            { flag: '🇳🇱', code: 'NL', name: 'Netherlands' },
-            { flag: '🇧🇷', code: 'BR', name: 'Brazil' },
-            { flag: '🇯🇵', code: 'JP', name: 'Japan' },
-            { flag: '🇲🇾', code: 'MY', name: 'Malaysia' },
-            { flag: '🇸🇬', code: 'SG', name: 'Singapore' },
-            { flag: '🇲🇽', code: 'MX', name: 'Mexico' },
-            { flag: '🇵🇭', code: 'PH', name: 'Philippines' }
+            { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
+            { flag: '🇬🇧', flagClass: 'fi-gb', code: 'GB', name: 'UK' },
+            { flag: '🇨🇦', flagClass: 'fi-ca', code: 'CA', name: 'Canada' },
+            { flag: '🇦🇺', flagClass: 'fi-au', code: 'AU', name: 'Australia' },
+            { flag: '🇩🇪', flagClass: 'fi-de', code: 'DE', name: 'Germany' },
+            { flag: '🇫🇷', flagClass: 'fi-fr', code: 'FR', name: 'France' },
+            { flag: '🇮🇹', flagClass: 'fi-it', code: 'IT', name: 'Italy' },
+            { flag: '🇪🇸', flagClass: 'fi-es', code: 'ES', name: 'Spain' },
+            { flag: '🇳🇱', flagClass: 'fi-nl', code: 'NL', name: 'Netherlands' },
+            { flag: '🇧🇷', flagClass: 'fi-br', code: 'BR', name: 'Brazil' },
+            { flag: '🇯🇵', flagClass: 'fi-jp', code: 'JP', name: 'Japan' },
+            { flag: '🇲🇾', flagClass: 'fi-my', code: 'MY', name: 'Malaysia' },
+            { flag: '🇸🇬', flagClass: 'fi-sg', code: 'SG', name: 'Singapore' },
+            { flag: '🇲🇽', flagClass: 'fi-mx', code: 'MX', name: 'Mexico' },
+            { flag: '🇵🇭', flagClass: 'fi-ph', code: 'PH', name: 'Philippines' }
         ];
 
         const brands = ['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER'];
@@ -3175,7 +3191,7 @@
                     <td>${p.type}</td>
                     <td>
                         <div class="country-cell">
-                            <span class="flag">${p.country.flag}</span>
+                            <span class="fi ${p.country.flagClass} flag-icon"></span>
                             <span class="country-code">${p.country.code}</span>
                         </div>
                     </td>
@@ -3803,6 +3819,30 @@
                 alert('Ticket resolved!');
             }
         }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAltz6ySnmdpHmZ1cYPpDCHEfoJSWiqscI",
+            authDomain: "pluxo-1e5a3.firebaseapp.com",
+            projectId: "pluxo-1e5a3",
+            storageBucket: "pluxo-1e5a3.firebasestorage.app",
+            messagingSenderId: "504034808974",
+            appId: "1:504034808974:web:6fb3fc4cffa39465da65df",
+            measurementId: "G-FLP8S5VLWE"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        console.log("🔥 Firebase fully ready");
     </script>
 </body>
 </html>
