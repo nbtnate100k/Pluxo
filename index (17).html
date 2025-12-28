@@ -417,6 +417,79 @@
             background: var(--black);
         }
 
+        /* Grand Opening Banner */
+        .grand-opening-banner {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-bottom: 2px solid var(--blue);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .banner-lights {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .banner-lights .light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--blue);
+            box-shadow: 0 0 10px var(--blue), 0 0 20px var(--blue);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        .banner-lights .light:nth-child(1) { animation-delay: 0s; }
+        .banner-lights .light:nth-child(2) { animation-delay: 0.2s; }
+        .banner-lights .light:nth-child(3) { animation-delay: 0.4s; }
+        .banner-lights .light:nth-child(4) { animation-delay: 0.6s; }
+        .banner-lights .light:nth-child(5) { animation-delay: 0.8s; }
+        .banner-lights .light:nth-child(6) { animation-delay: 1s; }
+        .banner-lights .light:nth-child(7) { animation-delay: 1.2s; }
+        .banner-lights .light:nth-child(8) { animation-delay: 1.4s; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        .banner-content {
+            flex: 2;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .banner-text {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, var(--blue-light) 50%, #ffffff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .banner-subtext {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
         .top-bar {
             background: var(--black-light);
             border-bottom: 1px solid var(--gray-border);
@@ -2185,6 +2258,33 @@
 
     <!-- ==================== DASHBOARD ==================== -->
     <div class="dashboard-page" id="dashboardPage">
+        <!-- Grand Opening Banner -->
+        <div class="grand-opening-banner">
+            <div class="banner-lights">
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+            </div>
+            <div class="banner-content">
+                <span class="banner-text">🎉 GRAND OPENING 🎉</span>
+                <span class="banner-subtext">Welcome to PLUXO - Your Premium Card Marketplace</span>
+            </div>
+            <div class="banner-lights">
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+                <span class="light"></span>
+            </div>
+        </div>
         <div class="top-bar">
             <div class="top-left">
                 <span class="top-brand">PLUXO</span>
@@ -2640,12 +2740,12 @@
             </div>
         </div>
 
-        <!-- Add Funds Modal -->
+        <!-- Add Funds Modal (Step 1) -->
         <div class="modal-overlay" id="fundsModal">
             <div class="modal">
                 <button class="modal-close" onclick="closeFundsModal()">×</button>
                 <h2>Add Funds</h2>
-                <form onsubmit="addFunds(event)">
+                <form onsubmit="submitFundsRequest(event)">
                     <div class="form-group">
                         <label>Payment Method</label>
                         <select id="payMethod">
@@ -2662,11 +2762,26 @@
                         <label>Bonus Code (Optional)</label>
                         <input type="text" class="input-field" id="bonusCode" placeholder="Enter code">
                     </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">Continue</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Payment Link Modal (Step 2) -->
+        <div class="modal-overlay" id="paymentLinkModal">
+            <div class="modal">
+                <button class="modal-close" onclick="closePaymentLinkModal()">×</button>
+                <h2>Submit Payment Link</h2>
+                <p style="color: var(--gray); margin-bottom: 20px;">After sending your payment via <strong id="selectedPaymentMethod"></strong>, paste your transaction link below.</p>
+                <form onsubmit="addFunds(event)">
                     <div class="form-group">
                         <label>Payment Link <span style="color: #ef4444;">*</span></label>
                         <input type="url" class="input-field" id="paymentLink" placeholder="Paste your payment transaction link" required>
                         <p style="color: var(--gray); font-size: 12px; margin-top: 6px;">Don't see payment link? Requires higher approval</p>
                     </div>
+                    <input type="hidden" id="pendingAmount">
+                    <input type="hidden" id="pendingPaymentMethod">
+                    <input type="hidden" id="pendingBonusCode">
                     <button type="submit" class="btn btn-primary" style="width:100%;">Submit Request</button>
                 </form>
             </div>
@@ -3230,7 +3345,47 @@
         function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
 
         function openFundsModal() { document.getElementById('fundsModal').classList.add('active'); }
-        function closeFundsModal() { document.getElementById('fundsModal').classList.remove('active'); }
+        function closeFundsModal() { 
+            document.getElementById('fundsModal').classList.remove('active');
+            document.getElementById('fundAmt').value = '';
+            document.getElementById('bonusCode').value = '';
+        }
+        
+        function openPaymentLinkModal() { document.getElementById('paymentLinkModal').classList.add('active'); }
+        function closePaymentLinkModal() { 
+            document.getElementById('paymentLinkModal').classList.remove('active');
+            document.getElementById('paymentLink').value = '';
+        }
+        
+        // Step 1: Submit funds request (opens payment link modal)
+        function submitFundsRequest(e) {
+            e.preventDefault();
+            const amt = parseFloat(document.getElementById('fundAmt').value);
+            const paymentMethod = document.getElementById('payMethod').value;
+            const bonusCode = document.getElementById('bonusCode').value.trim();
+            
+            if (amt < 10) {
+                alert('Minimum amount is $10');
+                return;
+            }
+            
+            // Store pending values
+            document.getElementById('pendingAmount').value = amt;
+            document.getElementById('pendingPaymentMethod').value = paymentMethod;
+            document.getElementById('pendingBonusCode').value = bonusCode;
+            
+            // Update payment method display
+            const methodNames = {
+                'btc': 'Bitcoin (BTC)',
+                'cashapp': 'CashApp',
+                'ltc': 'Litecoin (LTC)'
+            };
+            document.getElementById('selectedPaymentMethod').textContent = methodNames[paymentMethod] || paymentMethod;
+            
+            // Close first modal and open payment link modal
+            closeFundsModal();
+            openPaymentLinkModal();
+        }
 
         async function addFunds(e) {
             e.preventDefault();
@@ -3239,10 +3394,10 @@
                 return;
             }
             
-            const amt = parseFloat(document.getElementById('fundAmt').value);
+            const amt = parseFloat(document.getElementById('pendingAmount').value);
             const paymentLink = document.getElementById('paymentLink').value.trim();
-            const paymentMethod = document.getElementById('payMethod').value;
-            const bonusCode = document.getElementById('bonusCode').value.trim();
+            const paymentMethod = document.getElementById('pendingPaymentMethod').value;
+            const bonusCode = document.getElementById('pendingBonusCode').value.trim();
             
             if (amt < 10) {
                 alert('Minimum amount is $10');
@@ -3276,12 +3431,15 @@
                 await setDoc(doc(requestsRef, requestId), balanceRequest);
                 
                 alert('Balance request submitted! Waiting for admin approval.');
-                closeFundsModal();
+                closePaymentLinkModal();
                 
-                // Reset form
+                // Reset forms
                 document.getElementById('fundAmt').value = '';
                 document.getElementById('paymentLink').value = '';
                 document.getElementById('bonusCode').value = '';
+                document.getElementById('pendingAmount').value = '';
+                document.getElementById('pendingPaymentMethod').value = '';
+                document.getElementById('pendingBonusCode').value = '';
             } catch (error) {
                 console.error('Error submitting balance request:', error);
                 alert('Error submitting request. Please try again.');
@@ -3350,21 +3508,7 @@
         let allProducts = [];
 
         const countries = [
-            { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
-            { flag: '🇬🇧', flagClass: 'fi-gb', code: 'GB', name: 'UK' },
-            { flag: '🇨🇦', flagClass: 'fi-ca', code: 'CA', name: 'Canada' },
-            { flag: '🇦🇺', flagClass: 'fi-au', code: 'AU', name: 'Australia' },
-            { flag: '🇩🇪', flagClass: 'fi-de', code: 'DE', name: 'Germany' },
-            { flag: '🇫🇷', flagClass: 'fi-fr', code: 'FR', name: 'France' },
-            { flag: '🇮🇹', flagClass: 'fi-it', code: 'IT', name: 'Italy' },
-            { flag: '🇪🇸', flagClass: 'fi-es', code: 'ES', name: 'Spain' },
-            { flag: '🇳🇱', flagClass: 'fi-nl', code: 'NL', name: 'Netherlands' },
-            { flag: '🇧🇷', flagClass: 'fi-br', code: 'BR', name: 'Brazil' },
-            { flag: '🇯🇵', flagClass: 'fi-jp', code: 'JP', name: 'Japan' },
-            { flag: '🇲🇾', flagClass: 'fi-my', code: 'MY', name: 'Malaysia' },
-            { flag: '🇸🇬', flagClass: 'fi-sg', code: 'SG', name: 'Singapore' },
-            { flag: '🇲🇽', flagClass: 'fi-mx', code: 'MX', name: 'Mexico' },
-            { flag: '🇵🇭', flagClass: 'fi-ph', code: 'PH', name: 'Philippines' }
+            { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' }
         ];
 
         const brands = ['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER'];
@@ -3405,7 +3549,7 @@
                     bank: banks[Math.floor(Math.random() * banks.length)],
                     base: '2025_12_27_' + bases[Math.floor(Math.random() * bases.length)],
                     refundable: true,
-                    price: (Math.random() * 4 + 3).toFixed(2)
+                    price: (Math.random() * 6.5 + 8.5).toFixed(2)
                 });
             }
         }
