@@ -2579,6 +2579,13 @@
                     </div>
 
                     <div class="admin-section">
+                        <div class="section-title">Balance Approval Requests</div>
+                        <div class="balance-requests-list" id="balanceRequestsDisplay">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
                         <div class="section-title">Quick Stats</div>
                         <div class="stats-grid">
                             <div class="stat-card">
@@ -2655,7 +2662,12 @@
                         <label>Bonus Code (Optional)</label>
                         <input type="text" class="input-field" id="bonusCode" placeholder="Enter code">
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%;">Add Funds</button>
+                    <div class="form-group">
+                        <label>Payment Link <span style="color: #ef4444;">*</span></label>
+                        <input type="url" class="input-field" id="paymentLink" placeholder="Paste your payment transaction link" required>
+                        <p style="color: var(--gray); font-size: 12px; margin-top: 6px;">Don't see payment link? Requires higher approval</p>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">Submit Request</button>
                 </form>
             </div>
         </div>
@@ -2780,8 +2792,20 @@
         // Make showDashboard globally accessible for Firebase module
         window.showDashboard = showDashboard;
 
-        if (userData) showDashboard();
-        else showLogin();
+        if (userData) {
+            // Load orders and balance from Firestore if Firebase UID exists
+            if (userData.firebaseUID) {
+                loadOrdersFromFirestore().then(() => {
+                    loadUserBalanceFromFirestore().then(() => {
+                        showDashboard();
+                    });
+                });
+            } else {
+                showDashboard();
+            }
+        } else {
+            showLogin();
+        }
 
         // Login functions
         function togglePassword() {
@@ -3002,6 +3026,168 @@
 
             // Render admin tickets
             renderAdminTickets();
+            
+            // Render balance requests
+            renderBalanceRequests();
+        }
+        
+        // Load and render balance requests for admin
+        async function renderBalanceRequests() {
+            if (!isAdmin(userData?.username)) return;
+            
+            const requestsEl = document.getElementById('balanceRequestsDisplay');
+            if (!requestsEl) return;
+            
+            try {
+                const requestsRef = collection(db, 'balanceRequests');
+                const q = query(requestsRef, where('status', '==', 'pending'), orderBy('createdAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                const requests = [];
+                querySnapshot.forEach((doc) => {
+                    requests.push(doc.data());
+                });
+                
+                if (requests.length === 0) {
+                    requestsEl.innerHTML = '<p style="color: var(--gray);">No pending balance requests</p>';
+                } else {
+                    requestsEl.innerHTML = requests.map(req => `
+                        <div class="balance-request-item" style="background: var(--black-lighter); border: 1px solid var(--gray-border); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                <div>
+                                    <div style="font-weight: 600; margin-bottom: 4px;">${req.username}</div>
+                                    <div style="color: var(--gray); font-size: 13px;">Request ID: ${req.id}</div>
+                                    <div style="color: var(--gray); font-size: 13px;">${new Date(req.createdAt).toLocaleString()}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 20px; font-weight: 700; color: var(--blue);">$${parseFloat(req.amount).toFixed(2)}</div>
+                                    <div style="color: var(--gray); font-size: 12px; text-transform: uppercase;">${req.paymentMethod}</div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <div style="font-size: 13px; color: var(--gray); margin-bottom: 4px;">Payment Link:</div>
+                                <a href="${req.paymentLink}" target="_blank" style="color: var(--blue-light); word-break: break-all; font-size: 13px;">${req.paymentLink}</a>
+                            </div>
+                            ${req.bonusCode ? `<div style="margin-bottom: 12px; font-size: 13px; color: var(--gray);">Bonus Code: <strong>${req.bonusCode}</strong></div>` : ''}
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-primary" style="flex: 1; padding: 8px;" onclick="approveBalanceRequest('${req.id}', '${req.userId}', ${req.amount}, '${req.username}')">Approve</button>
+                                <button class="btn" style="flex: 1; padding: 8px; background: transparent; border: 1px solid var(--gray-border);" onclick="rejectBalanceRequest('${req.id}')">Reject</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading balance requests:', error);
+                requestsEl.innerHTML = '<p style="color: #ef4444;">Error loading balance requests</p>';
+            }
+        }
+        
+        // Make functions globally accessible
+        window.approveBalanceRequest = approveBalanceRequest;
+        window.rejectBalanceRequest = rejectBalanceRequest;
+        
+        // Approve balance request
+        async function approveBalanceRequest(requestId, userId, amount, username) {
+            if (!isAdmin(userData?.username)) {
+                alert('Only admins can approve requests');
+                return;
+            }
+            
+            if (!confirm(`Approve $${amount.toFixed(2)} balance for ${username}?`)) return;
+            
+            try {
+                // Update request status
+                const requestRef = doc(db, 'balanceRequests', requestId);
+                await updateDoc(requestRef, {
+                    status: 'approved',
+                    approvedBy: userData.username,
+                    approvedAt: new Date().toISOString()
+                });
+                
+                // Update user balance in Firestore
+                const userBalanceRef = doc(db, 'userBalances', userId);
+                const userBalanceDoc = await getDoc(userBalanceRef);
+                
+                if (userBalanceDoc.exists()) {
+                    const currentBalance = userBalanceDoc.data().balance || 0;
+                    const currentRecharge = userBalanceDoc.data().totalRecharge || 0;
+                    await updateDoc(userBalanceRef, {
+                        balance: currentBalance + amount,
+                        totalRecharge: currentRecharge + amount,
+                        updatedAt: new Date().toISOString()
+                    });
+                } else {
+                    await setDoc(userBalanceRef, {
+                        balance: amount,
+                        totalRecharge: amount,
+                        username: username.toLowerCase(),
+                        createdAt: new Date().toISOString()
+                    });
+                }
+                
+                // Update local userData if it's the current user
+                if (userData.firebaseUID === userId) {
+                    userData.balance = (userData.balance || 0) + amount;
+                    userData.totalRecharge = (userData.totalRecharge || 0) + amount;
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    updateUI();
+                }
+                
+                alert('Balance request approved!');
+                renderBalanceRequests();
+            } catch (error) {
+                console.error('Error approving balance request:', error);
+                alert('Error approving request. Please try again.');
+            }
+        }
+        
+        // Reject balance request
+        async function rejectBalanceRequest(requestId) {
+            if (!isAdmin(userData?.username)) {
+                alert('Only admins can reject requests');
+                return;
+            }
+            
+            if (!confirm('Reject this balance request?')) return;
+            
+            try {
+                const requestRef = doc(db, 'balanceRequests', requestId);
+                await updateDoc(requestRef, {
+                    status: 'rejected',
+                    approvedBy: userData.username,
+                    approvedAt: new Date().toISOString()
+                });
+                
+                alert('Balance request rejected');
+                renderBalanceRequests();
+            } catch (error) {
+                console.error('Error rejecting balance request:', error);
+                alert('Error rejecting request. Please try again.');
+            }
+        }
+        
+        // Make functions globally accessible
+        window.approveBalanceRequest = approveBalanceRequest;
+        window.rejectBalanceRequest = rejectBalanceRequest;
+        
+        // Load user balance from Firestore
+        async function loadUserBalanceFromFirestore() {
+            if (!userData || !userData.firebaseUID) return;
+            
+            try {
+                const userBalanceRef = doc(db, 'userBalances', userData.firebaseUID);
+                const userBalanceDoc = await getDoc(userBalanceRef);
+                
+                if (userBalanceDoc.exists()) {
+                    const balanceData = userBalanceDoc.data();
+                    userData.balance = balanceData.balance || 0;
+                    userData.totalRecharge = balanceData.totalRecharge || 0;
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    updateUI();
+                }
+            } catch (error) {
+                console.error('Error loading user balance:', error);
+            }
         }
 
         function updateTime() {
@@ -3046,16 +3232,59 @@
         function openFundsModal() { document.getElementById('fundsModal').classList.add('active'); }
         function closeFundsModal() { document.getElementById('fundsModal').classList.remove('active'); }
 
-        function addFunds(e) {
+        async function addFunds(e) {
             e.preventDefault();
+            if (!userData || !userData.firebaseUID) {
+                alert('Please login to add funds');
+                return;
+            }
+            
             const amt = parseFloat(document.getElementById('fundAmt').value);
-            if (amt > 0) {
-                userData.balance += amt;
-                userData.totalRecharge += amt;
-                localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                updateUI();
-                alert('Added $' + amt.toFixed(2) + ' to your balance');
+            const paymentLink = document.getElementById('paymentLink').value.trim();
+            const paymentMethod = document.getElementById('payMethod').value;
+            const bonusCode = document.getElementById('bonusCode').value.trim();
+            
+            if (amt < 10) {
+                alert('Minimum amount is $10');
+                return;
+            }
+            
+            if (!paymentLink) {
+                alert('Please provide payment link');
+                return;
+            }
+            
+            // Create pending balance request
+            const requestId = 'BR' + Date.now() + Math.random().toString(36).substr(2, 9);
+            const balanceRequest = {
+                id: requestId,
+                userId: userData.firebaseUID,
+                username: userData.username,
+                amount: amt,
+                paymentMethod: paymentMethod,
+                paymentLink: paymentLink,
+                bonusCode: bonusCode || null,
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                approvedBy: null,
+                approvedAt: null
+            };
+            
+            try {
+                // Save to Firestore
+                const requestsRef = collection(db, 'balanceRequests');
+                await setDoc(doc(requestsRef, requestId), balanceRequest);
+                
+                alert('Balance request submitted! Waiting for admin approval.');
                 closeFundsModal();
+                
+                // Reset form
+                document.getElementById('fundAmt').value = '';
+                document.getElementById('paymentLink').value = '';
+                document.getElementById('bonusCode').value = '';
+            } catch (error) {
+                console.error('Error submitting balance request:', error);
+                alert('Error submitting request. Please try again.');
             }
         }
 
@@ -3925,7 +4154,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAltz6ySnmdpHmZ1cYPpDCHEfoJSWiqscI",
@@ -3981,11 +4210,14 @@
                 let existingData = JSON.parse(localStorage.getItem('pluxoUser')) || null;
                 userData = existingData || { 
                     username: username, 
-                    balance: 0.01, 
-                    totalRecharge: 400.76, 
+                    balance: 0.00, 
+                    totalRecharge: 0.00, 
                     cart: [],
                     firebaseUID: userCred.user.uid // Store Firebase UID for Firestore operations
                 };
+                
+                // Load user balance from Firestore if available
+                await loadUserBalanceFromFirestore();
                 userData.username = username; // Update username from Firebase
                 userData.firebaseUID = userCred.user.uid; // Always update Firebase UID
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
