@@ -2776,6 +2776,9 @@
             updateUI();
             updateCartDisplay();
         }
+        
+        // Make showDashboard globally accessible for Firebase module
+        window.showDashboard = showDashboard;
 
         if (userData) showDashboard();
         else showLogin();
@@ -2823,38 +2826,40 @@
             document.getElementById('username').value = user;
         });
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value;
-            const ans = document.getElementById('captchaAnswer').value.trim();
+        // OLD LOGIN HANDLER DISABLED - Now using Firebase authentication
+        // This handler was auto-registering users and bypassing Firebase auth
+        // document.getElementById('loginForm').addEventListener('submit', function(e) {
+        //     e.preventDefault();
+        //     const user = document.getElementById('username').value.trim();
+        //     const pass = document.getElementById('password').value;
+        //     const ans = document.getElementById('captchaAnswer').value.trim();
 
-            if (!user) { alert('Enter username'); return; }
-            if (!pass) { alert('Enter password'); return; }
-            if (parseInt(ans) !== captchaAnswer) {
-                alert('Wrong captcha');
-                genCaptcha();
-                document.getElementById('captchaAnswer').value = '';
-                return;
-            }
+        //     if (!user) { alert('Enter username'); return; }
+        //     if (!pass) { alert('Enter password'); return; }
+        //     if (parseInt(ans) !== captchaAnswer) {
+        //         alert('Wrong captcha');
+        //         genCaptcha();
+        //         document.getElementById('captchaAnswer').value = '';
+        //         return;
+        //     }
 
-            // Auto-register user if not exists
-            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
-            if (!users[user]) {
-                users[user] = { email: '', pass: pass };
-                localStorage.setItem('pluxoUsers', JSON.stringify(users));
-            }
+        //     // Auto-register user if not exists
+        //     const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+        //     if (!users[user]) {
+        //         users[user] = { email: '', pass: pass };
+        //         localStorage.setItem('pluxoUsers', JSON.stringify(users));
+        //     }
 
-            // Ensure owner is always admin
-            if (!adminList.includes(OWNER.toLowerCase())) {
-                adminList.push(OWNER.toLowerCase());
-                localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
-            }
+        //     // Ensure owner is always admin
+        //     if (!adminList.includes(OWNER.toLowerCase())) {
+        //         adminList.push(OWNER.toLowerCase());
+        //         localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
+        //     }
 
-            userData = { username: user, balance: 0.01, totalRecharge: 400.76, cart: [] };
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            showDashboard();
-        });
+        //     userData = { username: user, balance: 0.01, totalRecharge: 400.76, cart: [] };
+        //     localStorage.setItem('pluxoUser', JSON.stringify(userData));
+        //     showDashboard();
+        // });
 
         // Dashboard functions
         function updateUI() {
@@ -3031,6 +3036,7 @@
             // Render orders if showing orders page
             if (name === 'orders') {
                 showOnlySelected = false;
+                // renderOrders is now async, so we call it without await (it will load in background)
                 renderOrders();
             }
         }
@@ -3065,15 +3071,15 @@
             closeSettings();
         }
 
-        function checkout() {
+        async function checkout() {
             if (!userData || userData.cart.length === 0) { alert('Cart is empty'); return; }
             const total = userData.cart.reduce((s, i) => s + i.price, 0);
             if (userData.balance < total) { alert('Insufficient balance'); return; }
             
             const itemCount = userData.cart.length;
             
-            // Save orders for each cart item
-            userData.cart.forEach(item => {
+            // Save orders for each cart item (now async)
+            for (const item of userData.cart) {
                 const product = {
                     bin: item.bin || item.name.split(' - ')[1] || '000000',
                     bank: item.bank || 'UNKNOWN BANK',
@@ -3081,8 +3087,8 @@
                     price: item.price,
                     refundable: item.refundable !== undefined ? item.refundable : true
                 };
-                saveOrder(product);
-            });
+                await saveOrder(product);
+            }
             
             userData.balance -= total;
             userData.cart = [];
@@ -3448,25 +3454,96 @@
             };
         }
 
-        function saveOrder(product) {
-            if (!userData) return;
-            
-            const username = userData.username.toLowerCase();
-            if (!userOrders[username]) {
-                userOrders[username] = [];
+        async function saveOrder(product) {
+            if (!userData || !userData.firebaseUID) {
+                // Fallback to localStorage if Firebase UID not available
+                const username = userData?.username?.toLowerCase();
+                if (!username) return;
+                
+                if (!userOrders[username]) {
+                    userOrders[username] = [];
+                }
+                
+                const orderDetails = generateOrderDetails(product);
+                userOrders[username].push(orderDetails);
+                localStorage.setItem('pluxoOrders', JSON.stringify(userOrders));
+                return;
             }
             
-            const orderDetails = generateOrderDetails(product);
-            userOrders[username].push(orderDetails);
-            localStorage.setItem('pluxoOrders', JSON.stringify(userOrders));
+            // Save to Firestore
+            try {
+                const orderDetails = generateOrderDetails(product);
+                const userDocRef = doc(db, 'userOrders', userData.firebaseUID);
+                
+                // Get existing orders or create new document
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    // Add order to existing array
+                    await updateDoc(userDocRef, {
+                        orders: arrayUnion(orderDetails)
+                    });
+                } else {
+                    // Create new document with first order
+                    await setDoc(userDocRef, {
+                        orders: [orderDetails],
+                        username: userData.username.toLowerCase(),
+                        createdAt: new Date().toISOString()
+                    });
+                }
+                
+                // Also update local cache for immediate UI update
+                const username = userData.username.toLowerCase();
+                if (!userOrders[username]) {
+                    userOrders[username] = [];
+                }
+                userOrders[username].push(orderDetails);
+                localStorage.setItem('pluxoOrders', JSON.stringify(userOrders));
+                
+                console.log("Order saved to Firestore");
+            } catch (error) {
+                console.error("Error saving order to Firestore:", error);
+                // Fallback to localStorage
+                const username = userData.username.toLowerCase();
+                if (!userOrders[username]) {
+                    userOrders[username] = [];
+                }
+                const orderDetails = generateOrderDetails(product);
+                userOrders[username].push(orderDetails);
+                localStorage.setItem('pluxoOrders', JSON.stringify(userOrders));
+            }
         }
 
-        function renderOrders() {
+        // Load orders from Firestore
+        async function loadOrdersFromFirestore() {
+            if (!userData || !userData.firebaseUID) return;
+            
+            try {
+                const userDocRef = doc(db, 'userOrders', userData.firebaseUID);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    const username = userData.username.toLowerCase();
+                    userOrders[username] = data.orders || [];
+                    localStorage.setItem('pluxoOrders', JSON.stringify(userOrders));
+                    console.log("Orders loaded from Firestore");
+                }
+            } catch (error) {
+                console.error("Error loading orders from Firestore:", error);
+            }
+        }
+
+        async function renderOrders() {
             const tbody = document.getElementById('ordersTableBody');
             const noOrders = document.getElementById('noOrdersData');
             const totalCount = document.getElementById('totalOrdersCount');
             
             if (!tbody || !userData) return;
+
+            // Load from Firestore if Firebase UID is available
+            if (userData.firebaseUID) {
+                await loadOrdersFromFirestore();
+            }
 
             const username = userData.username.toLowerCase();
             let orders = userOrders[username] || [];
@@ -3539,7 +3616,7 @@
             if (countEl2) countEl2.textContent = count;
         }
 
-        function removeSelectedOrders() {
+        async function removeSelectedOrders() {
             if (!userData) return;
             
             const selected = Array.from(document.querySelectorAll('.order-check:checked')).map(c => c.dataset.id);
@@ -3550,25 +3627,48 @@
 
             if (confirm(`Remove ${selected.length} selected item(s)?`)) {
                 const username = userData.username.toLowerCase();
+                const ordersToRemove = (userOrders[username] || []).filter(o => selected.includes(o.id));
                 userOrders[username] = (userOrders[username] || []).filter(o => !selected.includes(o.id));
+                
+                // Remove from Firestore if Firebase UID is available
+                if (userData.firebaseUID) {
+                    try {
+                        const userDocRef = doc(db, 'userOrders', userData.firebaseUID);
+                        // Remove orders from Firestore array
+                        for (const order of ordersToRemove) {
+                            await updateDoc(userDocRef, {
+                                orders: arrayRemove(order)
+                            });
+                        }
+                        console.log("Orders removed from Firestore");
+                    } catch (error) {
+                        console.error("Error removing orders from Firestore:", error);
+                    }
+                }
+                
                 localStorage.setItem('pluxoOrders', JSON.stringify(userOrders));
                 showOnlySelected = false;
-                renderOrders();
+                await renderOrders();
             }
         }
 
-        function showSelectedOrders() {
+        async function showSelectedOrders() {
             const selected = document.querySelectorAll('.order-check:checked').length;
             if (selected === 0) {
                 alert('Please select items to show');
                 return;
             }
             showOnlySelected = !showOnlySelected;
-            renderOrders();
+            await renderOrders();
         }
 
-        function exportOrders() {
+        async function exportOrders() {
             if (!userData) return;
+            
+            // Load from Firestore if Firebase UID is available
+            if (userData.firebaseUID) {
+                await loadOrdersFromFirestore();
+            }
             
             const username = userData.username.toLowerCase();
             const orders = userOrders[username] || [];
@@ -3824,8 +3924,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-        import { getAuth } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAltz6ySnmdpHmZ1cYPpDCHEfoJSWiqscI",
@@ -3843,6 +3943,168 @@
         const db = getFirestore(app);
 
         console.log("🔥 Firebase fully ready");
+
+        // ----------- USERNAME TO EMAIL FUNCTION -----------
+        function usernameToEmail(username) {
+            return `${username.toLowerCase()}@pluxo.app`;
+        }
+
+        // ----------- SIGN UP FUNCTION -----------
+        async function signUp(username, password) {
+            const email = usernameToEmail(username);
+            try {
+                const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                console.log("Account created:", userCred.user.uid);
+                
+                // Store username in Firestore for login checking
+                await setDoc(doc(db, 'users', username.toLowerCase()), {
+                    username: username.toLowerCase(),
+                    email: email,
+                    createdAt: new Date().toISOString()
+                });
+                
+                alert("Account created successfully!");
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        // ----------- LOGIN FUNCTION -----------
+        async function login(username, password) {
+            const email = usernameToEmail(username);
+            try {
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                // ✅ Login successful
+                console.log("Logged in:", userCred.user.uid);
+                
+                // Initialize user data
+                let existingData = JSON.parse(localStorage.getItem('pluxoUser')) || null;
+                userData = existingData || { 
+                    username: username, 
+                    balance: 0.01, 
+                    totalRecharge: 400.76, 
+                    cart: [],
+                    firebaseUID: userCred.user.uid // Store Firebase UID for Firestore operations
+                };
+                userData.username = username; // Update username from Firebase
+                userData.firebaseUID = userCred.user.uid; // Always update Firebase UID
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                
+                // Load orders from Firestore
+                await loadOrdersFromFirestore();
+                
+                // Navigate to dashboard
+                if (typeof window.showDashboard === 'function') {
+                    window.showDashboard();
+                } else {
+                    // Fallback if showDashboard not available yet
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('dashboardPage').style.display = 'block';
+                    // Try to update UI if functions exist
+                    if (typeof updateUI === 'function') updateUI();
+                    if (typeof updateCartDisplay === 'function') updateCartDisplay();
+                }
+                alert("Login successful!");
+            } catch (err) {
+                // ❌ Handle different error types
+                console.log("Login failed:", err.code, err.message);
+                
+                // Check error code
+                // Firebase v9+ uses 'auth/invalid-credential' for both user-not-found and wrong-password
+                if (err.code === 'auth/user-not-found') {
+                    // User doesn't exist
+                    alert("Please register account");
+                } else if (err.code === 'auth/invalid-credential') {
+                    // Could be either user-not-found OR wrong-password
+                    // Check Firestore to see if username is registered
+                    try {
+                        const userDoc = await getDoc(doc(db, 'users', username.toLowerCase()));
+                        if (userDoc.exists()) {
+                            // Username exists in Firestore, so password was wrong
+                            alert("Invalid login");
+                        } else {
+                            // Username not in Firestore, user doesn't exist
+                            alert("Please register account");
+                        }
+                    } catch (checkErr) {
+                        // Error checking Firestore, default to invalid login
+                        console.log("Error checking user:", checkErr);
+                        alert("Invalid login");
+                    }
+                } else if (err.code === 'auth/wrong-password') {
+                    alert("Invalid login");
+                } else {
+                    // Generic error
+                    alert("Invalid login");
+                }
+                return; // Make sure it stops here and doesn't proceed
+            }
+        }
+
+        // ----------- HOOK TO HTML BUTTONS -----------
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', attachFirebaseHandlers);
+        } else {
+            attachFirebaseHandlers();
+        }
+
+        function attachFirebaseHandlers() {
+            // Hook into login form
+            const loginForm = document.getElementById("loginForm");
+            if (loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById("username").value.trim();
+                    const password = document.getElementById("password").value;
+                    const captchaAns = document.getElementById("captchaAnswer").value.trim();
+                    
+                    // Validate inputs
+                    if (!username) { alert('Enter username'); return; }
+                    if (!password) { alert('Enter password'); return; }
+                    
+                    // Validate captcha if it exists
+                    if (typeof captchaAnswer !== 'undefined' && parseInt(captchaAns) !== captchaAnswer) {
+                        alert('Wrong captcha');
+                        if (typeof genCaptcha === 'function') genCaptcha();
+                        document.getElementById("captchaAnswer").value = '';
+                        return;
+                    }
+                    
+                    login(username, password);
+                });
+            }
+
+            // Hook into register form
+            const registerForm = document.getElementById("registerForm");
+            if (registerForm) {
+                registerForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById("regUser").value;
+                    const password = document.getElementById("regPass").value;
+                    signUp(username, password);
+                });
+            }
+
+            // Also support direct button clicks if buttons exist
+            const loginBtn = document.getElementById("loginBtn");
+            if (loginBtn) {
+                loginBtn.onclick = () => {
+                    const username = document.getElementById("username").value;
+                    const password = document.getElementById("password").value;
+                    login(username, password);
+                };
+            }
+
+            const registerBtn = document.getElementById("registerBtn");
+            if (registerBtn) {
+                registerBtn.onclick = () => {
+                    const username = document.getElementById("username").value;
+                    const password = document.getElementById("password").value;
+                    signUp(username, password);
+                };
+            }
+        }
     </script>
 </body>
 </html>
