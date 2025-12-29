@@ -434,6 +434,16 @@
             display: flex;
             gap: 8px;
             flex: 1;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banner-lights-left {
+            justify-content: flex-start;
+        }
+
+        .banner-lights-right {
+            justify-content: flex-end;
         }
 
         .banner-lights .light {
@@ -488,6 +498,62 @@
             font-size: 14px;
             color: var(--gray);
             font-weight: 500;
+        }
+
+        /* Mobile Responsive for Grand Opening Banner */
+        @media (max-width: 768px) {
+            .grand-opening-banner {
+                padding: 12px 8px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .banner-lights {
+                flex: 0 0 auto;
+                gap: 4px;
+            }
+
+            .banner-lights .light {
+                width: 8px;
+                height: 8px;
+            }
+
+            .banner-content {
+                flex: 1 1 100%;
+                order: 2;
+                margin-top: 8px;
+            }
+
+            .banner-text {
+                font-size: 18px;
+            }
+
+            .banner-subtext {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grand-opening-banner {
+                padding: 10px 6px;
+            }
+
+            .banner-lights {
+                gap: 3px;
+            }
+
+            .banner-lights .light {
+                width: 6px;
+                height: 6px;
+            }
+
+            .banner-text {
+                font-size: 16px;
+            }
+
+            .banner-subtext {
+                font-size: 10px;
+            }
         }
 
         .top-bar {
@@ -2467,11 +2533,7 @@
     <div class="dashboard-page" id="dashboardPage">
         <!-- Grand Opening Banner -->
         <div class="grand-opening-banner">
-            <div class="banner-lights">
-                <span class="light"></span>
-                <span class="light"></span>
-                <span class="light"></span>
-                <span class="light"></span>
+            <div class="banner-lights banner-lights-left">
                 <span class="light"></span>
                 <span class="light"></span>
                 <span class="light"></span>
@@ -2481,11 +2543,7 @@
                 <span class="banner-text">🎉 GRAND OPENING 🎉</span>
                 <span class="banner-subtext">Welcome to PLUXO - Your Premium Card Marketplace</span>
             </div>
-            <div class="banner-lights">
-                <span class="light"></span>
-                <span class="light"></span>
-                <span class="light"></span>
-                <span class="light"></span>
+            <div class="banner-lights banner-lights-right">
                 <span class="light"></span>
                 <span class="light"></span>
                 <span class="light"></span>
@@ -3701,6 +3759,11 @@
             };
             
             try {
+                // Check if db is available
+                if (typeof db === 'undefined' || !db) {
+                    throw new Error('Firebase not initialized. Please refresh the page.');
+                }
+                
                 // Save to Firestore
                 const requestsRef = collection(db, 'balanceRequests');
                 await setDoc(doc(requestsRef, requestId), balanceRequest);
@@ -3718,7 +3781,8 @@
                 document.getElementById('pendingBonusCode').value = '';
             } catch (error) {
                 console.error('Error submitting balance request:', error);
-                alert('Error submitting request. Please try again.');
+                closePaymentLinkModal();
+                alert('Error submitting request: ' + (error.message || 'Please try again. Make sure you are logged in.'));
             }
         }
 
