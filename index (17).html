@@ -3005,12 +3005,12 @@
             </div>
         </div>
 
-        <!-- Add Funds Modal (Step 1) -->
+        <!-- Add Funds Modal -->
         <div class="modal-overlay" id="fundsModal">
             <div class="modal">
                 <button class="modal-close" onclick="closeFundsModal()">×</button>
                 <h2>Add Funds</h2>
-                <form onsubmit="submitFundsRequest(event)">
+                <form onsubmit="addFunds(event)">
                     <div class="form-group">
                         <label>Payment Method</label>
                         <select id="payMethod">
@@ -3027,26 +3027,6 @@
                         <label>Bonus Code (Optional)</label>
                         <input type="text" class="input-field" id="bonusCode" placeholder="Enter code">
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%;">Continue</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Payment Link Modal (Step 2) -->
-        <div class="modal-overlay" id="paymentLinkModal">
-            <div class="modal">
-                <button class="modal-close" onclick="closePaymentLinkModal()">×</button>
-                <h2>Submit Payment Link</h2>
-                <p style="color: var(--gray); margin-bottom: 20px;">After sending your payment via <strong id="selectedPaymentMethod"></strong>, paste your transaction link below.</p>
-                <form onsubmit="addFunds(event)">
-                    <div class="form-group">
-                        <label>Payment Link <span style="color: #ef4444;">*</span></label>
-                        <input type="url" class="input-field" id="paymentLink" placeholder="Paste your payment transaction link" required>
-                        <p style="color: var(--gray); font-size: 12px; margin-top: 6px;">Don't see payment link? Requires higher approval</p>
-                    </div>
-                    <input type="hidden" id="pendingAmount">
-                    <input type="hidden" id="pendingPaymentMethod">
-                    <input type="hidden" id="pendingBonusCode">
                     <button type="submit" class="btn btn-primary" style="width:100%;">Submit Request</button>
                 </form>
             </div>
@@ -3454,13 +3434,17 @@
             if (!requestsEl) return;
             
             // Check if db is available
-            if (typeof db === 'undefined' || !db) {
+            const firestoreDb = window.db;
+            const firestore = window.firestoreFunctions;
+            
+            if (!firestoreDb || !firestore) {
                 requestsEl.innerHTML = '<p style="color: var(--gray);">Loading...</p>';
                 return;
             }
             
             try {
-                const requestsRef = collection(db, 'balanceRequests');
+                const { collection, query, where, getDocs, orderBy } = firestore;
+                const requestsRef = collection(firestoreDb, 'balanceRequests');
                 // Try query with orderBy, if it fails, try without orderBy
                 let querySnapshot;
                 try {
@@ -3500,10 +3484,6 @@
                                     <div style="font-size: 20px; font-weight: 700; color: var(--blue);">$${parseFloat(req.amount || 0).toFixed(2)}</div>
                                     <div style="color: var(--gray); font-size: 12px; text-transform: uppercase;">${req.paymentMethod || 'N/A'}</div>
                                 </div>
-                            </div>
-                            <div style="margin-bottom: 12px;">
-                                <div style="font-size: 13px; color: var(--gray); margin-bottom: 4px;">Payment Link:</div>
-                                <a href="${req.paymentLink || '#'}" target="_blank" style="color: var(--blue-light); word-break: break-all; font-size: 13px;">${req.paymentLink || 'N/A'}</a>
                             </div>
                             ${req.bonusCode ? `<div style="margin-bottom: 12px; font-size: 13px; color: var(--gray);">Bonus Code: <strong>${req.bonusCode}</strong></div>` : ''}
                             <div style="display: flex; gap: 8px;">
@@ -3673,12 +3653,6 @@
             document.getElementById('bonusCode').value = '';
         }
         
-        function openPaymentLinkModal() { document.getElementById('paymentLinkModal').classList.add('active'); }
-        function closePaymentLinkModal() { 
-            document.getElementById('paymentLinkModal').classList.remove('active');
-            document.getElementById('paymentLink').value = '';
-        }
-        
         function showApprovalAnimation() {
             document.getElementById('approvalAnimationModal').classList.add('active');
         }
@@ -3689,36 +3663,6 @@
         
         // Make globally accessible
         window.closeApprovalAnimation = closeApprovalAnimation;
-        
-        // Step 1: Submit funds request (opens payment link modal)
-        function submitFundsRequest(e) {
-            e.preventDefault();
-            const amt = parseFloat(document.getElementById('fundAmt').value);
-            const paymentMethod = document.getElementById('payMethod').value;
-            const bonusCode = document.getElementById('bonusCode').value.trim();
-            
-            if (amt < 10) {
-                alert('Minimum amount is $10');
-                return;
-            }
-            
-            // Store pending values
-            document.getElementById('pendingAmount').value = amt;
-            document.getElementById('pendingPaymentMethod').value = paymentMethod;
-            document.getElementById('pendingBonusCode').value = bonusCode;
-            
-            // Update payment method display
-            const methodNames = {
-                'btc': 'Bitcoin (BTC)',
-                'cashapp': 'CashApp',
-                'ltc': 'Litecoin (LTC)'
-            };
-            document.getElementById('selectedPaymentMethod').textContent = methodNames[paymentMethod] || paymentMethod;
-            
-            // Close first modal and open payment link modal
-            closeFundsModal();
-            openPaymentLinkModal();
-        }
 
         async function addFunds(e) {
             e.preventDefault();
@@ -3727,18 +3671,12 @@
                 return;
             }
             
-            const amt = parseFloat(document.getElementById('pendingAmount').value);
-            const paymentLink = document.getElementById('paymentLink').value.trim();
-            const paymentMethod = document.getElementById('pendingPaymentMethod').value;
-            const bonusCode = document.getElementById('pendingBonusCode').value.trim();
+            const amt = parseFloat(document.getElementById('fundAmt').value);
+            const paymentMethod = document.getElementById('payMethod').value;
+            const bonusCode = document.getElementById('bonusCode').value.trim();
             
             if (amt < 10) {
                 alert('Minimum amount is $10');
-                return;
-            }
-            
-            if (!paymentLink) {
-                alert('Please provide payment link');
                 return;
             }
             
@@ -3750,7 +3688,6 @@
                 username: userData.username,
                 amount: amt,
                 paymentMethod: paymentMethod,
-                paymentLink: paymentLink,
                 bonusCode: bonusCode || null,
                 status: 'pending',
                 createdAt: new Date().toISOString(),
@@ -3781,19 +3718,14 @@
                 await setDoc(doc(requestsRef, requestId), balanceRequest);
                 
                 // Show approval animation
-                closePaymentLinkModal();
+                closeFundsModal();
                 showApprovalAnimation();
                 
-                // Reset forms
+                // Reset form
                 document.getElementById('fundAmt').value = '';
-                document.getElementById('paymentLink').value = '';
                 document.getElementById('bonusCode').value = '';
-                document.getElementById('pendingAmount').value = '';
-                document.getElementById('pendingPaymentMethod').value = '';
-                document.getElementById('pendingBonusCode').value = '';
             } catch (error) {
                 console.error('Error submitting balance request:', error);
-                closePaymentLinkModal();
                 let errorMsg = 'Error submitting request. ';
                 if (error.message) {
                     errorMsg += error.message;
