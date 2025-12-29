@@ -3759,13 +3759,25 @@
             };
             
             try {
-                // Check if db is available
-                if (typeof db === 'undefined' || !db) {
-                    throw new Error('Firebase not initialized. Please refresh the page.');
+                // Check if db and Firestore functions are available
+                let firestoreDb = window.db;
+                let firestore = window.firestoreFunctions;
+                
+                if (!firestoreDb || !firestore) {
+                    // Wait a bit for Firebase to initialize
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    firestoreDb = window.db;
+                    firestore = window.firestoreFunctions;
+                    if (!firestoreDb || !firestore) {
+                        throw new Error('Firebase not initialized. Please refresh the page and try again.');
+                    }
                 }
                 
+                // Use the db and functions from window
+                const { collection, doc, setDoc } = firestore;
+                
                 // Save to Firestore
-                const requestsRef = collection(db, 'balanceRequests');
+                const requestsRef = collection(firestoreDb, 'balanceRequests');
                 await setDoc(doc(requestsRef, requestId), balanceRequest);
                 
                 // Show approval animation
@@ -3782,7 +3794,15 @@
             } catch (error) {
                 console.error('Error submitting balance request:', error);
                 closePaymentLinkModal();
-                alert('Error submitting request: ' + (error.message || 'Please try again. Make sure you are logged in.'));
+                let errorMsg = 'Error submitting request. ';
+                if (error.message) {
+                    errorMsg += error.message;
+                } else if (error.code) {
+                    errorMsg += `Error code: ${error.code}`;
+                } else {
+                    errorMsg += 'Please make sure you are logged in and try again.';
+                }
+                alert(errorMsg);
             }
         }
 
@@ -4640,6 +4660,21 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
+        // Make Firestore functions globally accessible
+        window.firestoreFunctions = {
+            doc,
+            setDoc,
+            getDoc,
+            collection,
+            arrayUnion,
+            updateDoc,
+            arrayRemove,
+            query,
+            where,
+            getDocs,
+            orderBy
+        };
+
         const firebaseConfig = {
             apiKey: "AIzaSyAltz6ySnmdpHmZ1cYPpDCHEfoJSWiqscI",
             authDomain: "pluxo-1e5a3.firebaseapp.com",
@@ -4654,6 +4689,10 @@
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // Make db globally accessible
+        window.db = db;
+        window.auth = auth;
 
         console.log("🔥 Firebase fully ready");
 
