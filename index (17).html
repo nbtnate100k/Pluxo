@@ -1478,6 +1478,213 @@
         }
 
         /* Modals */
+        /* Approval Animation Modal */
+        .approval-animation-modal {
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            overflow: visible;
+        }
+
+        .approval-animation-content {
+            padding: 40px 30px;
+            position: relative;
+        }
+
+        .checkmark-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s ease-out;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .checkmark {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+
+        .checkmark::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 20px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 0 4px 4px;
+            transform: translate(-50%, -60%) rotate(-45deg);
+            animation: checkmarkDraw 0.6s ease-out 0.3s both;
+        }
+
+        @keyframes checkmarkDraw {
+            0% {
+                width: 0;
+                height: 0;
+            }
+            100% {
+                width: 20px;
+                height: 10px;
+            }
+        }
+
+        .approval-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .approval-message {
+            margin-bottom: 20px;
+        }
+
+        .approval-message p {
+            font-size: 18px;
+            color: var(--gray);
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        .loading-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .loading-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--blue);
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+
+        .loading-dots span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        .confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--blue);
+            animation: confettiFall 3s ease-out infinite;
+        }
+
+        .confetti:nth-child(1) {
+            left: 10%;
+            background: #2563eb;
+            animation-delay: 0s;
+        }
+
+        .confetti:nth-child(2) {
+            left: 20%;
+            background: #3b82f6;
+            animation-delay: 0.2s;
+        }
+
+        .confetti:nth-child(3) {
+            left: 30%;
+            background: #22c55e;
+            animation-delay: 0.4s;
+        }
+
+        .confetti:nth-child(4) {
+            left: 40%;
+            background: #f59e0b;
+            animation-delay: 0.6s;
+        }
+
+        .confetti:nth-child(5) {
+            left: 50%;
+            background: #ef4444;
+            animation-delay: 0.8s;
+        }
+
+        .confetti:nth-child(6) {
+            left: 60%;
+            background: #8b5cf6;
+            animation-delay: 1s;
+        }
+
+        .confetti:nth-child(7) {
+            left: 70%;
+            background: #ec4899;
+            animation-delay: 1.2s;
+        }
+
+        .confetti:nth-child(8) {
+            left: 80%;
+            background: #06b6d4;
+            animation-delay: 1.4s;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(400px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
         .modal-overlay {
             display: none;
             position: fixed;
@@ -2787,6 +2994,37 @@
             </div>
         </div>
 
+        <!-- Approval Animation Modal -->
+        <div class="modal-overlay" id="approvalAnimationModal">
+            <div class="modal approval-animation-modal">
+                <div class="approval-animation-content">
+                    <div class="checkmark-circle">
+                        <div class="checkmark"></div>
+                    </div>
+                    <h2 class="approval-title">Request Submitted!</h2>
+                    <div class="approval-message">
+                        <div class="loading-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <p>Waiting for admin approval</p>
+                    </div>
+                    <div class="confetti-container">
+                        <div class="confetti"></div>
+                        <div class="confetti"></div>
+                        <div class="confetti"></div>
+                        <div class="confetti"></div>
+                        <div class="confetti"></div>
+                        <div class="confetti"></div>
+                        <div class="confetti"></div>
+                        <div class="confetti"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="closeApprovalAnimation()" style="margin-top: 20px;">Got it!</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Settings Modal -->
         <div class="modal-overlay" id="settingsModal">
             <div class="modal">
@@ -3148,19 +3386,45 @@
         
         // Load and render balance requests for admin
         async function renderBalanceRequests() {
-            if (!isAdmin(userData?.username)) return;
+            if (!isAdmin(userData?.username)) {
+                const requestsEl = document.getElementById('balanceRequestsDisplay');
+                if (requestsEl) requestsEl.innerHTML = '';
+                return;
+            }
             
             const requestsEl = document.getElementById('balanceRequestsDisplay');
             if (!requestsEl) return;
             
+            // Check if db is available
+            if (typeof db === 'undefined' || !db) {
+                requestsEl.innerHTML = '<p style="color: var(--gray);">Loading...</p>';
+                return;
+            }
+            
             try {
                 const requestsRef = collection(db, 'balanceRequests');
-                const q = query(requestsRef, where('status', '==', 'pending'), orderBy('createdAt', 'desc'));
-                const querySnapshot = await getDocs(q);
+                // Try query with orderBy, if it fails, try without orderBy
+                let querySnapshot;
+                try {
+                    const q = query(requestsRef, where('status', '==', 'pending'), orderBy('createdAt', 'desc'));
+                    querySnapshot = await getDocs(q);
+                } catch (orderByError) {
+                    // If orderBy fails (might need index), try without it
+                    console.log('OrderBy failed, trying without:', orderByError);
+                    const q = query(requestsRef, where('status', '==', 'pending'));
+                    querySnapshot = await getDocs(q);
+                }
                 
                 const requests = [];
                 querySnapshot.forEach((doc) => {
-                    requests.push(doc.data());
+                    requests.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Sort manually if orderBy failed
+                requests.sort((a, b) => {
+                    const dateA = new Date(a.createdAt || 0);
+                    const dateB = new Date(b.createdAt || 0);
+                    return dateB - dateA;
                 });
                 
                 if (requests.length === 0) {
@@ -3170,22 +3434,22 @@
                         <div class="balance-request-item" style="background: var(--black-lighter); border: 1px solid var(--gray-border); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
                             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
                                 <div>
-                                    <div style="font-weight: 600; margin-bottom: 4px;">${req.username}</div>
+                                    <div style="font-weight: 600; margin-bottom: 4px;">${req.username || 'Unknown'}</div>
                                     <div style="color: var(--gray); font-size: 13px;">Request ID: ${req.id}</div>
-                                    <div style="color: var(--gray); font-size: 13px;">${new Date(req.createdAt).toLocaleString()}</div>
+                                    <div style="color: var(--gray); font-size: 13px;">${req.createdAt ? new Date(req.createdAt).toLocaleString() : 'N/A'}</div>
                                 </div>
                                 <div style="text-align: right;">
-                                    <div style="font-size: 20px; font-weight: 700; color: var(--blue);">$${parseFloat(req.amount).toFixed(2)}</div>
-                                    <div style="color: var(--gray); font-size: 12px; text-transform: uppercase;">${req.paymentMethod}</div>
+                                    <div style="font-size: 20px; font-weight: 700; color: var(--blue);">$${parseFloat(req.amount || 0).toFixed(2)}</div>
+                                    <div style="color: var(--gray); font-size: 12px; text-transform: uppercase;">${req.paymentMethod || 'N/A'}</div>
                                 </div>
                             </div>
                             <div style="margin-bottom: 12px;">
                                 <div style="font-size: 13px; color: var(--gray); margin-bottom: 4px;">Payment Link:</div>
-                                <a href="${req.paymentLink}" target="_blank" style="color: var(--blue-light); word-break: break-all; font-size: 13px;">${req.paymentLink}</a>
+                                <a href="${req.paymentLink || '#'}" target="_blank" style="color: var(--blue-light); word-break: break-all; font-size: 13px;">${req.paymentLink || 'N/A'}</a>
                             </div>
                             ${req.bonusCode ? `<div style="margin-bottom: 12px; font-size: 13px; color: var(--gray);">Bonus Code: <strong>${req.bonusCode}</strong></div>` : ''}
                             <div style="display: flex; gap: 8px;">
-                                <button class="btn btn-primary" style="flex: 1; padding: 8px;" onclick="approveBalanceRequest('${req.id}', '${req.userId}', ${req.amount}, '${req.username}')">Approve</button>
+                                <button class="btn btn-primary" style="flex: 1; padding: 8px;" onclick="approveBalanceRequest('${req.id}', '${req.userId || ''}', ${req.amount || 0}, '${req.username || ''}')">Approve</button>
                                 <button class="btn" style="flex: 1; padding: 8px; background: transparent; border: 1px solid var(--gray-border);" onclick="rejectBalanceRequest('${req.id}')">Reject</button>
                             </div>
                         </div>
@@ -3193,7 +3457,7 @@
                 }
             } catch (error) {
                 console.error('Error loading balance requests:', error);
-                requestsEl.innerHTML = '<p style="color: #ef4444;">Error loading balance requests</p>';
+                requestsEl.innerHTML = '<p style="color: var(--gray);">No pending balance requests</p>';
             }
         }
         
@@ -3357,6 +3621,17 @@
             document.getElementById('paymentLink').value = '';
         }
         
+        function showApprovalAnimation() {
+            document.getElementById('approvalAnimationModal').classList.add('active');
+        }
+        
+        function closeApprovalAnimation() {
+            document.getElementById('approvalAnimationModal').classList.remove('active');
+        }
+        
+        // Make globally accessible
+        window.closeApprovalAnimation = closeApprovalAnimation;
+        
         // Step 1: Submit funds request (opens payment link modal)
         function submitFundsRequest(e) {
             e.preventDefault();
@@ -3430,8 +3705,9 @@
                 const requestsRef = collection(db, 'balanceRequests');
                 await setDoc(doc(requestsRef, requestId), balanceRequest);
                 
-                alert('Balance request submitted! Waiting for admin approval.');
+                // Show approval animation
                 closePaymentLinkModal();
+                showApprovalAnimation();
                 
                 // Reset forms
                 document.getElementById('fundAmt').value = '';
