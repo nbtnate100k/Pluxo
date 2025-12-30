@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com;">
     <title>Pluxo</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css">
@@ -2338,6 +2339,188 @@
             margin-bottom: 10px;
         }
 
+        /* My Stock Styles */
+        .my-stock-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .my-stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .my-stock-item:hover {
+            border-color: #22c55e;
+            transform: translateX(3px);
+        }
+
+        .my-stock-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .my-stock-name {
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .my-stock-details {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .my-stock-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #22c55e;
+            margin-right: 16px;
+        }
+
+        .btn-delete-stock {
+            padding: 8px 16px;
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-delete-stock:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Dice Betting Styles */
+        .dice-bets-list, .dice-history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .dice-bet-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .dice-bet-item:hover {
+            border-color: #8b5cf6;
+            transform: translateX(3px);
+        }
+
+        .dice-bet-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .dice-bet-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .dice-bet-status.waiting {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .dice-bet-status.active {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .dice-bet-status.completed {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+        }
+
+        .dice-bet-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-right: 16px;
+        }
+
+        .dice-bet-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-accept-bet {
+            padding: 8px 16px;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-accept-bet:hover {
+            background: #16a34a;
+        }
+
+        .btn-cancel-bet {
+            padding: 8px 16px;
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel-bet:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .dice-waiting-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+            font-size: 16px;
+        }
+
+        .dice-waiting-message .waiting-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
         .admin-item .name, .user-item .name {
             font-weight: 600;
             color: var(--white);
@@ -2443,6 +2626,751 @@
             .nav-item { flex: 1 1 33%; padding: 12px; font-size: 12px; }
             .cart-panel { width: 100%; right: -100%; }
             .admin-form { flex-direction: column; }
+        }
+
+        /* ==================== ENHANCED ANIMATIONS ==================== */
+        
+        /* Page Load Animations */
+        .login-page {
+            animation: fadeInPage 0.6s ease-out;
+        }
+
+        .dashboard-page {
+            animation: fadeInPage 0.6s ease-out;
+        }
+
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Staggered Animation for Login Form Elements */
+        .login-left .brand {
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .login-title {
+            animation: slideInLeft 0.7s ease-out;
+        }
+
+        .login-subtitle {
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .form-group {
+            animation: slideInLeft 0.9s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Enhanced Button Animations */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+            }
+        }
+
+        .btn-primary:hover {
+            animation: none;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 25px var(--blue-glow);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        /* Card Hover Animations */
+        .content-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+            border-color: var(--blue);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stat Card Animations */
+        .stat-card {
+            transition: all 0.3s ease;
+            animation: scaleIn 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+            border-color: var(--blue);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Floating Animation */
+        .graphic-center {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(-50%, -50%) translateY(0px);
+            }
+            50% {
+                transform: translate(-50%, -50%) translateY(-15px);
+            }
+        }
+
+        /* Enhanced Graphic Ring Animation */
+        .graphic-ring {
+            animation: spin 20s linear infinite, pulseRing 4s ease-in-out infinite;
+        }
+
+        .graphic-ring:nth-child(2) {
+            animation: spin 15s linear infinite reverse, pulseRing 3s ease-in-out infinite;
+        }
+
+        .graphic-ring:nth-child(3) {
+            animation: spin 10s linear infinite, pulseRing 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseRing {
+            0%, 100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+
+        /* Input Field Animations */
+        .input-field {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-field:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 0 0 4px var(--blue-glow), 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Navigation Item Animations */
+        .nav-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--blue);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-item:hover::before {
+            width: 80%;
+        }
+
+        .nav-item.active::before {
+            width: 100%;
+        }
+
+        /* Modal Animations */
+        .modal-bg {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-bg.active {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-box {
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Cart Panel Animation */
+        .cart-panel {
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        /* Cart Item Animations */
+        .cart-item-row {
+            animation: slideInRight 0.3s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .cart-item-row:nth-child(1) { animation-delay: 0.05s; }
+        .cart-item-row:nth-child(2) { animation-delay: 0.1s; }
+        .cart-item-row:nth-child(3) { animation-delay: 0.15s; }
+        .cart-item-row:nth-child(4) { animation-delay: 0.2s; }
+        .cart-item-row:nth-child(5) { animation-delay: 0.25s; }
+
+        /* Product Card Animations */
+        .product-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(37, 99, 235, 0.25);
+            border-color: var(--blue);
+        }
+
+        /* User Item and Admin Item Animations */
+        .user-item, .admin-item {
+            transition: all 0.3s ease;
+            animation: slideInRight 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .user-item:nth-child(1), .admin-item:nth-child(1) { animation-delay: 0.05s; }
+        .user-item:nth-child(2), .admin-item:nth-child(2) { animation-delay: 0.1s; }
+        .user-item:nth-child(3), .admin-item:nth-child(3) { animation-delay: 0.15s; }
+        .user-item:nth-child(4), .admin-item:nth-child(4) { animation-delay: 0.2s; }
+        .user-item:nth-child(5), .admin-item:nth-child(5) { animation-delay: 0.25s; }
+
+        .user-item:hover, .admin-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+            border-color: var(--blue);
+        }
+
+        /* Table Row Animations */
+        .tickets-table tbody tr {
+            transition: all 0.2s ease;
+            animation: fadeInRow 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .tickets-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+        .tickets-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+        .tickets-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+        .tickets-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+        .tickets-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .tickets-table tbody tr:hover {
+            transform: translateX(5px);
+            background: #f0f9ff !important;
+        }
+
+        /* Top Bar Animations */
+        .top-bar {
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Brand Logo Animation */
+        .top-brand {
+            animation: logoGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px var(--blue-glow);
+            }
+            50% {
+                text-shadow: 0 0 20px var(--blue-glow), 0 0 30px var(--blue-glow);
+            }
+        }
+
+        /* Balance Display Animation */
+        .balance-amount .value {
+            animation: numberPulse 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes numberPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Cart Badge Animation */
+        .cart-badge {
+            animation: bounceIn 0.5s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Page Header Animation */
+        .page-header h1 {
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .page-header .line {
+            animation: expandLine 0.8s ease-out;
+        }
+
+        @keyframes expandLine {
+            from {
+                width: 0;
+            }
+            to {
+                width: 60px;
+            }
+        }
+
+        /* Section Title Animation */
+        .section-title {
+            animation: fadeInLeft 0.5s ease-out;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Filter Container Animation */
+        .filter-container {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Toggle Switch Animation */
+        .toggle-switch::after {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px) scale(1.1);
+        }
+
+        /* Enhanced Remember Checkbox Animation */
+        .remember .box {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .remember input:checked + .box {
+            animation: checkmarkPop 0.3s ease-out;
+        }
+
+        @keyframes checkmarkPop {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(37, 99, 235, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--blue);
+            animation: spinLoader 1s linear infinite;
+        }
+
+        @keyframes spinLoader {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Shake Animation for Errors */
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            10%, 30%, 50%, 70%, 90% {
+                transform: translateX(-5px);
+            }
+            20%, 40%, 60%, 80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Gradient Text Animation */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 50%, var(--white) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s linear infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% center;
+            }
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        /* Enhanced Banner Lights */
+        .banner-lights .light {
+            animation: blink 1.5s ease-in-out infinite, lightPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes lightPulse {
+            0%, 100% {
+                box-shadow: 0 0 10px var(--blue), 0 0 20px var(--blue);
+            }
+            50% {
+                box-shadow: 0 0 20px var(--blue), 0 0 30px var(--blue), 0 0 40px var(--blue);
+            }
+        }
+
+        /* Smooth Transitions for All Interactive Elements */
+        a, button, input, select, textarea {
+            transition: all 0.2s ease;
+        }
+
+        /* Hover Scale Effect for Icons */
+        .cart-btn:hover,
+        .logout-btn:hover,
+        .modal-close:hover {
+            transform: scale(1.1);
+        }
+
+        /* Smooth Page Transitions */
+        .page-content {
+            animation: fadeUp 0.4s ease-out;
+        }
+
+        /* Enhanced Approval Animation */
+        .approval-animation-content {
+            animation: scaleIn 0.5s ease-out, rotateIn 0.6s ease-out;
+        }
+
+        @keyframes rotateIn {
+            from {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Ripple Effect on Click */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ripple:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Order Item Animations */
+        .order-item, .order-row {
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .order-item:nth-child(1), .order-row:nth-child(1) { animation-delay: 0.05s; }
+        .order-item:nth-child(2), .order-row:nth-child(2) { animation-delay: 0.1s; }
+        .order-item:nth-child(3), .order-row:nth-child(3) { animation-delay: 0.15s; }
+        .order-item:nth-child(4), .order-row:nth-child(4) { animation-delay: 0.2s; }
+
+        .order-item:hover, .order-row:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Discount List Item Animations */
+        .discount-list li {
+            transition: all 0.3s ease;
+            animation: slideInLeft 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .discount-list li:nth-child(1) { animation-delay: 0.1s; }
+        .discount-list li:nth-child(2) { animation-delay: 0.2s; }
+        .discount-list li:nth-child(3) { animation-delay: 0.3s; }
+        .discount-list li:nth-child(4) { animation-delay: 0.4s; }
+
+        .discount-list li:hover {
+            transform: translateX(5px);
+            background: var(--black-lighter);
+            padding-left: 20px;
+        }
+
+        /* Badge Animations */
+        .owner-badge, .admin-badge-sm, .ticket-status {
+            animation: scaleIn 0.4s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        .owner-badge:hover, .admin-badge-sm:hover, .ticket-status:hover {
+            transform: scale(1.1);
+        }
+
+        /* Placeholder Number Animation */
+        .placeholder-num {
+            animation: fadeInScale 1s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+        }
+
+        /* Grand Opening Banner Enhanced Animation */
+        .grand-opening-banner {
+            animation: slideDown 0.6s ease-out, bannerGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes bannerGlow {
+            0%, 100% {
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+            }
+            50% {
+            box-shadow: 0 4px 30px rgba(37, 99, 235, 0.5), 0 0 40px rgba(37, 99, 235, 0.2);
+            }
+        }
+
+        /* Navigation Bar Animation */
+        .nav-bar {
+            animation: slideDown 0.5s ease-out;
+        }
+
+        /* Form Group Stagger Animation */
+        .modal-box .form-group {
+            animation: slideInLeft 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .modal-box .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .modal-box .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .modal-box .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .modal-box .form-group:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Captcha Row Animation */
+        .captcha-row {
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        /* Button Row Animation */
+        .btn-row {
+            animation: slideInLeft 0.7s ease-out;
+        }
+
+        /* Stats Grid Animation */
+        .stats-grid {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Smooth Scroll Behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Enhanced Focus States */
+        *:focus-visible {
+            outline: 2px solid var(--blue);
+            outline-offset: 2px;
+            animation: focusPulse 0.3s ease-out;
+        }
+
+        @keyframes focusPulse {
+            0% {
+                outline-width: 2px;
+            }
+            50% {
+                outline-width: 4px;
+            }
+            100% {
+                outline-width: 2px;
+            }
         }
     </style>
 </head>
@@ -2581,6 +3509,8 @@
             <a class="nav-item" onclick="showPage('orders', this)">Orders</a>
             <a class="nav-item" onclick="showPage('tickets', this)">Tickets</a>
             <a class="nav-item admin-nav" id="adminNavItem" onclick="showPage('admin', this)" style="display:none;">Admin</a>
+            <a class="nav-item admin-nav" id="adminSupplyNavItem" onclick="showPage('admin-supply', this)" style="display:none;">Admin Private Supply</a>
+            <a class="nav-item admin-nav" id="adminDiceNavItem" onclick="showPage('admin-dice', this)" style="display:none;">Dice</a>
             <a class="nav-item settings-nav" onclick="openSettings()">⚙</a>
         </nav>
 
@@ -2779,8 +3709,6 @@
                             <!-- Generated by JS -->
                         </div>
                         <button class="page-btn" onclick="changePage('next')" id="nextBtn">›</button>
-                        <span class="page-ellipsis">...</span>
-                        <button class="page-btn" onclick="goToPage(10)">›</button>
                         <div class="page-size">
                             <select onchange="changePageSize(this.value)">
                                 <option>10 / Page</option>
@@ -2969,6 +3897,7 @@
                     </div>
                 </div>
 
+
                 <!-- Ticket Management Section -->
                 <div class="content-card" style="margin-top: 24px; border-color: #f59e0b;">
                     <h2 style="color: #f59e0b;">🎫 Ticket Management</h2>
@@ -2982,6 +3911,74 @@
 
                     <div class="admin-tickets-list" id="adminTicketsList">
                         <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN PRIVATE SUPPLY PAGE -->
+            <div class="page-content" id="page-admin-supply" style="display:none;">
+                <div class="page-header">
+                    <h1>Admin Private Supply</h1>
+                    <div class="line" style="background: #22c55e;"></div>
+                </div>
+                
+                <div class="content-card" style="border-color: #22c55e;">
+                    <h2 style="color: #22c55e;">📦 Your Private Supply</h2>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Manage your own products. Only you can see and manage these items. Other admins cannot access your supply.</p>
+                    
+                    <div class="admin-section">
+                        <div class="section-title">Add New Product</div>
+                        <div class="admin-form">
+                            <input type="text" class="input-field" id="newProductBin" placeholder="BIN (e.g., 400000)" maxlength="20">
+                            <input type="text" class="input-field" id="newProductBrand" placeholder="Brand (VISA, MASTERCARD, etc.)" maxlength="20">
+                            <input type="text" class="input-field" id="newProductPrice" placeholder="Price (e.g., 10.50)" maxlength="10">
+                            <button class="btn btn-admin" onclick="addMyProduct()" style="background: #22c55e;">Add Product</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">My Products (<span id="myStockCount">0</span>)</div>
+                        <div class="my-stock-list" id="myStockList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN DICE BETTING PAGE -->
+            <div class="page-content" id="page-admin-dice" style="display:none;">
+                <div class="page-header">
+                    <h1>Dice Betting</h1>
+                    <div class="line" style="background: #8b5cf6;"></div>
+                </div>
+                
+                <div class="content-card" style="border-color: #8b5cf6;">
+                    <h2 style="color: #8b5cf6;">🎲 Dice Game</h2>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Bet against other users. Choose your bet amount ($1-$5) and wait for an opponent.</p>
+                    
+                    <div class="admin-section">
+                        <div class="section-title">Create Bet</div>
+                        <div class="admin-form" style="flex-direction: column; gap: 16px;">
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $5)</label>
+                                <input type="number" class="input-field" id="diceBetAmount" placeholder="Enter amount (1-5)" min="1" max="5" step="0.01">
+                            </div>
+                            <button class="btn btn-admin" onclick="createDiceBet()" style="background: #8b5cf6; width: 100%;">Create Bet</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">Active Bets</div>
+                        <div class="dice-bets-list" id="diceBetsList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">Bet History</div>
+                        <div class="dice-history-list" id="diceHistoryList">
+                            <!-- Populated by JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3159,12 +4156,102 @@
         const OWNER = 'NBTNate';
         let adminList = JSON.parse(localStorage.getItem('pluxoAdmins')) || [OWNER.toLowerCase()];
         
+        // Security: Rate limiting storage
+        const rateLimitStore = JSON.parse(localStorage.getItem('pluxoRateLimit')) || {};
+        
+        // Security: Rate limiting function
+        function checkRateLimit(action, maxAttempts = 10, windowMs = 60000) {
+            const now = Date.now();
+            const key = `${action}_${userData?.username || 'anonymous'}`;
+            
+            if (!rateLimitStore[key]) {
+                rateLimitStore[key] = { count: 0, resetTime: now + windowMs };
+            }
+            
+            const limit = rateLimitStore[key];
+            
+            if (now > limit.resetTime) {
+                limit.count = 0;
+                limit.resetTime = now + windowMs;
+            }
+            
+            if (limit.count >= maxAttempts) {
+                return { allowed: false, message: 'Rate limit exceeded. Please try again later.' };
+            }
+            
+            limit.count++;
+            localStorage.setItem('pluxoRateLimit', JSON.stringify(rateLimitStore));
+            
+            return { allowed: true };
+        }
+        
+        // Security: Enhanced admin check with validation
         function isAdmin(username) {
-            return adminList.includes(username.toLowerCase());
+            if (!username || typeof username !== 'string') {
+                return false;
+            }
+            const normalized = username.toLowerCase().trim();
+            if (normalized.length === 0 || normalized.length > 50) {
+                return false; // Prevent extremely long usernames
+            }
+            return adminList.includes(normalized);
         }
 
+        // Security: Enhanced owner check
         function isOwner(username) {
-            return username.toLowerCase() === OWNER.toLowerCase();
+            if (!username || typeof username !== 'string') {
+                return false;
+            }
+            return username.toLowerCase().trim() === OWNER.toLowerCase();
+        }
+        
+        // Security: Validate session
+        function validateSession() {
+            if (!userData || !userData.username) {
+                return false;
+            }
+            
+            // Check if user still exists
+            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+            if (!users[userData.username]) {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Security: Secure admin action wrapper
+        function secureAdminAction(actionName, callback, maxAttempts = 10) {
+            return function(...args) {
+                // Validate session
+                if (!validateSession()) {
+                    alert('Session expired. Please login again.');
+                    showLogin();
+                    return;
+                }
+                
+                // Check admin access
+                if (!verifyAdminAccess()) {
+                    alert('Unauthorized access. Admin privileges required.');
+                    return;
+                }
+                
+                // Check rate limit
+                const rateCheck = checkRateLimit(actionName, maxAttempts);
+                if (!rateCheck.allowed) {
+                    alert(rateCheck.message);
+                    return;
+                }
+                
+                // Execute callback
+                try {
+                    return callback.apply(this, args);
+                } catch (error) {
+                    console.error(`Error in ${actionName}:`, error);
+                    alert('An error occurred. Please try again.');
+                    return;
+                }
+            };
         }
 
         // Page control
@@ -3279,17 +4366,30 @@
         // Dashboard functions
         function updateUI() {
             if (!userData) return;
-            document.getElementById('userName').textContent = userData.username;
-            document.getElementById('userBalance').textContent = userData.balance.toFixed(2);
-            document.getElementById('totalRecharge').textContent = userData.totalRecharge.toFixed(2);
-            document.getElementById('cartCount').textContent = userData.cart.length;
+            
+            const userNameEl = document.getElementById('userName');
+            const userBalanceEl = document.getElementById('userBalance');
+            const totalRechargeEl = document.getElementById('totalRecharge');
+            const cartCountEl = document.getElementById('cartCount');
+            
+            if (userNameEl) userNameEl.textContent = userData.username || 'Guest';
+            if (userBalanceEl) userBalanceEl.textContent = (userData.balance || 0).toFixed(2);
+            if (totalRechargeEl) totalRechargeEl.textContent = (userData.totalRecharge || 0).toFixed(2);
+            if (cartCountEl) cartCountEl.textContent = (userData.cart && userData.cart.length) || 0;
             
             // Show/hide admin nav based on role
             const adminNav = document.getElementById('adminNavItem');
+            const adminSupplyNav = document.getElementById('adminSupplyNavItem');
+            const adminDiceNav = document.getElementById('adminDiceNavItem');
+            
             if (isAdmin(userData.username)) {
-                adminNav.style.display = 'block';
+                if (adminNav) adminNav.style.display = 'block';
+                if (adminSupplyNav) adminSupplyNav.style.display = 'block';
+                if (adminDiceNav) adminDiceNav.style.display = 'block';
             } else {
-                adminNav.style.display = 'none';
+                if (adminNav) adminNav.style.display = 'none';
+                if (adminSupplyNav) adminSupplyNav.style.display = 'none';
+                if (adminDiceNav) adminDiceNav.style.display = 'none';
             }
             
             // Update admin badge
@@ -3302,16 +4402,50 @@
             }
         }
 
-        // Admin functions
+        // Admin functions - Secured
         function addAdmin() {
+            // Security: Only owner can add admins
             if (!userData || !isOwner(userData.username)) {
                 alert('Only the owner can add admins');
                 return;
             }
             
-            const username = document.getElementById('newAdminUser').value.trim();
+            // Security: Rate limiting
+            const rateCheck = checkRateLimit('addAdmin', 5, 60000);
+            if (!rateCheck.allowed) {
+                alert(rateCheck.message);
+                return;
+            }
+            
+            const usernameInput = document.getElementById('newAdminUser');
+            let username = usernameInput.value.trim();
+            
+            // Security: Input validation
             if (!username) {
                 alert('Enter a username');
+                shakeElement(usernameInput);
+                return;
+            }
+            
+            // Security: Sanitize and validate username
+            username = sanitizeInput(username);
+            if (username.length < 3 || username.length > 30) {
+                alert('Username must be 3-30 characters');
+                shakeElement(usernameInput);
+                return;
+            }
+            
+            // Security: Prevent adding owner as admin (already admin)
+            if (username.toLowerCase() === OWNER.toLowerCase()) {
+                alert('Owner is already an admin');
+                return;
+            }
+            
+            // Security: Check if user exists
+            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+            if (!users[username.toLowerCase()]) {
+                alert('User does not exist. User must register first.');
+                shakeElement(usernameInput);
                 return;
             }
             
@@ -3322,19 +4456,37 @@
             
             adminList.push(username.toLowerCase());
             localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
-            document.getElementById('newAdminUser').value = '';
+            usernameInput.value = '';
             renderAdminPanel();
             alert(username + ' has been granted admin access');
         }
 
         function revokeAdmin(username) {
+            // Security: Only owner can revoke admins
             if (!userData || !isOwner(userData.username)) {
                 alert('Only the owner can revoke admin access');
                 return;
             }
             
+            // Security: Input validation
+            if (!username || typeof username !== 'string') {
+                alert('Invalid username');
+                return;
+            }
+            
+            // Security: Sanitize username
+            username = sanitizeInput(username).trim();
+            
+            // Security: Prevent revoking owner
             if (username.toLowerCase() === OWNER.toLowerCase()) {
                 alert('Cannot revoke owner\'s admin access');
+                return;
+            }
+            
+            // Security: Rate limiting
+            const rateCheck = checkRateLimit('revokeAdmin', 5, 60000);
+            if (!rateCheck.allowed) {
+                alert(rateCheck.message);
                 return;
             }
             
@@ -3346,8 +4498,25 @@
         }
 
         function grantAdminFromList(username) {
+            // Security: Only owner can grant admin
             if (!userData || !isOwner(userData.username)) {
                 alert('Only the owner can add admins');
+                return;
+            }
+            
+            // Security: Input validation
+            if (!username || typeof username !== 'string') {
+                alert('Invalid username');
+                return;
+            }
+            
+            // Security: Sanitize username
+            username = sanitizeInput(username).trim();
+            
+            // Security: Rate limiting
+            const rateCheck = checkRateLimit('grantAdmin', 5, 60000);
+            if (!rateCheck.allowed) {
+                alert(rateCheck.message);
                 return;
             }
             
@@ -3360,28 +4529,37 @@
         }
 
         function renderAdminPanel() {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                return;
+            }
+            
             const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
             
-            // Render admin list
+            // Render admin list - Security: Sanitize all outputs
             const adminListEl = document.getElementById('adminListDisplay');
             if (adminListEl) {
                 adminListEl.innerHTML = adminList.map(admin => {
+                    // Security: Sanitize admin name
+                    const safeAdmin = sanitizeInput(admin);
                     const isOwnerUser = admin === OWNER.toLowerCase();
+                    const safeOnClick = `revokeAdmin('${safeAdmin.replace(/'/g, "\\'")}')`;
+                    
                     return `
                         <div class="admin-item">
                             <div>
-                                <span class="name">${admin}</span>
+                                <span class="name">${safeAdmin}</span>
                                 <span class="role">${isOwnerUser ? '<span class="owner-badge">OWNER</span>' : '<span class="admin-badge-sm">ADMIN</span>'}</span>
                             </div>
                             ${!isOwnerUser && isOwner(userData?.username) ? 
-                                `<button class="btn-revoke" onclick="revokeAdmin('${admin}')">Revoke</button>` : 
+                                `<button class="btn-revoke" onclick="${safeOnClick}">Revoke</button>` : 
                                 ''}
                         </div>
                     `;
                 }).join('');
             }
             
-            // Render users list
+            // Render users list - Security: Sanitize all outputs
             const usersListEl = document.getElementById('usersListDisplay');
             if (usersListEl) {
                 const usernames = Object.keys(users);
@@ -3389,17 +4567,21 @@
                     usersListEl.innerHTML = '<p style="color: var(--gray);">No registered users yet</p>';
                 } else {
                     usersListEl.innerHTML = usernames.map(user => {
+                        // Security: Sanitize username
+                        const safeUser = sanitizeInput(user);
                         const userIsAdmin = isAdmin(user);
                         const userIsOwner = isOwner(user);
+                        const safeOnClick = `grantAdminFromList('${safeUser.replace(/'/g, "\\'")}')`;
+                        
                         return `
                             <div class="user-item">
                                 <div class="user-info">
-                                    <span class="name">${user}</span>
+                                    <span class="name">${safeUser}</span>
                                     ${userIsOwner ? '<span class="owner-badge">OWNER</span>' : 
                                       userIsAdmin ? '<span class="admin-badge-sm">ADMIN</span>' : ''}
                                 </div>
                                 ${!userIsAdmin && isOwner(userData?.username) ? 
-                                    `<button class="btn-grant" onclick="grantAdminFromList('${user}')">Grant Admin</button>` : 
+                                    `<button class="btn-grant" onclick="${safeOnClick}">Grant Admin</button>` : 
                                     ''}
                             </div>
                         `;
@@ -3472,26 +4654,41 @@
                 if (requests.length === 0) {
                     requestsEl.innerHTML = '<p style="color: var(--gray);">No pending balance requests</p>';
                 } else {
-                    requestsEl.innerHTML = requests.map(req => `
-                        <div class="balance-request-item" style="background: var(--black-lighter); border: 1px solid var(--gray-border); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                                <div>
-                                    <div style="font-weight: 600; margin-bottom: 4px;">${req.username || 'Unknown'}</div>
-                                    <div style="color: var(--gray); font-size: 13px;">Request ID: ${req.id}</div>
-                                    <div style="color: var(--gray); font-size: 13px;">${req.createdAt ? new Date(req.createdAt).toLocaleString() : 'N/A'}</div>
+                    // Security: Sanitize all request data before rendering
+                    requestsEl.innerHTML = requests.map(req => {
+                        const safeId = sanitizeInput(req.id || '');
+                        const safeUsername = sanitizeInput(req.username || 'Unknown');
+                        const safeUserId = sanitizeInput(req.userId || '');
+                        const safeAmount = parseFloat(req.amount || 0).toFixed(2);
+                        const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
+                        const safeBonusCode = req.bonusCode ? sanitizeInput(req.bonusCode) : '';
+                        const safeCreatedAt = req.createdAt ? new Date(req.createdAt).toLocaleString() : 'N/A';
+                        
+                        // Security: Escape quotes in onclick handlers
+                        const safeApproveOnClick = `approveBalanceRequest('${safeId.replace(/'/g, "\\'")}', '${safeUserId.replace(/'/g, "\\'")}', ${safeAmount}, '${safeUsername.replace(/'/g, "\\'")}')`;
+                        const safeRejectOnClick = `rejectBalanceRequest('${safeId.replace(/'/g, "\\'")}')`;
+                        
+                        return `
+                            <div class="balance-request-item" style="background: var(--black-lighter); border: 1px solid var(--gray-border); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 4px;">${safeUsername}</div>
+                                        <div style="color: var(--gray); font-size: 13px;">Request ID: ${safeId}</div>
+                                        <div style="color: var(--gray); font-size: 13px;">${safeCreatedAt}</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 20px; font-weight: 700; color: var(--blue);">$${safeAmount}</div>
+                                        <div style="color: var(--gray); font-size: 12px; text-transform: uppercase;">${safePaymentMethod}</div>
+                                    </div>
                                 </div>
-                                <div style="text-align: right;">
-                                    <div style="font-size: 20px; font-weight: 700; color: var(--blue);">$${parseFloat(req.amount || 0).toFixed(2)}</div>
-                                    <div style="color: var(--gray); font-size: 12px; text-transform: uppercase;">${req.paymentMethod || 'N/A'}</div>
+                                ${safeBonusCode ? `<div style="margin-bottom: 12px; font-size: 13px; color: var(--gray);">Bonus Code: <strong>${safeBonusCode}</strong></div>` : ''}
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-primary" style="flex: 1; padding: 8px;" onclick="${safeApproveOnClick}">Approve</button>
+                                    <button class="btn" style="flex: 1; padding: 8px; background: transparent; border: 1px solid var(--gray-border);" onclick="${safeRejectOnClick}">Reject</button>
                                 </div>
                             </div>
-                            ${req.bonusCode ? `<div style="margin-bottom: 12px; font-size: 13px; color: var(--gray);">Bonus Code: <strong>${req.bonusCode}</strong></div>` : ''}
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn btn-primary" style="flex: 1; padding: 8px;" onclick="approveBalanceRequest('${req.id}', '${req.userId || ''}', ${req.amount || 0}, '${req.username || ''}')">Approve</button>
-                                <button class="btn" style="flex: 1; padding: 8px; background: transparent; border: 1px solid var(--gray-border);" onclick="rejectBalanceRequest('${req.id}')">Reject</button>
-                            </div>
-                        </div>
-                    `).join('');
+                        `;
+                    }).join('');
                 }
             } catch (error) {
                 console.error('Error loading balance requests:', error);
@@ -3503,14 +4700,49 @@
         window.approveBalanceRequest = approveBalanceRequest;
         window.rejectBalanceRequest = rejectBalanceRequest;
         
-        // Approve balance request
+        // Approve balance request - Secured
         async function approveBalanceRequest(requestId, userId, amount, username) {
-            if (!isAdmin(userData?.username)) {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
                 alert('Only admins can approve requests');
                 return;
             }
             
-            if (!confirm(`Approve $${amount.toFixed(2)} balance for ${username}?`)) return;
+            // Security: Input validation
+            if (!requestId || typeof requestId !== 'string' || requestId.length > 100) {
+                alert('Invalid request ID');
+                return;
+            }
+            
+            if (!userId || typeof userId !== 'string' || userId.length > 100) {
+                alert('Invalid user ID');
+                return;
+            }
+            
+            if (!username || typeof username !== 'string' || username.length > 50) {
+                alert('Invalid username');
+                return;
+            }
+            
+            // Security: Validate amount
+            const amountNum = parseFloat(amount);
+            if (isNaN(amountNum) || amountNum <= 0 || amountNum > 100000) {
+                alert('Invalid amount');
+                return;
+            }
+            
+            // Security: Rate limiting
+            const rateCheck = checkRateLimit('approveBalance', 20, 60000);
+            if (!rateCheck.allowed) {
+                alert(rateCheck.message);
+                return;
+            }
+            
+            // Security: Sanitize inputs
+            const safeUsername = sanitizeInput(username);
+            const safeAmount = amountNum.toFixed(2);
+            
+            if (!confirm(`Approve $${safeAmount} balance for ${safeUsername}?`)) return;
             
             try {
                 // Update request status
@@ -3558,10 +4790,24 @@
             }
         }
         
-        // Reject balance request
+        // Reject balance request - Secured
         async function rejectBalanceRequest(requestId) {
-            if (!isAdmin(userData?.username)) {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
                 alert('Only admins can reject requests');
+                return;
+            }
+            
+            // Security: Input validation
+            if (!requestId || typeof requestId !== 'string' || requestId.length > 100) {
+                alert('Invalid request ID');
+                return;
+            }
+            
+            // Security: Rate limiting
+            const rateCheck = checkRateLimit('rejectBalance', 20, 60000);
+            if (!rateCheck.allowed) {
+                alert(rateCheck.message);
                 return;
             }
             
@@ -3586,6 +4832,608 @@
         // Make functions globally accessible
         window.approveBalanceRequest = approveBalanceRequest;
         window.rejectBalanceRequest = rejectBalanceRequest;
+        
+        /* ==================== ADMIN STOCK MANAGEMENT (SECURE) ==================== */
+        
+        // Security: Input sanitization to prevent XSS
+        function sanitizeInput(input) {
+            if (typeof input !== 'string') return '';
+            const div = document.createElement('div');
+            div.textContent = input;
+            return div.innerHTML;
+        }
+
+        // Security: Validate admin authentication
+        function verifyAdminAccess() {
+            if (!userData || !userData.username) {
+                return false;
+            }
+            return isAdmin(userData.username);
+        }
+
+        // Security: Generate secure product ID
+        function generateSecureId() {
+            return 'PROD_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9) + '_' + userData.username.toLowerCase().substr(0, 3);
+        }
+
+        // Security: Validate product data
+        function validateProductData(bin, brand, price) {
+            // Validate BIN (only numbers, 6-20 digits)
+            if (!bin || !/^\d{6,20}$/.test(bin.trim())) {
+                return { valid: false, error: 'BIN must be 6-20 digits only' };
+            }
+            
+            // Validate brand (alphanumeric and common card brands)
+            const validBrands = ['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER', 'DINERS', 'JCB', 'UNIONPAY'];
+            const brandUpper = brand.trim().toUpperCase();
+            if (!brand || !validBrands.includes(brandUpper)) {
+                return { valid: false, error: 'Invalid brand. Must be: ' + validBrands.join(', ') };
+            }
+            
+            // Validate price (positive number, max 9999.99)
+            const priceNum = parseFloat(price);
+            if (isNaN(priceNum) || priceNum <= 0 || priceNum > 9999.99) {
+                return { valid: false, error: 'Price must be between $0.01 and $9999.99' };
+            }
+            
+            return { valid: true };
+        }
+
+        // Get admin's stock from storage
+        function getMyStock() {
+            if (!verifyAdminAccess()) {
+                return [];
+            }
+            
+            const adminUsername = userData.username.toLowerCase();
+            const allStock = JSON.parse(localStorage.getItem('pluxoAdminStock')) || {};
+            
+            // Security: Only return products owned by current admin
+            return allStock[adminUsername] || [];
+        }
+
+        // Save admin's stock to storage
+        function saveMyStock(stock) {
+            if (!verifyAdminAccess()) {
+                console.error('Unauthorized access attempt');
+                return false;
+            }
+            
+            const adminUsername = userData.username.toLowerCase();
+            const allStock = JSON.parse(localStorage.getItem('pluxoAdminStock')) || {};
+            
+            // Security: Only save to current admin's storage
+            allStock[adminUsername] = stock;
+            localStorage.setItem('pluxoAdminStock', JSON.stringify(allStock));
+            return true;
+        }
+
+        // Add product to admin's stock
+        function addMyProduct() {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                alert('Unauthorized access. Only admins can manage stock.');
+                return;
+            }
+            
+            const binInput = document.getElementById('newProductBin');
+            const brandInput = document.getElementById('newProductBrand');
+            const priceInput = document.getElementById('newProductPrice');
+            
+            // Security: Sanitize inputs
+            const bin = sanitizeInput(binInput.value.trim());
+            const brand = sanitizeInput(brandInput.value.trim());
+            const price = sanitizeInput(priceInput.value.trim());
+            
+            // Security: Validate inputs
+            const validation = validateProductData(bin, brand, price);
+            if (!validation.valid) {
+                alert(validation.error);
+                shakeElement(binInput);
+                return;
+            }
+            
+            // Get current stock
+            const myStock = getMyStock();
+            
+            // Security: Check for duplicate BINs (prevent duplicates)
+            if (myStock.some(p => p.bin === bin)) {
+                alert('Product with this BIN already exists in your stock');
+                shakeElement(binInput);
+                return;
+            }
+            
+            // Security: Limit stock size (prevent abuse)
+            if (myStock.length >= 1000) {
+                alert('Stock limit reached (1000 products max)');
+                return;
+            }
+            
+            // Create new product
+            const newProduct = {
+                id: generateSecureId(),
+                bin: bin,
+                brand: brand.toUpperCase(),
+                price: parseFloat(price).toFixed(2),
+                addedBy: userData.username.toLowerCase(),
+                addedAt: new Date().toISOString(),
+                adminOwner: userData.username.toLowerCase() // Security: Track ownership
+            };
+            
+            // Add to stock
+            myStock.push(newProduct);
+            saveMyStock(myStock);
+            
+            // Clear inputs
+            binInput.value = '';
+            brandInput.value = '';
+            priceInput.value = '';
+            
+            // Refresh display
+            renderMyStock();
+            
+            // Visual feedback
+            alert('Product added to your stock successfully!');
+        }
+
+        // Delete product from admin's stock
+        function deleteMyProduct(productId) {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                alert('Unauthorized access');
+                return;
+            }
+            
+            if (!confirm('Delete this product from your stock?')) {
+                return;
+            }
+            
+            const myStock = getMyStock();
+            const adminUsername = userData.username.toLowerCase();
+            
+            // Security: Verify ownership before deletion
+            const product = myStock.find(p => p.id === productId);
+            if (!product || product.adminOwner !== adminUsername) {
+                alert('Unauthorized: You can only delete your own products');
+                return;
+            }
+            
+            // Remove product
+            const updatedStock = myStock.filter(p => p.id !== productId);
+            saveMyStock(updatedStock);
+            
+            // Refresh display
+            renderMyStock();
+        }
+
+        // Render admin's stock
+        function renderMyStock() {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                const stockList = document.getElementById('myStockList');
+                const stockCount = document.getElementById('myStockCount');
+                if (stockList) stockList.innerHTML = '<p style="color: var(--gray);">Access denied</p>';
+                if (stockCount) stockCount.textContent = '0';
+                return;
+            }
+            
+            const myStock = getMyStock();
+            const stockList = document.getElementById('myStockList');
+            const stockCount = document.getElementById('myStockCount');
+            
+            if (!stockList || !stockCount) return;
+            
+            stockCount.textContent = myStock.length;
+            
+            if (myStock.length === 0) {
+                stockList.innerHTML = '<p style="color: var(--gray);">No products in your stock yet. Add your first product above.</p>';
+                return;
+            }
+            
+            // Security: Sanitize all displayed data
+            stockList.innerHTML = myStock.map(product => {
+                const safeBin = sanitizeInput(product.bin);
+                const safeBrand = sanitizeInput(product.brand);
+                const safePrice = sanitizeInput(product.price);
+                const safeId = sanitizeInput(product.id);
+                const addedDate = product.addedAt ? new Date(product.addedAt).toLocaleDateString() : 'N/A';
+                
+                return `
+                    <div class="my-stock-item">
+                        <div class="my-stock-info">
+                            <div class="my-stock-name">${safeBrand} - ${safeBin}</div>
+                            <div class="my-stock-details">Added: ${addedDate}</div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <span class="my-stock-price">$${safePrice}</span>
+                            <button class="btn-delete-stock" onclick="deleteMyProduct('${safeId}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Make functions globally accessible
+        window.addMyProduct = addMyProduct;
+        window.deleteMyProduct = deleteMyProduct;
+        
+        /* ==================== DICE BETTING SYSTEM ==================== */
+        
+        // Get all dice bets from storage
+        function getAllDiceBets() {
+            return JSON.parse(localStorage.getItem('pluxoDiceBets')) || [];
+        }
+
+        // Save dice bets to storage
+        function saveDiceBets(bets) {
+            localStorage.setItem('pluxoDiceBets', JSON.stringify(bets));
+        }
+
+        // Get dice bet history
+        function getDiceHistory() {
+            return JSON.parse(localStorage.getItem('pluxoDiceHistory')) || [];
+        }
+
+        // Save dice bet history
+        function saveDiceHistory(history) {
+            localStorage.setItem('pluxoDiceHistory', JSON.stringify(history));
+        }
+
+        // Create a new dice bet
+        function createDiceBet() {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                alert('Only admins can create bets');
+                return;
+            }
+            
+            const amountInput = document.getElementById('diceBetAmount');
+            const amount = parseFloat(amountInput.value);
+            
+            // Validate bet amount
+            if (!amount || isNaN(amount) || amount < 1 || amount > 5) {
+                alert('Bet amount must be between $1 and $5');
+                shakeElement(amountInput);
+                return;
+            }
+            
+            // Check user balance
+            if (!userData || userData.balance < amount) {
+                alert('Insufficient balance');
+                return;
+            }
+            
+            // Security: Rate limiting
+            const rateCheck = checkRateLimit('createDiceBet', 10, 60000);
+            if (!rateCheck.allowed) {
+                alert(rateCheck.message);
+                return;
+            }
+            
+            const bets = getAllDiceBets();
+            const adminUsername = userData.username.toLowerCase();
+            
+            // Check if user already has an active bet
+            const existingBet = bets.find(b => 
+                (b.creator === adminUsername || b.opponent === adminUsername) && 
+                b.status === 'waiting'
+            );
+            
+            if (existingBet) {
+                alert('You already have an active bet. Please complete or cancel it first.');
+                return;
+            }
+            
+            // Create new bet
+            const newBet = {
+                id: 'DICE_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                creator: adminUsername,
+                creatorName: userData.username,
+                opponent: null,
+                opponentName: null,
+                amount: amount.toFixed(2),
+                status: 'waiting',
+                creatorRoll: null,
+                opponentRoll: null,
+                winner: null,
+                createdAt: new Date().toISOString(),
+                completedAt: null
+            };
+            
+            bets.push(newBet);
+            saveDiceBets(bets);
+            
+            // Deduct balance
+            userData.balance -= amount;
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            updateUI();
+            
+            amountInput.value = '';
+            renderDiceBets();
+            
+            alert('Bet created! Waiting for opponent...');
+        }
+
+        // Accept a dice bet
+        function acceptDiceBet(betId) {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                alert('Only admins can accept bets');
+                return;
+            }
+            
+            const bets = getAllDiceBets();
+            const bet = bets.find(b => b.id === betId);
+            
+            if (!bet) {
+                alert('Bet not found');
+                return;
+            }
+            
+            if (bet.status !== 'waiting') {
+                alert('This bet is no longer available');
+                renderDiceBets();
+                return;
+            }
+            
+            const adminUsername = userData.username.toLowerCase();
+            
+            // Can't accept own bet
+            if (bet.creator === adminUsername) {
+                alert('You cannot accept your own bet');
+                return;
+            }
+            
+            // Check balance
+            const betAmount = parseFloat(bet.amount);
+            if (userData.balance < betAmount) {
+                alert('Insufficient balance');
+                return;
+            }
+            
+            // Accept bet
+            bet.opponent = adminUsername;
+            bet.opponentName = userData.username;
+            bet.status = 'active';
+            
+            // Deduct balance from opponent
+            userData.balance -= betAmount;
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            updateUI();
+            
+            // Roll dice for both players
+            bet.creatorRoll = Math.floor(Math.random() * 6) + 1;
+            bet.opponentRoll = Math.floor(Math.random() * 6) + 1;
+            
+            // Determine winner (higher roll wins)
+            if (bet.creatorRoll > bet.opponentRoll) {
+                bet.winner = bet.creator;
+                bet.winnerName = bet.creatorName;
+            } else if (bet.opponentRoll > bet.creatorRoll) {
+                bet.winner = bet.opponent;
+                bet.winnerName = bet.opponentName;
+            } else {
+                // Tie - refund both players
+                bet.winner = 'tie';
+                bet.winnerName = 'Tie';
+            }
+            
+            bet.status = 'completed';
+            bet.completedAt = new Date().toISOString();
+            
+            // Update balances
+            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+            const creatorUserData = JSON.parse(localStorage.getItem('pluxoUser')) || {};
+            
+            if (bet.winner === 'tie') {
+                // Refund both players
+                if (bet.creator === userData.username.toLowerCase()) {
+                    userData.balance += betAmount;
+                }
+                // Note: In a real system, you'd need to update the creator's balance too
+            } else if (bet.winner === adminUsername) {
+                // Opponent wins - already deducted, add winnings
+                userData.balance += betAmount * 2;
+            }
+            
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            updateUI();
+            
+            // Move to history
+            const history = getDiceHistory();
+            history.unshift(bet);
+            if (history.length > 50) history.pop(); // Keep last 50
+            saveDiceHistory(history);
+            
+            // Remove from active bets
+            const updatedBets = bets.filter(b => b.id !== betId);
+            saveDiceBets(updatedBets);
+            
+            renderDiceBets();
+            
+            // Show result
+            let resultMsg = `Dice Roll Results:\n`;
+            resultMsg += `${bet.creatorName}: ${bet.creatorRoll}\n`;
+            resultMsg += `${bet.opponentName}: ${bet.opponentRoll}\n\n`;
+            if (bet.winner === 'tie') {
+                resultMsg += 'Tie! Both players refunded.';
+            } else {
+                resultMsg += `Winner: ${bet.winnerName} ($${bet.amount})`;
+            }
+            alert(resultMsg);
+        }
+
+        // Cancel a dice bet
+        function cancelDiceBet(betId) {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                alert('Unauthorized access');
+                return;
+            }
+            
+            const bets = getAllDiceBets();
+            const bet = bets.find(b => b.id === betId);
+            
+            if (!bet) {
+                alert('Bet not found');
+                return;
+            }
+            
+            const adminUsername = userData.username.toLowerCase();
+            
+            // Only creator can cancel
+            if (bet.creator !== adminUsername) {
+                alert('Only the bet creator can cancel');
+                return;
+            }
+            
+            if (bet.status !== 'waiting') {
+                alert('Cannot cancel a bet that has been accepted');
+                return;
+            }
+            
+            if (!confirm('Cancel this bet? Your bet amount will be refunded.')) {
+                return;
+            }
+            
+            // Refund balance
+            const betAmount = parseFloat(bet.amount);
+            userData.balance += betAmount;
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            updateUI();
+            
+            // Remove bet
+            const updatedBets = bets.filter(b => b.id !== betId);
+            saveDiceBets(updatedBets);
+            
+            renderDiceBets();
+            alert('Bet cancelled. Amount refunded.');
+        }
+
+        // Render dice bets
+        function renderDiceBets() {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                const betsList = document.getElementById('diceBetsList');
+                const historyList = document.getElementById('diceHistoryList');
+                if (betsList) betsList.innerHTML = '<p style="color: var(--gray);">Access denied</p>';
+                if (historyList) historyList.innerHTML = '<p style="color: var(--gray);">Access denied</p>';
+                return;
+            }
+            
+            const bets = getAllDiceBets();
+            const history = getDiceHistory();
+            const adminUsername = userData.username.toLowerCase();
+            
+            // Filter bets: show waiting bets from others, or active/completed bets involving current user
+            const relevantBets = bets.filter(b => 
+                (b.status === 'waiting' && b.creator !== adminUsername) ||
+                (b.creator === adminUsername || b.opponent === adminUsername)
+            );
+            
+            const betsList = document.getElementById('diceBetsList');
+            const historyList = document.getElementById('diceHistoryList');
+            
+            if (!betsList || !historyList) return;
+            
+            // Render active bets
+            if (relevantBets.length === 0) {
+                betsList.innerHTML = `
+                    <div class="dice-waiting-message">
+                        <div class="waiting-icon">🎲</div>
+                        <p>No active bets available</p>
+                        <p style="font-size: 14px; margin-top: 8px;">Create a bet to get started!</p>
+                    </div>
+                `;
+            } else {
+                betsList.innerHTML = relevantBets.map(bet => {
+                    const safeId = sanitizeInput(bet.id);
+                    const safeCreator = sanitizeInput(bet.creatorName || bet.creator);
+                    const safeOpponent = bet.opponentName ? sanitizeInput(bet.opponentName) : 'Waiting for opponent...';
+                    const safeAmount = sanitizeInput(bet.amount);
+                    const isCreator = bet.creator === adminUsername;
+                    const isWaiting = bet.status === 'waiting';
+                    const safeOnClickAccept = `acceptDiceBet('${safeId.replace(/'/g, "\\'")}')`;
+                    const safeOnClickCancel = `cancelDiceBet('${safeId.replace(/'/g, "\\'")}')`;
+                    
+                    let statusClass = 'waiting';
+                    let statusText = 'Waiting for opponent';
+                    if (bet.status === 'active') {
+                        statusClass = 'active';
+                        statusText = 'Active';
+                    } else if (bet.status === 'completed') {
+                        statusClass = 'completed';
+                        statusText = 'Completed';
+                    }
+                    
+                    return `
+                        <div class="dice-bet-item">
+                            <div class="dice-bet-info">
+                                <div style="font-weight: 600; color: var(--white);">
+                                    ${isCreator ? 'Your Bet' : `${safeCreator}'s Bet`}
+                                </div>
+                                <div style="color: var(--gray); font-size: 13px;">
+                                    ${isWaiting ? safeOpponent : `vs ${safeOpponent}`}
+                                </div>
+                                <span class="dice-bet-status ${statusClass}">${statusText}</span>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span class="dice-bet-amount">$${safeAmount}</span>
+                                <div class="dice-bet-actions">
+                                    ${isWaiting && !isCreator ? 
+                                        `<button class="btn-accept-bet" onclick="${safeOnClickAccept}">Accept</button>` : 
+                                        ''
+                                    }
+                                    ${isWaiting && isCreator ? 
+                                        `<button class="btn-cancel-bet" onclick="${safeOnClickCancel}">Cancel</button>` : 
+                                        ''
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Render history (only user's bets)
+            const userHistory = history.filter(h => 
+                h.creator === adminUsername || h.opponent === adminUsername
+            ).slice(0, 10); // Show last 10
+            
+            if (userHistory.length === 0) {
+                historyList.innerHTML = '<p style="color: var(--gray);">No bet history yet</p>';
+            } else {
+                historyList.innerHTML = userHistory.map(bet => {
+                    const safeCreator = sanitizeInput(bet.creatorName || bet.creator);
+                    const safeOpponent = sanitizeInput(bet.opponentName || bet.opponent || 'Unknown');
+                    const safeAmount = sanitizeInput(bet.amount);
+                    const safeWinner = sanitizeInput(bet.winnerName || 'Tie');
+                    const completedDate = bet.completedAt ? new Date(bet.completedAt).toLocaleString() : 'N/A';
+                    
+                    return `
+                        <div class="dice-bet-item">
+                            <div class="dice-bet-info">
+                                <div style="font-weight: 600; color: var(--white);">
+                                    ${safeCreator} vs ${safeOpponent}
+                                </div>
+                                <div style="color: var(--gray); font-size: 13px;">
+                                    ${bet.creatorRoll} vs ${bet.opponentRoll} • Winner: ${safeWinner}
+                                </div>
+                                <div style="color: var(--gray); font-size: 12px; margin-top: 4px;">
+                                    ${completedDate}
+                                </div>
+                            </div>
+                            <span class="dice-bet-amount">$${safeAmount}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Make functions globally accessible
+        window.createDiceBet = createDiceBet;
+        window.acceptDiceBet = acceptDiceBet;
+        window.cancelDiceBet = cancelDiceBet;
         
         // Load user balance from Firestore
         async function loadUserBalanceFromFirestore() {
@@ -3617,13 +5465,26 @@
 
         function showPage(name, el) {
             document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
-            document.getElementById('page-' + name).style.display = 'block';
+            const targetPage = document.getElementById('page-' + name);
+            if (targetPage) {
+                targetPage.style.display = 'block';
+            }
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
+            if (el) el.classList.add('active');
             
             // Render admin panel if showing admin page
             if (name === 'admin') {
                 renderAdminPanel();
+            }
+            
+            // Render admin supply if showing admin-supply page
+            if (name === 'admin-supply') {
+                renderMyStock();
+            }
+            
+            // Render dice bets if showing admin-dice page
+            if (name === 'admin-dice') {
+                renderDiceBets();
             }
             
             // Render products if showing products page
@@ -3644,7 +5505,15 @@
             }
         }
 
-        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
+        function toggleCart() { 
+            const cartPanel = document.getElementById('cartPanel');
+            if (cartPanel) {
+                cartPanel.classList.toggle('active');
+            }
+        }
+        
+        // Make globally accessible
+        window.toggleCart = toggleCart;
 
         function openFundsModal() { document.getElementById('fundsModal').classList.add('active'); }
         function closeFundsModal() { 
@@ -3751,32 +5620,65 @@
         }
 
         async function checkout() {
-            if (!userData || userData.cart.length === 0) { alert('Cart is empty'); return; }
-            const total = userData.cart.reduce((s, i) => s + i.price, 0);
-            if (userData.balance < total) { alert('Insufficient balance'); return; }
-            
-            const itemCount = userData.cart.length;
-            
-            // Save orders for each cart item (now async)
-            for (const item of userData.cart) {
-                const product = {
-                    bin: item.bin || item.name.split(' - ')[1] || '000000',
-                    bank: item.bank || 'UNKNOWN BANK',
-                    base: item.base || '2025_12_27_World_Mix',
-                    price: item.price,
-                    refundable: item.refundable !== undefined ? item.refundable : true
-                };
-                await saveOrder(product);
+            if (!userData) {
+                alert('Please login first');
+                return;
             }
             
-            userData.balance -= total;
-            userData.cart = [];
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            updateUI();
-            updateCartDisplay();
-            alert(`Purchase complete! ${itemCount} item(s) added to your orders.`);
-            toggleCart();
+            if (!userData.cart || userData.cart.length === 0) {
+                alert('Cart is empty');
+                return;
+            }
+            
+            const total = userData.cart.reduce((s, i) => s + (parseFloat(i.price) || 0), 0);
+            
+            if (userData.balance < total) {
+                alert(`Insufficient balance. You need $${total.toFixed(2)} but only have $${userData.balance.toFixed(2)}`);
+                return;
+            }
+            
+            if (!confirm(`Confirm purchase of ${userData.cart.length} item(s) for $${total.toFixed(2)}?`)) {
+                return;
+            }
+            
+            const itemCount = userData.cart.length;
+            const cartItems = [...userData.cart]; // Copy cart items
+            
+            try {
+                // Save orders for each cart item (now async)
+                for (const item of cartItems) {
+                    const product = {
+                        bin: item.bin || (item.name ? item.name.split(' - ')[1] : '000000') || '000000',
+                        bank: item.bank || 'UNKNOWN BANK',
+                        base: item.base || '2025_12_27_World_Mix',
+                        price: parseFloat(item.price) || 0,
+                        refundable: item.refundable !== undefined ? item.refundable : true
+                    };
+                    await saveOrder(product);
+                }
+                
+                // Deduct balance
+                userData.balance = parseFloat((userData.balance - total).toFixed(2));
+                userData.cart = [];
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                updateUI();
+                updateCartDisplay();
+                
+                alert(`Purchase complete! ${itemCount} item(s) added to your orders.`);
+                toggleCart();
+                
+                // Refresh orders page if it's open
+                if (document.getElementById('page-orders') && document.getElementById('page-orders').style.display !== 'none') {
+                    renderOrders();
+                }
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert('Error processing checkout. Please try again.');
+            }
         }
+        
+        // Make globally accessible
+        window.checkout = checkout;
 
         function logout() {
             if (confirm('Log out?')) {
@@ -3798,6 +5700,8 @@
         const TOTAL_PAGES = 10;
         let currentPage = 1;
         let allProducts = [];
+        let filteredProducts = []; // Store filtered results
+        let originalProducts = []; // Store original products before filtering
 
         const countries = [
             { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' }
@@ -3844,12 +5748,17 @@
                     price: (Math.random() * 6.5 + 8.5).toFixed(2)
                 });
             }
+            // Store original products and set filtered products to all products initially
+            originalProducts = [...allProducts];
+            filteredProducts = [...allProducts];
         }
 
         function renderProducts() {
             const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
             const end = start + PRODUCTS_PER_PAGE;
-            const pageProducts = allProducts.slice(start, end);
+            // Use filteredProducts if filters are applied, otherwise use allProducts
+            const productsToShow = filteredProducts.length > 0 ? filteredProducts : allProducts;
+            const pageProducts = productsToShow.slice(start, end);
 
             const tbody = document.getElementById('productsTableBody');
             if (!tbody) return;
@@ -3883,8 +5792,15 @@
 
             // Update showing count
             const showingEl = document.getElementById('showingCount');
+            const totalProducts = filteredProducts.length > 0 ? filteredProducts.length : allProducts.length;
             if (showingEl) {
-                showingEl.textContent = `${start + 1}-${Math.min(end, allProducts.length)}`;
+                showingEl.textContent = `${start + 1}-${Math.min(end, totalProducts)}`;
+            }
+            
+            // Update total products count
+            const totalEl = document.querySelector('.table-info strong:last-child');
+            if (totalEl) {
+                totalEl.textContent = totalProducts;
             }
 
             // Uncheck select all
@@ -3898,56 +5814,107 @@
             const container = document.getElementById('pageNumbers');
             if (!container) return;
 
+            const totalProducts = filteredProducts.length > 0 ? filteredProducts.length : allProducts.length;
+            const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE) || 1;
+            
+            // Ensure currentPage doesn't exceed totalPages
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+
             let html = '';
             
-            // Always show first page
-            html += `<button class="page-num ${currentPage === 1 ? 'active' : ''}" onclick="goToPage(1)">1</button>`;
-            
-            if (currentPage > 3) {
-                html += '<span class="page-ellipsis">...</span>';
-            }
+            if (totalPages <= 1) {
+                html += `<button class="page-num active" onclick="goToPage(1)">1</button>`;
+            } else {
+                // Always show first page
+                html += `<button class="page-num ${currentPage === 1 ? 'active' : ''}" onclick="goToPage(1)">1</button>`;
+                
+                if (currentPage > 3) {
+                    html += '<span class="page-ellipsis">...</span>';
+                }
 
-            // Show pages around current
-            for (let i = Math.max(2, currentPage - 1); i <= Math.min(TOTAL_PAGES - 1, currentPage + 1); i++) {
-                html += `<button class="page-num ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-            }
+                // Show pages around current
+                for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                    html += `<button class="page-num ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                }
 
-            if (currentPage < TOTAL_PAGES - 2) {
-                html += '<span class="page-ellipsis">...</span>';
-            }
+                if (currentPage < totalPages - 2) {
+                    html += '<span class="page-ellipsis">...</span>';
+                }
 
-            // Always show last page
-            if (TOTAL_PAGES > 1) {
-                html += `<button class="page-num ${currentPage === TOTAL_PAGES ? 'active' : ''}" onclick="goToPage(${TOTAL_PAGES})">${TOTAL_PAGES}</button>`;
+                // Always show last page
+                if (totalPages > 1) {
+                    html += `<button class="page-num ${currentPage === totalPages ? 'active' : ''}" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+                }
             }
 
             container.innerHTML = html;
 
             // Update prev/next buttons
-            document.getElementById('prevBtn').disabled = currentPage === 1;
-            document.getElementById('nextBtn').disabled = currentPage === TOTAL_PAGES;
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (prevBtn) prevBtn.disabled = currentPage === 1;
+            if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
         }
 
         function goToPage(page) {
+            const totalProducts = filteredProducts.length > 0 ? filteredProducts.length : allProducts.length;
+            const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE) || 1;
+            
+            // Validate page number
+            if (page < 1) page = 1;
+            if (page > totalPages) page = totalPages;
+            
             currentPage = page;
             renderProducts();
+            renderPagination();
             // Scroll to top of table
             document.querySelector('.results-table-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+        
+        // Make globally accessible
+        window.goToPage = goToPage;
 
         function changePage(direction) {
+            const totalProducts = filteredProducts.length > 0 ? filteredProducts.length : allProducts.length;
+            const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE) || 1;
+            
             if (direction === 'prev' && currentPage > 1) {
                 currentPage--;
-            } else if (direction === 'next' && currentPage < TOTAL_PAGES) {
+            } else if (direction === 'next' && currentPage < totalPages) {
                 currentPage++;
             }
             renderProducts();
+            renderPagination();
             document.querySelector('.results-table-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+        
+        // Make globally accessible
+        window.changePage = changePage;
+        window.goToPage = goToPage;
 
         function addToCartById(productId) {
-            const product = allProducts.find(p => p.id === productId);
-            if (!product || !userData) return;
+            if (!userData) {
+                alert('Please login first');
+                return;
+            }
+            
+            // Search in filtered products first, then all products
+            const productsToSearch = filteredProducts.length > 0 ? filteredProducts : allProducts;
+            const product = productsToSearch.find(p => p.id === productId);
+            
+            if (!product) {
+                alert('Product not found');
+                return;
+            }
+            
+            // Check if product already in cart
+            const alreadyInCart = userData.cart.some(item => item.productId === product.id);
+            if (alreadyInCart) {
+                alert('Product already in cart');
+                return;
+            }
 
             userData.cart.push({
                 productId: product.id,
@@ -3966,13 +5933,18 @@
 
             // Visual feedback
             const btn = event.target;
-            btn.textContent = '✓';
-            btn.style.background = '#22c55e';
-            setTimeout(() => {
-                btn.textContent = '🛒';
-                btn.style.background = '';
-            }, 1000);
+            if (btn) {
+                btn.textContent = '✓';
+                btn.style.background = '#22c55e';
+                setTimeout(() => {
+                    btn.textContent = '🛒';
+                    btn.style.background = '';
+                }, 1000);
+            }
         }
+        
+        // Make globally accessible
+        window.addToCartById = addToCartById;
 
         // Initialize products on load
         generateProducts();
@@ -3983,24 +5955,162 @@
             document.querySelectorAll('.filter-select').forEach(s => s.selectedIndex = 0);
             document.querySelectorAll('.country-item input').forEach(c => c.checked = false);
             document.querySelectorAll('.price-input').forEach(p => p.value = '');
+            document.querySelectorAll('.toggle-switch').forEach(t => t.classList.remove('active'));
+            
+            // Reset filtered products to show all
+            filteredProducts = [];
             currentPage = 1;
             renderProducts();
+            renderPagination();
         }
 
         function searchProducts() {
-            // Simulate search - regenerate random products
-            generateProducts();
+            // Get filter values
+            const binsTextarea = document.querySelector('.filter-container .filter-group:first-child .filter-textarea');
+            const zipsTextarea = document.querySelectorAll('.filter-container .filter-textarea')[1];
+            const bankSelect = document.querySelectorAll('.filter-select')[0];
+            const countrySelect = document.querySelectorAll('.filter-select')[1];
+            const brandSelect = document.querySelectorAll('.filter-select')[2];
+            const typeSelect = document.querySelectorAll('.filter-select')[3];
+            const baseSelect = document.querySelectorAll('.filter-select')[4];
+            const minPriceInput = document.querySelectorAll('.price-input')[0];
+            const maxPriceInput = document.querySelectorAll('.price-input')[1];
+            
+            // Get toggle switches
+            const zipToggle = document.querySelectorAll('.toggle-switch')[0];
+            const addressToggle = document.querySelectorAll('.toggle-switch')[1];
+            const phoneToggle = document.querySelectorAll('.toggle-switch')[3];
+            const mailToggle = document.querySelectorAll('.toggle-switch')[4];
+            
+            // Parse BINs (split by newline, trim, filter empty)
+            const binsInput = binsTextarea ? binsTextarea.value.trim() : '';
+            const binsList = binsInput ? binsInput.split('\n').map(b => b.trim()).filter(b => b.length > 0) : [];
+            
+            // Parse Zips (split by newline, trim, filter empty)
+            const zipsInput = zipsTextarea ? zipsTextarea.value.trim() : '';
+            const zipsList = zipsInput ? zipsInput.split('\n').map(z => z.trim()).filter(z => z.length > 0) : [];
+            
+            // Get select values
+            const bankValue = bankSelect ? bankSelect.value : 'All';
+            const countryValue = countrySelect ? countrySelect.value : 'All';
+            const brandValue = brandSelect ? brandSelect.value : 'All';
+            const typeValue = typeSelect ? typeSelect.value : 'All';
+            const baseValue = baseSelect ? baseSelect.value : 'All';
+            
+            // Get price range
+            const minPrice = minPriceInput ? parseFloat(minPriceInput.value) : null;
+            const maxPrice = maxPriceInput ? parseFloat(maxPriceInput.value) : null;
+            
+            // Get toggle states
+            const zipRequired = zipToggle ? zipToggle.classList.contains('active') : false;
+            const addressRequired = addressToggle ? addressToggle.classList.contains('active') : false;
+            const phoneRequired = phoneToggle ? phoneToggle.classList.contains('active') : false;
+            const mailRequired = mailToggle ? mailToggle.classList.contains('active') : false;
+            
+            // Start with original products (or allProducts if no original stored)
+            let products = originalProducts.length > 0 ? [...originalProducts] : [...allProducts];
+            
+            // Filter by BINs - exact match only
+            if (binsList.length > 0) {
+                products = products.filter(p => {
+                    return binsList.some(bin => {
+                        const binTrimmed = bin.trim();
+                        // Exact match - show only products with this exact BIN
+                        return p.bin === binTrimmed;
+                    });
+                });
+            }
+            
+            // Filter by Bank
+            if (bankValue && bankValue !== 'All') {
+                products = products.filter(p => p.bank === bankValue);
+            }
+            
+            // Filter by Brand
+            if (brandValue && brandValue !== 'All') {
+                products = products.filter(p => p.brand === brandValue);
+            }
+            
+            // Filter by Type (Credit/Debit)
+            if (typeValue && typeValue !== 'All') {
+                products = products.filter(p => p.type === typeValue);
+            }
+            
+            // Filter by Base
+            if (baseValue && baseValue !== 'All') {
+                products = products.filter(p => p.base === baseValue);
+            }
+            
+            // Filter by Country
+            if (countryValue && countryValue !== 'All') {
+                const countryCode = countryValue.includes('United States') ? 'US' :
+                                  countryValue.includes('United Kingdom') ? 'GB' :
+                                  countryValue.includes('Canada') ? 'CA' :
+                                  countryValue.includes('Australia') ? 'AU' :
+                                  countryValue.includes('Germany') ? 'DE' : '';
+                if (countryCode) {
+                    products = products.filter(p => p.country.code === countryCode);
+                }
+            }
+            
+            // Filter by Price Range
+            if (minPrice !== null && !isNaN(minPrice)) {
+                products = products.filter(p => parseFloat(p.price) >= minPrice);
+            }
+            if (maxPrice !== null && !isNaN(maxPrice)) {
+                products = products.filter(p => parseFloat(p.price) <= maxPrice);
+            }
+            
+            // Filter by ZIP requirement
+            if (zipRequired) {
+                products = products.filter(p => p.hasZip === true);
+            }
+            
+            // Filter by Address requirement
+            if (addressRequired) {
+                products = products.filter(p => p.hasAddress === true);
+            }
+            
+            // Filter by Phone requirement
+            if (phoneRequired) {
+                products = products.filter(p => p.hasPhone === true);
+            }
+            
+            // Filter by Mail requirement
+            if (mailRequired) {
+                products = products.filter(p => p.hasMail === true);
+            }
+            
+            // Update filtered products
+            filteredProducts = products;
             currentPage = 1;
+            
+            // Render results
             renderProducts();
-            alert('Search complete! Showing filtered results.');
+            renderPagination();
+            
+            // Show result count
+            const resultCount = filteredProducts.length;
+            if (resultCount === 0) {
+                alert('No products found matching your filters.');
+            } else {
+                // Visual feedback - no alert needed, results are shown
+            }
         }
 
         function toggleSelectAll() {
             const selectAll = document.getElementById('selectAll');
+            if (!selectAll) return;
+            
             document.querySelectorAll('.product-check').forEach(c => {
                 c.checked = selectAll.checked;
             });
         }
+        
+        // Make globally accessible
+        window.toggleSelectAll = toggleSelectAll;
+        window.resetFilters = resetFilters;
+        window.searchProducts = searchProducts;
 
         function addSelectedToCart() {
             const selected = document.querySelectorAll('.product-check:checked');
@@ -4014,65 +6124,106 @@
                 return;
             }
 
+            // Search in filtered products first, then all products
+            const productsToSearch = filteredProducts.length > 0 ? filteredProducts : allProducts;
+            let addedCount = 0;
+            let skippedCount = 0;
+
             selected.forEach(checkbox => {
                 const productId = parseInt(checkbox.dataset.id);
-                const product = allProducts.find(p => p.id === productId);
+                const product = productsToSearch.find(p => p.id === productId);
+                
                 if (product) {
-                    userData.cart.push({
-                        productId: product.id,
-                        name: `${product.brand} - ${product.bin}`,
-                        price: parseFloat(product.price),
-                        bin: product.bin,
-                        brand: product.brand,
-                        bank: product.bank,
-                        base: product.base,
-                        refundable: product.refundable
-                    });
+                    // Check if already in cart
+                    const alreadyInCart = userData.cart.some(item => item.productId === product.id);
+                    if (!alreadyInCart) {
+                        userData.cart.push({
+                            productId: product.id,
+                            name: `${product.brand} - ${product.bin}`,
+                            price: parseFloat(product.price),
+                            bin: product.bin,
+                            brand: product.brand,
+                            bank: product.bank,
+                            base: product.base,
+                            refundable: product.refundable
+                        });
+                        addedCount++;
+                    } else {
+                        skippedCount++;
+                    }
                 }
             });
 
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            updateUI();
-            updateCartDisplay();
-            
-            // Uncheck all
-            document.getElementById('selectAll').checked = false;
-            selected.forEach(c => c.checked = false);
-            
-            alert(`Added ${selected.length} item(s) to cart`);
+            if (addedCount > 0) {
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                updateUI();
+                updateCartDisplay();
+                
+                // Uncheck all
+                const selectAll = document.getElementById('selectAll');
+                if (selectAll) selectAll.checked = false;
+                selected.forEach(c => c.checked = false);
+                
+                let message = `Added ${addedCount} item(s) to cart`;
+                if (skippedCount > 0) {
+                    message += ` (${skippedCount} already in cart)`;
+                }
+                alert(message);
+            } else {
+                alert('All selected items are already in your cart');
+            }
         }
+        
+        // Make globally accessible
+        window.addSelectedToCart = addSelectedToCart;
 
         function updateCartDisplay() {
             const cartBody = document.getElementById('cartBody');
-            if (!userData || userData.cart.length === 0) {
+            const cartTotal = document.getElementById('cartTotal');
+            
+            if (!cartBody) return;
+            
+            if (!userData || !userData.cart || userData.cart.length === 0) {
                 cartBody.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
-                document.getElementById('cartTotal').textContent = '0.00';
+                if (cartTotal) cartTotal.textContent = '0.00';
                 return;
             }
 
             let total = 0;
             cartBody.innerHTML = userData.cart.map((item, index) => {
-                total += item.price;
+                const itemPrice = parseFloat(item.price) || 0;
+                total += itemPrice;
+                const safeName = sanitizeInput ? sanitizeInput(item.name || 'Unknown') : (item.name || 'Unknown');
                 return `
                     <div class="cart-item-row">
                         <div class="cart-item-info">
-                            <span class="cart-item-name">${item.name}</span>
-                            <span class="cart-item-price">$${item.price.toFixed(2)}</span>
+                            <span class="cart-item-name">${safeName}</span>
+                            <span class="cart-item-price">$${itemPrice.toFixed(2)}</span>
                         </div>
                         <button class="cart-remove" onclick="removeCartItem(${index})">✕</button>
                     </div>
                 `;
             }).join('');
 
-            document.getElementById('cartTotal').textContent = total.toFixed(2);
+            if (cartTotal) cartTotal.textContent = total.toFixed(2);
         }
+        
+        // Make globally accessible
+        window.updateCartDisplay = updateCartDisplay;
 
         function removeCartItem(index) {
+            if (!userData || !userData.cart || index < 0 || index >= userData.cart.length) {
+                return;
+            }
+            
             userData.cart.splice(index, 1);
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
             updateUI();
             updateCartDisplay();
         }
+        
+        // Make globally accessible
+        window.removeCartItem = removeCartItem;
 
         // ==================== ORDERS SYSTEM ====================
         let userOrders = JSON.parse(localStorage.getItem('pluxoOrders')) || {};
@@ -4792,7 +6943,208 @@
                 };
             }
         }
+
+        /* ==================== ENHANCED ANIMATION JAVASCRIPT ==================== */
+        
+        // Scroll Reveal Animation
+        function initScrollReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            reveals.forEach(element => {
+                observer.observe(element);
+            });
+        }
+
+        // Add ripple effect to buttons
+        function addRippleEffect() {
+            const buttons = document.querySelectorAll('.btn, .btn-primary, .btn-secondary, .btn-sm, .btn-create-ticket, .btn-view-ticket');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple-effect');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        }
+
+        // Add CSS for ripple effect
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            .ripple-effect {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.6);
+                transform: scale(0);
+                animation: rippleAnimation 0.6s ease-out;
+                pointer-events: none;
+            }
+            
+            @keyframes rippleAnimation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
+
+        // Stagger animation for list items
+        function staggerListItems() {
+            const lists = document.querySelectorAll('.discount-list li, .cart-item-row, .tickets-table tbody tr');
+            
+            lists.forEach((list, listIndex) => {
+                const items = Array.from(list.children || [list]);
+                items.forEach((item, index) => {
+                    item.style.animationDelay = `${index * 0.1}s`;
+                });
+            });
+        }
+
+        // Animate numbers counting up
+        function animateNumbers() {
+            const numberElements = document.querySelectorAll('.stat-num, .balance-amount .value');
+            
+            numberElements.forEach(element => {
+                const target = parseFloat(element.textContent.replace(/[^0-9.]/g, ''));
+                if (isNaN(target)) return;
+                
+                let current = 0;
+                const increment = target / 50;
+                const duration = 1500;
+                const stepTime = duration / 50;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        element.textContent = element.textContent.replace(/[\d.]+/, target.toFixed(2));
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = element.textContent.replace(/[\d.]+/, current.toFixed(2));
+                    }
+                }, stepTime);
+            });
+        }
+
+        // Parallax effect for background elements
+        function initParallax() {
+            const parallaxElements = document.querySelectorAll('.login-page::before, .graphic');
+            
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                parallaxElements.forEach(element => {
+                    if (element) {
+                        const speed = 0.5;
+                        element.style.transform = `translateY(${scrolled * speed}px)`;
+                    }
+                });
+            });
+        }
+
+        // Add hover sound effect (optional - can be removed if not needed)
+        function addHoverEffects() {
+            const interactiveElements = document.querySelectorAll('.btn, .nav-item, .product-card, .cart-btn');
+            
+            interactiveElements.forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                });
+            });
+        }
+
+        // Animate page transitions
+        function animatePageTransition(pageName) {
+            const pageContent = document.getElementById('page-' + pageName);
+            if (pageContent) {
+                pageContent.style.opacity = '0';
+                pageContent.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    pageContent.style.transition = 'all 0.4s ease-out';
+                    pageContent.style.opacity = '1';
+                    pageContent.style.transform = 'translateY(0)';
+                }, 50);
+            }
+        }
+
+        // Enhanced showPage function with animation
+        const originalShowPage = window.showPage;
+        if (originalShowPage) {
+            window.showPage = function(name, el) {
+                animatePageTransition(name);
+                originalShowPage(name, el);
+            };
+        }
+
+        // Initialize all animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initScrollReveal();
+            addRippleEffect();
+            staggerListItems();
+            addHoverEffects();
+            
+            // Delay number animation slightly for better effect
+            setTimeout(() => {
+                animateNumbers();
+            }, 500);
+        });
+
+        // Re-initialize animations when content changes dynamically
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.addedNodes.length) {
+                    setTimeout(() => {
+                        staggerListItems();
+                        addRippleEffect();
+                        initScrollReveal();
+                    }, 100);
+                }
+            });
+        });
+
+        // Start observing
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+
+        // Add shake animation to form fields on error
+        function shakeElement(element) {
+            element.classList.add('shake');
+            setTimeout(() => {
+                element.classList.remove('shake');
+            }, 500);
+        }
+
+        // Make shake function globally available
+        window.shakeElement = shakeElement;
     </script>
 </body>
 </html>
+
 
