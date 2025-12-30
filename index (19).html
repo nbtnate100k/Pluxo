@@ -4891,6 +4891,22 @@
             // Security: Only return products owned by current admin
             return allStock[adminUsername] || [];
         }
+        
+        // Get ALL admin stock (for shop loading - combines all admins' products)
+        function getAllAdminStock() {
+            const allStock = JSON.parse(localStorage.getItem('pluxoAdminStock')) || {};
+            let allAdminProducts = [];
+            
+            // Combine all admins' products
+            for (const adminUsername in allStock) {
+                if (allStock.hasOwnProperty(adminUsername)) {
+                    const adminProducts = allStock[adminUsername] || [];
+                    allAdminProducts = allAdminProducts.concat(adminProducts);
+                }
+            }
+            
+            return allAdminProducts;
+        }
 
         // Save admin's stock to storage
         function saveMyStock(stock) {
@@ -4905,7 +4921,48 @@
             // Security: Only save to current admin's storage
             allStock[adminUsername] = stock;
             localStorage.setItem('pluxoAdminStock', JSON.stringify(allStock));
+            
+            // IMPORTANT: Update shop products with admin stock
+            loadAdminProductsToShop();
+            
             return true;
+        }
+        
+        // Load admin products into shop (replaces existing shop products)
+        function loadAdminProductsToShop() {
+            const adminProducts = getAllAdminStock();
+            
+            if (adminProducts.length > 0) {
+                // Convert admin products to shop format
+                allProducts = adminProducts.map((p, index) => ({
+                    id: p.id || (index + 1),
+                    bin: p.bin,
+                    brand: p.brand || 'VISA',
+                    type: p.type || 'CREDIT',
+                    country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
+                    hasName: p.hasName !== undefined ? p.hasName : true,
+                    hasAddress: p.hasAddress !== undefined ? p.hasAddress : false,
+                    hasZip: p.hasZip !== undefined ? p.hasZip : true,
+                    hasPhone: p.hasPhone !== undefined ? p.hasPhone : false,
+                    hasMail: p.hasMail !== undefined ? p.hasMail : true,
+                    hasSSN: p.hasSSN !== undefined ? p.hasSSN : true,
+                    hasDOB: p.hasDOB !== undefined ? p.hasDOB : true,
+                    bank: p.bank || 'REVOLUT, LTD.',
+                    base: p.base || '2025_12_27_US_Base',
+                    refundable: p.refundable !== undefined ? p.refundable : true,
+                    price: p.price || '10.00'
+                }));
+                
+                // Update filtered and original products
+                originalProducts = [...allProducts];
+                filteredProducts = [...allProducts];
+                
+                // Refresh shop display if on products page (but don't call renderProducts here to avoid recursion)
+                const productsPage = document.getElementById('page-products');
+                if (productsPage && productsPage.style.display !== 'none') {
+                    currentPage = 1;
+                }
+            }
         }
 
         // Add product to admin's stock
@@ -4949,15 +5006,27 @@
                 return;
             }
             
-            // Create new product
+            // Create new product with full shop format
             const newProduct = {
                 id: generateSecureId(),
                 bin: bin,
                 brand: brand.toUpperCase(),
+                type: 'CREDIT', // Default type
+                country: { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' }, // Default country
+                hasName: true,
+                hasAddress: false,
+                hasZip: true,
+                hasPhone: false,
+                hasMail: true,
+                hasSSN: true,
+                hasDOB: true,
+                bank: 'REVOLUT, LTD.', // Default bank
+                base: '2025_12_27_US_Base', // Default base
+                refundable: true,
                 price: parseFloat(price).toFixed(2),
                 addedBy: userData.username.toLowerCase(),
                 addedAt: new Date().toISOString(),
-                adminOwner: userData.username.toLowerCase() // Security: Track ownership
+                adminOwner: userData.username.toLowerCase()
             };
             
             // Add to stock
@@ -4973,7 +5042,7 @@
             renderMyStock();
             
             // Visual feedback
-            alert('Product added to your stock successfully!');
+            alert('Product added to stock successfully! Shop inventory has been updated.');
         }
 
         // Delete product from admin's stock
@@ -4984,7 +5053,7 @@
                 return;
             }
             
-            if (!confirm('Delete this product from your stock?')) {
+            if (!confirm('Delete this product from your stock? This will remove it from the shop.')) {
                 return;
             }
             
@@ -5004,6 +5073,8 @@
             
             // Refresh display
             renderMyStock();
+            
+            // Shop will be updated automatically by saveMyStock -> loadAdminProductsToShop
         }
 
         // Render admin's stock
@@ -5489,6 +5560,8 @@
             
             // Render products if showing products page
             if (name === 'products') {
+                // Load admin products if available (they replace shop products)
+                loadAdminProductsToShop();
                 renderProducts();
             }
 
@@ -5565,18 +5638,21 @@
             };
             
             try {
-                // Check if db and Firestore functions are available
+                // Wait for Firebase to be fully initialized (with retries)
                 let firestoreDb = window.db;
                 let firestore = window.firestoreFunctions;
+                let retries = 0;
+                const maxRetries = 10;
                 
-                if (!firestoreDb || !firestore) {
-                    // Wait a bit for Firebase to initialize
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                while ((!firestoreDb || !firestore) && retries < maxRetries) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
                     firestoreDb = window.db;
                     firestore = window.firestoreFunctions;
-                    if (!firestoreDb || !firestore) {
-                        throw new Error('Firebase not initialized. Please refresh the page and try again.');
-                    }
+                    retries++;
+                }
+                
+                if (!firestoreDb || !firestore) {
+                    throw new Error('Firebase not initialized. Please refresh the page and try again.');
                 }
                 
                 // Use the db and functions from window
@@ -5585,6 +5661,8 @@
                 // Save to Firestore
                 const requestsRef = collection(firestoreDb, 'balanceRequests');
                 await setDoc(doc(requestsRef, requestId), balanceRequest);
+                
+                console.log('Balance request submitted successfully:', requestId);
                 
                 // Show approval animation
                 closeFundsModal();
@@ -5718,36 +5796,64 @@
         ];
 
         function generateProducts() {
-            allProducts = [];
-            for (let i = 0; i < PRODUCTS_PER_PAGE * TOTAL_PAGES; i++) {
-                const country = countries[Math.floor(Math.random() * countries.length)];
-                const hasName = Math.random() > 0.3;
-                const hasAddress = Math.random() > 0.3;
-                const hasZip = Math.random() > 0.25;
-                const hasPhone = Math.random() > 0.3;
-                const hasMail = Math.random() > 0.35;
-                const hasSSN = Math.random() > 0.5;
-                const hasDOB = Math.random() > 0.4;
+            // Check if admin has stocked products first
+            const adminProducts = getAllAdminStock();
+            
+            if (adminProducts.length > 0) {
+                // Use admin products instead of generating random ones
+                // Convert admin products to shop format
+                allProducts = adminProducts.map((p, index) => ({
+                    id: p.id || (index + 1),
+                    bin: p.bin,
+                    brand: p.brand || 'VISA',
+                    type: p.type || 'CREDIT',
+                    country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
+                    hasName: p.hasName !== undefined ? p.hasName : true,
+                    hasAddress: p.hasAddress !== undefined ? p.hasAddress : false,
+                    hasZip: p.hasZip !== undefined ? p.hasZip : true,
+                    hasPhone: p.hasPhone !== undefined ? p.hasPhone : false,
+                    hasMail: p.hasMail !== undefined ? p.hasMail : true,
+                    hasSSN: p.hasSSN !== undefined ? p.hasSSN : true,
+                    hasDOB: p.hasDOB !== undefined ? p.hasDOB : true,
+                    bank: p.bank || 'REVOLUT, LTD.',
+                    base: p.base || '2025_12_27_US_Base',
+                    refundable: p.refundable !== undefined ? p.refundable : true,
+                    price: p.price || '10.00'
+                }));
+            } else {
+                // No admin products, generate default products
+                allProducts = [];
+                for (let i = 0; i < PRODUCTS_PER_PAGE * TOTAL_PAGES; i++) {
+                    const country = countries[Math.floor(Math.random() * countries.length)];
+                    const hasName = Math.random() > 0.3;
+                    const hasAddress = Math.random() > 0.3;
+                    const hasZip = Math.random() > 0.25;
+                    const hasPhone = Math.random() > 0.3;
+                    const hasMail = Math.random() > 0.35;
+                    const hasSSN = Math.random() > 0.5;
+                    const hasDOB = Math.random() > 0.4;
 
-                allProducts.push({
-                    id: i + 1,
-                    bin: (400000 + Math.floor(Math.random() * 200000)).toString(),
-                    brand: brands[Math.floor(Math.random() * brands.length)],
-                    type: types[Math.floor(Math.random() * types.length)],
-                    country: country,
-                    hasName: hasName,
-                    hasAddress: hasAddress,
-                    hasZip: hasZip,
-                    hasPhone: hasPhone,
-                    hasMail: hasMail,
-                    hasSSN: hasSSN,
-                    hasDOB: hasDOB,
-                    bank: banks[Math.floor(Math.random() * banks.length)],
-                    base: '2025_12_27_' + bases[Math.floor(Math.random() * bases.length)],
-                    refundable: true,
-                    price: (Math.random() * 6.5 + 8.5).toFixed(2)
-                });
+                    allProducts.push({
+                        id: i + 1,
+                        bin: (400000 + Math.floor(Math.random() * 200000)).toString(),
+                        brand: brands[Math.floor(Math.random() * brands.length)],
+                        type: types[Math.floor(Math.random() * types.length)],
+                        country: country,
+                        hasName: hasName,
+                        hasAddress: hasAddress,
+                        hasZip: hasZip,
+                        hasPhone: hasPhone,
+                        hasMail: hasMail,
+                        hasSSN: hasSSN,
+                        hasDOB: hasDOB,
+                        bank: banks[Math.floor(Math.random() * banks.length)],
+                        base: '2025_12_27_' + bases[Math.floor(Math.random() * bases.length)],
+                        refundable: true,
+                        price: (Math.random() * 6.5 + 8.5).toFixed(2)
+                    });
+                }
             }
+            
             // Store original products and set filtered products to all products initially
             originalProducts = [...allProducts];
             filteredProducts = [...allProducts];
@@ -5946,8 +6052,13 @@
         // Make globally accessible
         window.addToCartById = addToCartById;
 
-        // Initialize products on load
+        // Initialize products on load - check for admin stock first
         generateProducts();
+        
+        // Also load admin products when page loads (in case admin is logged in)
+        if (userData && isAdmin(userData.username)) {
+            loadAdminProductsToShop();
+        }
 
         // Product Functions
         function resetFilters() {
