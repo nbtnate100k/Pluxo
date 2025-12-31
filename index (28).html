@@ -2505,6 +2505,30 @@
             padding: 0 4px;
         }
         
+        /* Optimistic UI states */
+        .chat-message.pending .message-bubble {
+            opacity: 0.6;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .chat-message.failed .message-bubble {
+            border: 1px solid #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .chat-message.failed .message-meta {
+            color: #ef4444;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+        
         .chat-input-area {
             padding: 16px;
             border-top: 1px solid var(--gray-border);
@@ -6918,38 +6942,85 @@
         window.currentAdminChatId = null;
         
         // Get user's chat ID (one chat per user)
+        /*
+         * ====================================================================
+         * FIRESTORE SECURITY RULES - REQUIRED FOR CHAT SYSTEM
+         * ====================================================================
+         * 
+         * Copy these rules to Firebase Console → Firestore → Rules
+         * 
+         * rules_version = '2';
+         * service cloud.firestore {
+         *   match /databases/{database}/documents {
+         *     
+         *     match /chats/{chatId} {
+         *       // User can read/create/update their own chat
+         *       // Using request.resource.data for creates (when resource.data doesn't exist yet)
+         *       allow read, create, update: if request.auth != null &&
+         *         (request.resource.data.userId == request.auth.uid ||
+         *          resource.data.userId == request.auth.uid);
+         *       
+         *       // Admin can read all chats
+         *       allow read: if request.auth != null &&
+         *         get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.isAdmin == true;
+         *       
+         *       // Messages subcollection
+         *       match /messages/{messageId} {
+         *         // User can create messages in their own chat
+         *         allow create: if request.auth != null &&
+         *           get(/databases/$(database)/documents/chats/$(chatId)).data.userId == request.auth.uid;
+         *         
+         *         // Admin can create/update messages in any chat
+         *         allow create, update: if request.auth != null &&
+         *           get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.isAdmin == true;
+         *         
+         *         // Anyone authenticated can read messages
+         *         allow read: if request.auth != null;
+         *       }
+         *     }
+         *   }
+         * }
+         * 
+         * IMPORTANT NOTES:
+         * - Use request.resource.data for creates (when document doesn't exist yet)
+         * - Use resource.data for reads/updates (when document exists)
+         * - Messages are stored in subcollections: chats/{chatId}/messages/{messageId}
+         * - Chat documents do NOT contain a messages array
+         * ====================================================================
+         */
+        
         function getUserChatId() {
             if (!userData || !userData.firebaseUID) return null;
             return 'CHAT_' + userData.firebaseUID;
         }
         
-        // Create or get user chat
+        // Create or get user chat (chat document only, no messages array)
         async function getUserChat() {
             const chatId = getUserChatId();
             if (!chatId) return null;
             
             try {
+                await window.firebaseReady;
                 const firestoreDb = window.db;
                 const firestore = window.firestoreFunctions;
                 
                 if (!firestoreDb || !firestore) return null;
                 
-                const { doc, getDoc, setDoc } = firestore;
+                const { doc, getDoc, setDoc, serverTimestamp } = firestore;
                 const chatRef = doc(firestoreDb, 'chats', chatId);
                 const chatDoc = await getDoc(chatRef);
                 
                 if (chatDoc.exists()) {
                     return { id: chatDoc.id, ...chatDoc.data() };
                 } else {
-                    // Create new chat
+                    // Create new chat document (no messages array)
                     const newChat = {
                         id: chatId,
                         userId: userData.firebaseUID,
                         username: userData.username,
                         status: 'open',
-                        createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString(),
-                        messages: []
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
                     };
                     await setDoc(chatRef, newChat);
                     return newChat;
@@ -6967,70 +7038,262 @@
                 return;
             }
             
-            // Navigate to chat page
-            const chatNav = document.querySelector('.nav-item[onclick*="chat"]');
-            if (chatNav) {
-                showPage('chat', chatNav);
-            }
-            
-            // Check if user already has a message about funds
-            const chat = await getUserChat();
-            const hasFundsMessage = chat?.messages?.some(m => 
-                m.text.toLowerCase().includes('add funds') || 
-                m.text.toLowerCase().includes('bitcoin') ||
-                m.text.toLowerCase().includes('btc')
-            );
-            
-            // If no funds-related message exists, send initial message
-            if (!hasFundsMessage) {
+            // Show info message first
+            showInfo('To load funds contact support in chatbot. Shouldn\'t take longer than 10 min', 'Add Funds', () => {
+                // Navigate to chat page after user clicks OK
+                const chatNav = document.querySelector('.nav-item[onclick*="chat"]');
+                if (chatNav) {
+                    showPage('chat', chatNav);
+                }
+                
+                // Check if user already has a message about funds
                 setTimeout(async () => {
                     try {
-                        const firestoreDb = window.db;
-                        const firestore = window.firestoreFunctions;
-                        
-                        if (!firestoreDb || !firestore) {
-                            // Wait a bit for Firebase
-                            await new Promise(resolve => setTimeout(resolve, 1000));
-                        }
-                        
+                        await window.firebaseReady;
                         const chatId = getUserChatId();
                         if (!chatId) return;
                         
-                        const { doc, getDoc, updateDoc } = firestore;
-                        const chatRef = doc(firestoreDb, 'chats', chatId);
-                        const chatDoc = await getDoc(chatRef);
+                        const firestoreDb = window.db;
+                        const firestore = window.firestoreFunctions;
                         
-                        let chatData = { messages: [] };
-                        if (chatDoc.exists()) {
-                            chatData = chatDoc.data();
+                        if (!firestoreDb || !firestore) return;
+                        
+                        // Check if funds message already exists in subcollection
+                        const { collection, query, where, getDocs } = firestore;
+                        const messagesRef = collection(firestoreDb, 'chats', chatId, 'messages');
+                        const fundsQuery = query(
+                            messagesRef, 
+                            where('text', '>=', 'add funds'),
+                            where('text', '<=', 'add funds\uf8ff')
+                        );
+                        const snapshot = await getDocs(fundsQuery);
+                        
+                        const hasFundsMessage = !snapshot.empty || 
+                            Array.from(snapshot.docs).some(doc => {
+                                const text = doc.data().text?.toLowerCase() || '';
+                                return text.includes('add funds') || text.includes('bitcoin') || text.includes('btc');
+                            });
+                        
+                        // If no funds-related message exists, send initial message
+                        if (!hasFundsMessage) {
+                            // Ensure chat document exists first
+                            await getUserChat();
+                            
+                            const { collection, addDoc, doc, updateDoc, serverTimestamp } = firestore;
+                            
+                            // Add initial message to subcollection (chats/{chatId}/messages/{messageId})
+                            const messagesRef = collection(firestoreDb, 'chats', chatId, 'messages');
+                            await addDoc(messagesRef, {
+                                text: 'Hi, I would like to add funds. Please send me a Bitcoin address so I can send payment.',
+                                sender: 'user',
+                                senderName: userData.username,
+                                timestamp: serverTimestamp(),
+                                read: false
+                            });
+                            
+                            // Update chat document's updatedAt timestamp
+                            const chatRef = doc(firestoreDb, 'chats', chatId);
+                            await updateDoc(chatRef, {
+                                updatedAt: serverTimestamp(),
+                                status: 'open'
+                            });
                         }
-                        
-                        const initialMessage = {
-                            text: 'Hi, I would like to add funds. Please send me a Bitcoin address so I can send payment.',
-                            sender: 'user',
-                            senderName: userData.username,
-                            timestamp: new Date().toISOString()
-                        };
-                        
-                        const updatedMessages = [...(chatData.messages || []), initialMessage];
-                        
-                        await updateDoc(chatRef, {
-                            messages: updatedMessages,
-                            updatedAt: new Date().toISOString(),
-                            status: 'open'
-                        });
-                        
-                        await loadUserChat();
                     } catch (error) {
                         console.error('Error sending initial funds message:', error);
                     }
                 }, 500);
-            }
+            });
         }
         
         window.openAddFundsChat = openAddFundsChat;
         
-        // Load user chat messages
+        // Store unsubscribe functions for cleanup
+        let userChatUnsubscribe = null;
+        let adminChatUnsubscribe = null;
+        
+        // Note: clientId is used for reconciliation instead of tracking pending messages
+        
+        // Add message to UI optimistically (instant rendering)
+        function addMessageToUI(message, isPending = false) {
+            const messagesEl = document.getElementById('userChatMessages');
+            if (!messagesEl) return null;
+            
+            // Remove empty state if present
+            const emptyState = messagesEl.querySelector('.empty-chat');
+            if (emptyState) {
+                emptyState.remove();
+            }
+            
+            const bubble = document.createElement('div');
+            const isUser = message.sender === 'user';
+            bubble.className = `chat-message ${isUser ? 'user' : 'admin'} ${isPending ? 'pending' : ''}`;
+            
+            // Store clientId for reconciliation
+            if (message.clientId) {
+                bubble.dataset.clientId = message.clientId;
+            }
+            if (message.id) {
+                bubble.dataset.messageId = message.id;
+            }
+            
+            let safeMessage;
+            try {
+                safeMessage = sanitizeInput(message.text || '');
+            } catch {
+                safeMessage = '[Invalid message]';
+            }
+            
+            const time = message.timestamp instanceof Date 
+                ? message.timestamp.toLocaleString() 
+                : (message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date().toLocaleString());
+            
+            bubble.innerHTML = `
+                <div class="message-bubble">${safeMessage}</div>
+                <div class="message-meta">${isPending ? 'Sending…' : time}</div>
+            `;
+            
+            messagesEl.appendChild(bubble);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+            
+            return bubble;
+        }
+        
+        // Add admin message to UI optimistically
+        function addAdminMessageToUI(message, isPending = false) {
+            const messagesEl = document.getElementById('adminChatMessages');
+            if (!messagesEl) return null;
+            
+            const emptyState = messagesEl.querySelector('.empty-chat');
+            if (emptyState) {
+                emptyState.remove();
+            }
+            
+            const bubble = document.createElement('div');
+            const isAdmin = message.sender === 'admin';
+            bubble.className = `chat-message ${isAdmin ? 'admin' : 'user'} ${isPending ? 'pending' : ''}`;
+            
+            // Store clientId for reconciliation
+            if (message.clientId) {
+                bubble.dataset.clientId = message.clientId;
+            }
+            if (message.id) {
+                bubble.dataset.messageId = message.id;
+            }
+            
+            let safeMessage;
+            try {
+                safeMessage = sanitizeInput(message.text || '');
+            } catch {
+                safeMessage = '[Invalid message]';
+            }
+            
+            const time = message.timestamp instanceof Date 
+                ? message.timestamp.toLocaleString() 
+                : (message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date().toLocaleString());
+            
+            bubble.innerHTML = `
+                <div class="message-bubble">${safeMessage}</div>
+                <div class="message-meta">${message.senderName || (isAdmin ? 'Admin' : 'User')} • ${isPending ? 'Sending…' : time}</div>
+            `;
+            
+            messagesEl.appendChild(bubble);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+            
+            return bubble;
+        }
+        
+        // Render message from Firestore (reconciles with pending messages)
+        function renderMessageFromFirestore(msg, isAdminChat = false) {
+            const messagesEl = isAdminChat 
+                ? document.getElementById('adminChatMessages')
+                : document.getElementById('userChatMessages');
+            
+            if (!messagesEl) return;
+            
+            // DEBUG: Log reconciliation attempt
+            console.log('RECONCILE', {
+                clientId: msg.clientId,
+                messageId: msg.id,
+                text: msg.text?.substring(0, 20),
+                hasTimestamp: !!msg.timestamp
+            });
+            
+            // If message has clientId, find and update pending bubble
+            if (msg.clientId) {
+                // Try exact match first
+                let pendingBubble = messagesEl.querySelector(`.chat-message.pending[data-client-id="${msg.clientId}"]`);
+                
+                // Fallback: try without .pending class (in case it was already removed)
+                if (!pendingBubble) {
+                    pendingBubble = messagesEl.querySelector(`.chat-message[data-client-id="${msg.clientId}"]`);
+                }
+                
+                if (pendingBubble) {
+                    console.log('✅ MATCHED pending bubble by clientId:', msg.clientId);
+                    
+                    // Replace pending state with confirmed message
+                    pendingBubble.classList.remove('pending');
+                    if (msg.id) {
+                        pendingBubble.dataset.messageId = msg.id;
+                    }
+                    
+                    const metaEl = pendingBubble.querySelector('.message-meta');
+                    if (metaEl) {
+                        // Handle serverTimestamp() - might be null initially
+                        let timestamp;
+                        if (msg.timestamp?.toDate) {
+                            timestamp = msg.timestamp.toDate();
+                        } else if (msg.timestamp) {
+                            timestamp = new Date(msg.timestamp);
+                        } else {
+                            timestamp = new Date(); // Fallback for serverTimestamp() pending
+                        }
+                        
+                        if (isAdminChat) {
+                            metaEl.textContent = `${msg.senderName || (msg.sender === 'admin' ? 'Admin' : 'User')} • ${timestamp.toLocaleString()}`;
+                        } else {
+                            metaEl.textContent = timestamp.toLocaleString();
+                        }
+                    }
+                    return; // ⛔ CRITICAL: Stop here to prevent duplicate
+                } else {
+                    console.log('❌ No pending bubble found for clientId:', msg.clientId);
+                    // Log all pending bubbles for debugging
+                    const allPending = messagesEl.querySelectorAll('.chat-message.pending');
+                    console.log('Pending bubbles:', Array.from(allPending).map(b => ({
+                        clientId: b.dataset.clientId,
+                        text: b.querySelector('.message-bubble')?.textContent?.substring(0, 20)
+                    })));
+                }
+            } else {
+                console.log('⚠️ Message has no clientId:', msg);
+            }
+            
+            // Check if message already exists by ID (prevent duplicates)
+            if (msg.id) {
+                const existingBubble = messagesEl.querySelector(`[data-message-id="${msg.id}"]`);
+                if (existingBubble) {
+                    console.log('⚠️ Message already rendered by ID:', msg.id);
+                    return; // Already rendered
+                }
+            }
+            
+            // New message from Firestore (not from optimistic UI)
+            const message = {
+                id: msg.id,
+                ...msg,
+                timestamp: msg.timestamp?.toDate ? msg.timestamp.toDate() : (msg.timestamp ? new Date(msg.timestamp) : new Date())
+            };
+            
+            console.log('➕ Adding new message (not from optimistic UI)');
+            if (isAdminChat) {
+                addAdminMessageToUI(message, false);
+            } else {
+                addMessageToUI(message, false);
+            }
+        }
+        
+        // Load user chat messages using real-time listener (with incremental updates)
         async function loadUserChat() {
             if (!userData || !userData.firebaseUID) {
                 const messagesEl = document.getElementById('userChatMessages');
@@ -7040,32 +7303,83 @@
                 return;
             }
             
-            const chat = await getUserChat();
+            // Unsubscribe from previous listener
+            if (userChatUnsubscribe) {
+                userChatUnsubscribe();
+                userChatUnsubscribe = null;
+            }
+            
+            const chatId = getUserChatId();
+            if (!chatId) return;
+            
+            // Ensure chat document exists
+            await getUserChat();
+            
             const messagesEl = document.getElementById('userChatMessages');
             if (!messagesEl) return;
             
-            if (!chat || !chat.messages || chat.messages.length === 0) {
-                messagesEl.innerHTML = '<div class="empty-chat"><div class="empty-chat-icon">💬</div><p>Start a conversation by sending a message below</p></div>';
-                return;
-            }
-            
-            messagesEl.innerHTML = chat.messages.map(msg => {
-                const isUser = msg.sender === 'user';
-                const safeMessage = sanitizeInput(msg.text);
-                const time = new Date(msg.timestamp).toLocaleString();
+            try {
+                await window.firebaseReady;
+                const firestoreDb = window.db;
+                const firestore = window.firestoreFunctions;
                 
-                return `
-                    <div class="chat-message ${isUser ? 'user' : 'admin'}">
-                        <div class="message-bubble">${safeMessage}</div>
-                        <div class="message-meta">${time}</div>
-                    </div>
-                `;
-            }).join('');
-            
-            messagesEl.scrollTop = messagesEl.scrollHeight;
+                if (!firestoreDb || !firestore) return;
+                
+                const { collection, query, orderBy, onSnapshot } = firestore;
+                const messagesRef = collection(firestoreDb, 'chats', chatId, 'messages');
+                const q = query(messagesRef, orderBy('timestamp', 'asc'));
+                
+                // Set up real-time listener with incremental updates
+                userChatUnsubscribe = onSnapshot(q, (snapshot) => {
+                    // DEBUG: Log snapshot events
+                    console.log('📡 SNAPSHOT FIRED', {
+                        changes: snapshot.docChanges().length,
+                        totalDocs: snapshot.size
+                    });
+                    
+                    // Use docChanges() for incremental updates
+                    snapshot.docChanges().forEach(change => {
+                        console.log('📝 CHANGE', change.type, {
+                            id: change.doc.id,
+                            data: change.doc.data()
+                        });
+                        
+                        if (change.type === 'added') {
+                            const data = change.doc.data();
+                            const message = {
+                                id: change.doc.id,
+                                ...data,
+                                timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : (data.timestamp ? new Date(data.timestamp) : null)
+                            };
+                            
+                            // Render message (will reconcile with pending if clientId matches)
+                            renderMessageFromFirestore(message, false);
+                        }
+                    });
+                    
+                    // If no messages, show empty state
+                    if (messagesEl.children.length === 0 || 
+                        (messagesEl.children.length === 1 && messagesEl.querySelector('.empty-chat'))) {
+                        messagesEl.innerHTML = '<div class="empty-chat"><div class="empty-chat-icon">💬</div><p>Start a conversation by sending a message below</p></div>';
+                    }
+                    
+                    messagesEl.scrollTop = messagesEl.scrollHeight;
+                }, (error) => {
+                    console.error('Error loading chat messages:', error);
+                    if (messagesEl.children.length === 0) {
+                        messagesEl.innerHTML = '<div class="empty-chat"><p>Error loading messages. Please refresh.</p></div>';
+                    }
+                });
+            } catch (error) {
+                console.error('Error setting up chat listener:', error);
+                const messagesEl = document.getElementById('userChatMessages');
+                if (messagesEl && messagesEl.children.length === 0) {
+                    messagesEl.innerHTML = '<div class="empty-chat"><p>Error loading messages. Please refresh.</p></div>';
+                }
+            }
         }
         
-        // Send user message
+        // Send user message with optimistic UI (instant feedback)
         async function sendUserMessage() {
             if (!userData || !userData.firebaseUID) {
                 showError('Please login to send messages');
@@ -7074,114 +7388,290 @@
             
             const input = document.getElementById('userChatInput');
             const sendBtn = document.getElementById('userChatSendBtn');
-            const message = input?.value.trim();
+            const messageText = input?.value.trim();
             
-            if (!message) return;
+            if (!messageText) return;
             
-            if (sendBtn) {
-                sendBtn.disabled = true;
-                sendBtn.textContent = 'Sending...';
+            // Clear input immediately for better UX
+            input.value = '';
+            
+            // Don't disable button - it adds perceived lag
+            // if (sendBtn) {
+            //     sendBtn.disabled = true;
+            //     sendBtn.textContent = 'Sending...';
+            // }
+            
+            // Generate clientId for message reconciliation
+            const clientId = crypto.randomUUID ? crypto.randomUUID() : `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            
+            console.log('📤 SENDING MESSAGE', {
+                clientId: clientId,
+                text: messageText.substring(0, 20)
+            });
+            
+            // Show message instantly (optimistic UI)
+            const tempMessage = {
+                text: messageText,
+                sender: 'user',
+                senderName: userData.username,
+                timestamp: new Date(),
+                clientId: clientId
+            };
+            const pendingBubble = addMessageToUI(tempMessage, true);
+            
+            // Verify pending bubble was created with clientId
+            if (pendingBubble) {
+                console.log('✅ Pending bubble created', {
+                    hasClientId: !!pendingBubble.dataset.clientId,
+                    clientId: pendingBubble.dataset.clientId,
+                    selector: `.chat-message.pending[data-client-id="${clientId}"]`
+                });
+            } else {
+                console.error('❌ Failed to create pending bubble');
             }
             
             try {
+                // Wait for Firebase initialization
+                await window.firebaseReady;
                 const firestoreDb = window.db;
                 const firestore = window.firestoreFunctions;
                 
                 if (!firestoreDb || !firestore) {
-                    throw new Error('Firebase not initialized');
+                    throw new Error('Firebase not initialized. Please refresh and try again.');
                 }
                 
                 const chatId = getUserChatId();
-                const { doc, getDoc, updateDoc } = firestore;
-                const chatRef = doc(firestoreDb, 'chats', chatId);
-                const chatDoc = await getDoc(chatRef);
-                
-                let chat = { messages: [] };
-                if (chatDoc.exists()) {
-                    chat = chatDoc.data();
+                if (!chatId) {
+                    throw new Error('Unable to get chat ID');
                 }
                 
-                const newMessage = {
-                    text: message,
+                // Ensure chat document exists (creates if doesn't exist)
+                await getUserChat();
+                
+                const { collection, addDoc, doc, updateDoc, serverTimestamp } = firestore;
+                
+                // Add message to subcollection (background write) with clientId
+                const messagesRef = collection(firestoreDb, 'chats', chatId, 'messages');
+                const messageData = {
+                    text: messageText,
                     sender: 'user',
                     senderName: userData.username,
-                    timestamp: new Date().toISOString()
+                    timestamp: serverTimestamp(),
+                    read: false,
+                    clientId: clientId // Key for reconciliation
                 };
                 
-                const updatedMessages = [...(chat.messages || []), newMessage];
+                console.log('💾 Writing to Firestore', {
+                    clientId: clientId,
+                    chatId: chatId,
+                    hasClientId: !!messageData.clientId
+                });
                 
+                await addDoc(messagesRef, messageData);
+                
+                console.log('✅ Firestore write complete');
+                
+                // Update chat document's updatedAt timestamp
+                const chatRef = doc(firestoreDb, 'chats', chatId);
                 await updateDoc(chatRef, {
-                    messages: updatedMessages,
-                    updatedAt: new Date().toISOString(),
+                    updatedAt: serverTimestamp(),
                     status: 'open'
                 });
                 
-                input.value = '';
-                await loadUserChat();
-                showSuccess('Message sent!');
+                // onSnapshot will automatically reconcile the pending message via clientId
             } catch (error) {
                 console.error('Error sending message:', error);
-                showError('Failed to send message. Please try again.');
-            } finally {
-                if (sendBtn) {
-                    sendBtn.disabled = false;
-                    sendBtn.textContent = 'Send';
+                
+                // Mark as failed
+                if (pendingBubble) {
+                    pendingBubble.classList.remove('pending');
+                    pendingBubble.classList.add('failed');
+                    const metaEl = pendingBubble.querySelector('.message-meta');
+                    if (metaEl) {
+                        metaEl.textContent = 'Failed to send • Tap to retry';
+                        metaEl.style.cursor = 'pointer';
+                        metaEl.onclick = () => {
+                            input.value = messageText;
+                            pendingBubble.remove();
+                            sendUserMessage();
+                        };
+                    }
                 }
+                
+                let errorMsg = 'Failed to send message. Please try again.';
+                if (error.code === 'permission-denied') {
+                    errorMsg = 'Permission denied. Please check your account permissions.';
+                } else if (error.code === 'unavailable') {
+                    errorMsg = 'Service temporarily unavailable. Please try again.';
+                } else if (error.message) {
+                    errorMsg = `Error: ${error.message}`;
+                }
+                
+                // Show error but don't block UI
+                console.error('Send error:', errorMsg);
             }
         }
         
-        // Load all chats for admin
+        // Load all chats for admin (with real-time updates)
         async function loadAdminChats() {
-            if (!canAccessAdminChat(userData?.username)) return;
+            if (!canAccessAdminChat(userData?.username)) {
+                console.log('❌ Admin chat access denied for:', userData?.username);
+                return;
+            }
+            
+            console.log('🔍 Loading admin chats...');
             
             try {
+                await window.firebaseReady;
                 const firestoreDb = window.db;
                 const firestore = window.firestoreFunctions;
                 
-                if (!firestoreDb || !firestore) return;
-                
-                const { collection, getDocs, query, orderBy } = firestore;
-                const chatsRef = collection(firestoreDb, 'chats');
-                const q = query(chatsRef, orderBy('updatedAt', 'desc'));
-                const snapshot = await getDocs(q);
-                
-                const chats = [];
-                snapshot.forEach(doc => {
-                    chats.push({ id: doc.id, ...doc.data() });
-                });
-                
-                const chatListEl = document.getElementById('adminChatList');
-                if (!chatListEl) return;
-                
-                if (chats.length === 0) {
-                    chatListEl.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 20px;">No active chats</p>';
+                if (!firestoreDb || !firestore) {
+                    console.error('❌ Firebase not initialized');
                     return;
                 }
                 
-                chatListEl.innerHTML = chats.map(chat => {
-                    const lastMessage = chat.messages && chat.messages.length > 0 
-                        ? chat.messages[chat.messages.length - 1] 
-                        : null;
-                    const preview = lastMessage ? lastMessage.text.substring(0, 50) : 'No messages yet';
-                    const time = lastMessage ? new Date(lastMessage.timestamp).toLocaleString() : new Date(chat.createdAt).toLocaleString();
-                    const unreadCount = chat.messages ? chat.messages.filter(m => m.sender === 'user' && !m.read).length : 0;
-                    const isActive = chat.id === currentAdminChatId;
+                const { collection, query, orderBy, onSnapshot, getDocs } = firestore;
+                const chatsRef = collection(firestoreDb, 'chats');
+                
+                const chatListEl = document.getElementById('adminChatList');
+                if (!chatListEl) {
+                    console.error('❌ adminChatList element not found');
+                    return;
+                }
+                
+                // Try to query with orderBy, but fallback if it fails
+                let q;
+                try {
+                    q = query(chatsRef, orderBy('updatedAt', 'desc'));
+                } catch (orderByError) {
+                    console.warn('⚠️ orderBy failed, trying without:', orderByError);
+                    // Fallback: get all chats without ordering
+                    q = chatsRef;
+                }
+                
+                // Set up real-time listener for chat list
+                console.log('📡 Setting up admin chats listener...');
+                onSnapshot(q, async (snapshot) => {
+                    console.log('📡 ADMIN CHATS SNAPSHOT FIRED', {
+                        size: snapshot.size,
+                        empty: snapshot.empty
+                    });
                     
-                    return `
-                        <div class="chat-item ${isActive ? 'active' : ''}" onclick="selectAdminChat('${chat.id}')">
-                            <div class="chat-item-header">
-                                <div class="chat-item-user">
-                                    ${sanitizeInput(chat.username || 'Unknown')}
-                                    ${unreadCount > 0 ? '<span class="chat-item-unread"></span>' : ''}
+                    const chats = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        chats.push({ 
+                            id: doc.id, 
+                            ...data,
+                            createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : (data.createdAt ? new Date(data.createdAt) : new Date()),
+                            updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : (data.updatedAt ? new Date(data.updatedAt) : new Date())
+                        });
+                    });
+                    
+                    console.log('📋 Found chats:', chats.length, chats.map(c => ({ id: c.id, username: c.username })));
+                    
+                    if (chats.length === 0) {
+                        chatListEl.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 20px;">No active chats</p>';
+                        return;
+                    }
+                    
+                    // Sort manually if orderBy failed
+                    chats.sort((a, b) => {
+                        const aTime = a.updatedAt || a.createdAt || new Date(0);
+                        const bTime = b.updatedAt || b.createdAt || new Date(0);
+                        return bTime - aTime; // Descending
+                    });
+                    
+                    // Get last message and unread count for each chat
+                    const chatsWithMetadata = await Promise.all(chats.map(async (chat) => {
+                        try {
+                            const messagesRef = collection(firestoreDb, 'chats', chat.id, 'messages');
+                            let messagesQuery;
+                            try {
+                                messagesQuery = query(messagesRef, orderBy('timestamp', 'desc'));
+                            } catch (e) {
+                                // Fallback if orderBy fails
+                                messagesQuery = messagesRef;
+                            }
+                            const messagesSnapshot = await getDocs(messagesQuery);
+                            
+                            const messages = [];
+                            messagesSnapshot.forEach(msgDoc => {
+                                const msgData = msgDoc.data();
+                                messages.push({
+                                    id: msgDoc.id,
+                                    ...msgData,
+                                    timestamp: msgData.timestamp?.toDate ? msgData.timestamp.toDate() : (msgData.timestamp ? new Date(msgData.timestamp) : new Date())
+                                });
+                            });
+                            
+                            // Sort manually if orderBy failed
+                            messages.sort((a, b) => b.timestamp - a.timestamp);
+                            
+                            const lastMessage = messages[0] || null;
+                            const unreadCount = messages.filter(m => m.sender === 'user' && !m.read).length;
+                            
+                            return {
+                                ...chat,
+                                lastMessage,
+                                unreadCount,
+                                messageCount: messages.length
+                            };
+                        } catch (error) {
+                            console.error(`❌ Error loading metadata for chat ${chat.id}:`, error);
+                            return {
+                                ...chat,
+                                lastMessage: null,
+                                unreadCount: 0,
+                                messageCount: 0
+                            };
+                        }
+                    }));
+                    
+                    console.log('✅ Rendering', chatsWithMetadata.length, 'chats');
+                    
+                    chatListEl.innerHTML = chatsWithMetadata.map(chat => {
+                        const preview = chat.lastMessage ? chat.lastMessage.text.substring(0, 50) : 'No messages yet';
+                        const time = chat.lastMessage 
+                            ? (chat.lastMessage.timestamp instanceof Date ? chat.lastMessage.timestamp.toLocaleString() : new Date(chat.lastMessage.timestamp).toLocaleString())
+                            : (chat.createdAt instanceof Date ? chat.createdAt.toLocaleString() : new Date(chat.createdAt).toLocaleString());
+                        const unreadCount = chat.unreadCount || 0;
+                        const isActive = chat.id === currentAdminChatId;
+                        
+                        let safeUsername, safePreview;
+                        try {
+                            safeUsername = sanitizeInput(chat.username || 'Unknown');
+                            safePreview = sanitizeInput(preview);
+                        } catch {
+                            safeUsername = 'Unknown';
+                            safePreview = '[Invalid preview]';
+                        }
+                        
+                        return `
+                            <div class="chat-item ${isActive ? 'active' : ''}" onclick="selectAdminChat('${chat.id}')">
+                                <div class="chat-item-header">
+                                    <div class="chat-item-user">
+                                        ${safeUsername}
+                                        ${unreadCount > 0 ? '<span class="chat-item-unread"></span>' : ''}
+                                    </div>
+                                    <div class="chat-item-time">${time}</div>
                                 </div>
-                                <div class="chat-item-time">${time}</div>
+                                <div class="chat-item-preview">${safePreview}</div>
                             </div>
-                            <div class="chat-item-preview">${sanitizeInput(preview)}</div>
-                        </div>
-                    `;
-                }).join('');
+                        `;
+                    }).join('');
+                }, (error) => {
+                    console.error('❌ Error loading admin chats:', error);
+                    console.error('Error details:', {
+                        code: error.code,
+                        message: error.message,
+                        stack: error.stack
+                    });
+                    chatListEl.innerHTML = `<p style="color: var(--red); text-align: center; padding: 20px;">Error loading chats: ${error.message || 'Unknown error'}</p>`;
+                });
             } catch (error) {
-                console.error('Error loading admin chats:', error);
+                console.error('Error setting up admin chats listener:', error);
             }
         }
         
@@ -7196,17 +7686,24 @@
             if (inputArea) inputArea.style.display = 'flex';
         }
         
-        // Load messages for selected chat
+        // Load messages for selected chat (using real-time listener with incremental updates)
         async function loadAdminChatMessages(chatId) {
             if (!chatId) return;
             
+            // Unsubscribe from previous listener
+            if (adminChatUnsubscribe) {
+                adminChatUnsubscribe();
+                adminChatUnsubscribe = null;
+            }
+            
             try {
+                await window.firebaseReady;
                 const firestoreDb = window.db;
                 const firestore = window.firestoreFunctions;
                 
                 if (!firestoreDb || !firestore) return;
                 
-                const { doc, getDoc, updateDoc } = firestore;
+                const { doc, getDoc, updateDoc, collection, query, orderBy, onSnapshot } = firestore;
                 const chatRef = doc(firestoreDb, 'chats', chatId);
                 const chatDoc = await getDoc(chatRef);
                 
@@ -7235,40 +7732,74 @@
                 
                 if (!messagesEl) return;
                 
-                if (!chat.messages || chat.messages.length === 0) {
-                    messagesEl.innerHTML = '<div class="empty-chat"><p>No messages yet</p></div>';
-                    return;
-                }
+                // Set up real-time listener with incremental updates
+                const messagesRef = collection(firestoreDb, 'chats', chatId, 'messages');
+                const q = query(messagesRef, orderBy('timestamp', 'asc'));
                 
-                messagesEl.innerHTML = chat.messages.map(msg => {
-                    const isAdmin = msg.sender === 'admin';
-                    const safeMessage = sanitizeInput(msg.text);
-                    const time = new Date(msg.timestamp).toLocaleString();
+                adminChatUnsubscribe = onSnapshot(q, async (snapshot) => {
+                    // DEBUG: Log snapshot events
+                    console.log('📡 ADMIN SNAPSHOT FIRED', {
+                        changes: snapshot.docChanges().length,
+                        totalDocs: snapshot.size
+                    });
                     
-                    return `
-                        <div class="chat-message ${isAdmin ? 'admin' : 'user'}">
-                            <div class="message-bubble">${safeMessage}</div>
-                            <div class="message-meta">${msg.senderName || (isAdmin ? 'Admin' : 'User')} • ${time}</div>
-                        </div>
-                    `;
-                }).join('');
-                
-                messagesEl.scrollTop = messagesEl.scrollHeight;
-                
-                // Mark messages as read
-                const unreadMessages = chat.messages.filter(m => m.sender === 'user' && !m.read);
-                if (unreadMessages.length > 0) {
-                    const updatedMessages = chat.messages.map(m => 
-                        m.sender === 'user' && !m.read ? { ...m, read: true } : m
-                    );
-                    await updateDoc(chatRef, { messages: updatedMessages });
-                }
+                    // Use docChanges() for incremental updates
+                    snapshot.docChanges().forEach(change => {
+                        console.log('📝 ADMIN CHANGE', change.type, {
+                            id: change.doc.id,
+                            data: change.doc.data()
+                        });
+                        
+                        if (change.type === 'added') {
+                            const data = change.doc.data();
+                            const message = {
+                                id: change.doc.id,
+                                ...data,
+                                timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : (data.timestamp ? new Date(data.timestamp) : null)
+                            };
+                            
+                            // Render message (will reconcile with pending if clientId matches)
+                            renderMessageFromFirestore(message, true);
+                        }
+                    });
+                    
+                    // If no messages, show empty state
+                    if (messagesEl.children.length === 0 || 
+                        (messagesEl.children.length === 1 && messagesEl.querySelector('.empty-chat'))) {
+                        messagesEl.innerHTML = '<div class="empty-chat"><p>No messages yet</p></div>';
+                    }
+                    
+                    messagesEl.scrollTop = messagesEl.scrollHeight;
+                    
+                    // Mark unread messages as read
+                    const unreadMessages = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        if (data.sender === 'user' && !data.read) {
+                            unreadMessages.push({ id: doc.id, ...data });
+                        }
+                    });
+                    
+                    if (unreadMessages.length > 0) {
+                        const batch = [];
+                        unreadMessages.forEach(msg => {
+                            const msgRef = doc(firestoreDb, 'chats', chatId, 'messages', msg.id);
+                            batch.push(updateDoc(msgRef, { read: true }));
+                        });
+                        await Promise.all(batch);
+                    }
+                }, (error) => {
+                    console.error('Error loading admin chat messages:', error);
+                    if (messagesEl.children.length === 0) {
+                        messagesEl.innerHTML = '<div class="empty-chat"><p>Error loading messages</p></div>';
+                    }
+                });
             } catch (error) {
-                console.error('Error loading admin chat messages:', error);
+                console.error('Error setting up admin chat messages listener:', error);
             }
         }
         
-        // Send admin message
+        // Send admin message with optimistic UI (instant feedback)
         async function sendAdminMessage() {
             if (!canAccessAdminChat(userData?.username)) {
                 showError('Only admins can send messages');
@@ -7282,16 +7813,41 @@
             
             const input = document.getElementById('adminChatInput');
             const sendBtn = document.getElementById('adminChatSendBtn');
-            const message = input?.value.trim();
+            const messageText = input?.value.trim();
             
-            if (!message) return;
+            if (!messageText) return;
             
-            if (sendBtn) {
-                sendBtn.disabled = true;
-                sendBtn.textContent = 'Sending...';
+            // Clear input immediately
+            input.value = '';
+            
+            // Generate clientId for message reconciliation
+            const clientId = crypto.randomUUID ? crypto.randomUUID() : `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            
+            console.log('📤 ADMIN SENDING MESSAGE', {
+                clientId: clientId,
+                text: messageText.substring(0, 20)
+            });
+            
+            // Show message instantly (optimistic UI)
+            const tempMessage = {
+                text: messageText,
+                sender: 'admin',
+                senderName: userData.username,
+                timestamp: new Date(),
+                clientId: clientId
+            };
+            const pendingBubble = addAdminMessageToUI(tempMessage, true);
+            
+            // Verify pending bubble was created with clientId
+            if (pendingBubble) {
+                console.log('✅ Admin pending bubble created', {
+                    hasClientId: !!pendingBubble.dataset.clientId,
+                    clientId: pendingBubble.dataset.clientId
+                });
             }
             
             try {
+                await window.firebaseReady;
                 const firestoreDb = window.db;
                 const firestore = window.firestoreFunctions;
                 
@@ -7299,7 +7855,7 @@
                     throw new Error('Firebase not initialized');
                 }
                 
-                const { doc, getDoc, updateDoc } = firestore;
+                const { doc, getDoc, updateDoc, collection, addDoc, serverTimestamp } = firestore;
                 const chatRef = doc(firestoreDb, 'chats', currentAdminChatId);
                 const chatDoc = await getDoc(chatRef);
                 
@@ -7307,34 +7863,63 @@
                     throw new Error('Chat not found');
                 }
                 
-                const chat = chatDoc.data();
-                const newMessage = {
-                    text: message,
+                // Add message to subcollection (background write) with clientId
+                const messagesRef = collection(firestoreDb, 'chats', currentAdminChatId, 'messages');
+                const messageData = {
+                    text: messageText,
                     sender: 'admin',
                     senderName: userData.username,
-                    timestamp: new Date().toISOString(),
-                    read: false
+                    timestamp: serverTimestamp(),
+                    read: false,
+                    clientId: clientId // Key for reconciliation
                 };
                 
-                const updatedMessages = [...(chat.messages || []), newMessage];
+                console.log('💾 ADMIN Writing to Firestore', {
+                    clientId: clientId,
+                    chatId: currentAdminChatId,
+                    hasClientId: !!messageData.clientId
+                });
                 
+                await addDoc(messagesRef, messageData);
+                
+                console.log('✅ Admin Firestore write complete');
+                
+                // Update chat document's updatedAt timestamp
                 await updateDoc(chatRef, {
-                    messages: updatedMessages,
-                    updatedAt: new Date().toISOString(),
+                    updatedAt: serverTimestamp(),
                     status: 'open'
                 });
                 
-                input.value = '';
-                await loadAdminChatMessages(currentAdminChatId);
-                await loadAdminChats();
+                // onSnapshot will automatically reconcile the pending message via clientId
             } catch (error) {
                 console.error('Error sending admin message:', error);
-                showError('Failed to send message. Please try again.');
-            } finally {
-                if (sendBtn) {
-                    sendBtn.disabled = false;
-                    sendBtn.textContent = 'Send';
+                
+                // Mark as failed
+                if (pendingBubble) {
+                    pendingBubble.classList.remove('pending');
+                    pendingBubble.classList.add('failed');
+                    const metaEl = pendingBubble.querySelector('.message-meta');
+                    if (metaEl) {
+                        metaEl.textContent = 'Failed to send • Tap to retry';
+                        metaEl.style.cursor = 'pointer';
+                        metaEl.onclick = () => {
+                            input.value = messageText;
+                            pendingBubble.remove();
+                            sendAdminMessage();
+                        };
+                    }
                 }
+                
+                let errorMsg = 'Failed to send message. Please try again.';
+                if (error.code === 'permission-denied') {
+                    errorMsg = 'Permission denied. Please check your admin permissions.';
+                } else if (error.code === 'unavailable') {
+                    errorMsg = 'Service temporarily unavailable. Please try again.';
+                } else if (error.message) {
+                    errorMsg = `Error: ${error.message}`;
+                }
+                
+                console.error('Admin send error:', errorMsg);
             }
         }
         
@@ -7408,54 +7993,40 @@
                 }
             }
             
-            // Render chat if showing chat page
+            // Render chat if showing chat page (real-time updates via onSnapshot)
             if (name === 'chat') {
                 loadUserChat();
-                // Auto-refresh chat every 2 seconds
-                if (window.chatRefreshInterval) {
-                    clearInterval(window.chatRefreshInterval);
-                }
-                window.chatRefreshInterval = setInterval(() => {
-                    if (document.getElementById('page-chat')?.style.display !== 'none') {
-                        loadUserChat();
-                    } else {
-                        clearInterval(window.chatRefreshInterval);
-                    }
-                }, 2000);
             } else {
-                if (window.chatRefreshInterval) {
-                    clearInterval(window.chatRefreshInterval);
-                    window.chatRefreshInterval = null;
+                // Clean up user chat listener when leaving page
+                if (userChatUnsubscribe) {
+                    userChatUnsubscribe();
+                    userChatUnsubscribe = null;
                 }
             }
             
-            // Render admin chat if showing admin-chat page (accessible via direct URL or admin can navigate)
+            // Render admin chat if showing admin-chat page (real-time updates via onSnapshot)
             // Note: Admin chat page is accessible but nav item is hidden
             if (name === 'admin-chat') {
                 if (canAccessAdminChat(userData?.username)) {
-                    loadAdminChats();
-                    // Auto-refresh admin chats every 2 seconds
-                    if (window.adminChatRefreshInterval) {
-                        clearInterval(window.adminChatRefreshInterval);
-                    }
-                    window.adminChatRefreshInterval = setInterval(() => {
-                        if (document.getElementById('page-admin-chat')?.style.display !== 'none') {
-                            loadAdminChats();
-                            if (window.currentAdminChatId) {
-                                loadAdminChatMessages(window.currentAdminChatId);
-                            }
-                        } else {
-                            clearInterval(window.adminChatRefreshInterval);
+                    console.log('🔐 Admin access confirmed, loading chats...');
+                    // Small delay to ensure page is visible
+                    setTimeout(() => {
+                        loadAdminChats();
+                        // If a chat was previously selected, reload it
+                        if (window.currentAdminChatId) {
+                            loadAdminChatMessages(window.currentAdminChatId);
                         }
-                    }, 2000);
+                    }, 100);
                 } else {
+                    console.log('❌ Admin access denied');
                     showError('Access denied. Admin access required.');
                     showPage('news', document.querySelector('.nav-item'));
                 }
             } else {
-                if (window.adminChatRefreshInterval) {
-                    clearInterval(window.adminChatRefreshInterval);
-                    window.adminChatRefreshInterval = null;
+                // Clean up admin chat listeners when leaving page
+                if (adminChatUnsubscribe) {
+                    adminChatUnsubscribe();
+                    adminChatUnsubscribe = null;
                 }
             }
             
@@ -8836,7 +9407,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove, query, where, getDocs, orderBy, addDoc, serverTimestamp, onSnapshot, Timestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
         // Make Firestore functions globally accessible
         window.firestoreFunctions = {
@@ -8850,7 +9421,11 @@
             query,
             where,
             getDocs,
-            orderBy
+            orderBy,
+            addDoc,
+            serverTimestamp,
+            onSnapshot,
+            Timestamp
         };
 
         const firebaseConfig = {
@@ -8871,6 +9446,26 @@
         // Make db globally accessible
         window.db = db;
         window.auth = auth;
+
+        // Create Firebase ready promise to fix race conditions
+        window.firebaseReady = new Promise(resolve => {
+            const check = setInterval(() => {
+                if (window.db && window.firestoreFunctions) {
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 100);
+            
+            // Timeout after 10 seconds
+            setTimeout(() => {
+                clearInterval(check);
+                if (window.db && window.firestoreFunctions) {
+                    resolve();
+                } else {
+                    console.error('Firebase initialization timeout');
+                }
+            }, 10000);
+        });
 
         console.log("🔥 Firebase fully ready");
 
