@@ -2401,587 +2401,6 @@
             background: rgba(239, 68, 68, 0.1);
         }
 
-        /* Chat System Styles */
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 600px;
-            background: var(--black-lighter);
-            border: 1px solid var(--gray-border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        
-        .chat-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--gray-border);
-            background: var(--black-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .chat-header h3 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 600;
-        }
-        
-        .chat-status {
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .chat-status.open {
-            background: #22c55e;
-            color: white;
-        }
-        
-        .chat-status.closed {
-            background: var(--gray-dark);
-            color: var(--white);
-        }
-        
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .chat-message {
-            display: flex;
-            flex-direction: column;
-            max-width: 70%;
-            animation: messageSlideIn 0.3s ease-out;
-        }
-        
-        @keyframes messageSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .chat-message.user {
-            align-self: flex-end;
-        }
-        
-        .chat-message.admin {
-            align-self: flex-start;
-        }
-        
-        .message-bubble {
-            padding: 12px 16px;
-            border-radius: 12px;
-            word-wrap: break-word;
-        }
-        
-        .chat-message.user .message-bubble {
-            background: var(--blue);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-        
-        .chat-message.admin .message-bubble {
-            background: var(--black-light);
-            color: var(--white);
-            border: 1px solid var(--gray-border);
-            border-bottom-left-radius: 4px;
-        }
-        
-        .message-meta {
-            font-size: 11px;
-            color: var(--gray);
-            margin-top: 4px;
-            padding: 0 4px;
-        }
-        
-        /* Optimistic UI states */
-        .chat-message.pending .message-bubble {
-            opacity: 0.6;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        
-        .chat-message.failed .message-bubble {
-            border: 1px solid #ef4444;
-            background: rgba(239, 68, 68, 0.1);
-        }
-        
-        .chat-message.failed .message-meta {
-            color: #ef4444;
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 0.6;
-            }
-            50% {
-                opacity: 0.8;
-            }
-        }
-        
-        .chat-input-area {
-            padding: 16px;
-            border-top: 1px solid var(--gray-border);
-            background: var(--black-light);
-            display: flex;
-            gap: 12px;
-        }
-        
-        .chat-input {
-            flex: 1;
-            padding: 12px 16px;
-            background: var(--black-lighter);
-            border: 1px solid var(--gray-border);
-            border-radius: 8px;
-            color: var(--white);
-            font-size: 14px;
-            resize: none;
-            min-height: 44px;
-            max-height: 120px;
-        }
-        
-        .chat-input:focus {
-            outline: none;
-            border-color: var(--blue);
-        }
-        
-        .chat-send-btn {
-            padding: 12px 24px;
-            background: var(--blue);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .chat-send-btn:hover {
-            background: var(--blue-light);
-        }
-        
-        .chat-send-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .chat-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .chat-item {
-            background: var(--black-lighter);
-            border: 1px solid var(--gray-border);
-            border-radius: 8px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .chat-item:hover {
-            background: var(--black-light);
-            border-color: var(--blue);
-        }
-        
-        .chat-item.active {
-            border-color: var(--blue);
-            background: var(--black-light);
-        }
-        
-        .chat-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 8px;
-        }
-        
-        .chat-item-user {
-            font-weight: 600;
-            color: var(--white);
-        }
-        
-        .chat-item-time {
-            font-size: 12px;
-            color: var(--gray);
-        }
-        
-        .chat-item-preview {
-            font-size: 13px;
-            color: var(--gray);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        .chat-item-unread {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: var(--blue);
-            border-radius: 50%;
-            margin-left: 8px;
-        }
-        
-        .empty-chat {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--gray);
-        }
-        
-        .empty-chat-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-        
-        /* Full-Screen Animated Popup System */
-        .popup-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            pointer-events: none;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-        }
-        
-        .popup-container:not(:empty) {
-            display: flex;
-            pointer-events: all;
-            animation: fadeInOverlay 0.3s ease-out;
-        }
-        
-        .popup-container:empty {
-            display: none;
-            pointer-events: none;
-            background: transparent;
-            backdrop-filter: none;
-        }
-        
-        @keyframes fadeInOverlay {
-            from {
-                opacity: 0;
-                backdrop-filter: blur(0px);
-            }
-            to {
-                opacity: 1;
-                backdrop-filter: blur(10px);
-            }
-        }
-        
-        .popup {
-            background: linear-gradient(135deg, var(--black-lighter) 0%, var(--black-light) 100%);
-            border: 2px solid var(--gray-border);
-            border-radius: 20px;
-            padding: 40px;
-            min-width: 400px;
-            max-width: 600px;
-            width: 90%;
-            box-shadow: 
-                0 30px 80px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(255, 255, 255, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            transform: scale(0.7) rotateY(15deg);
-            opacity: 0;
-            pointer-events: all;
-            animation: popupEnterFullScreen 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .popup::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            animation: shimmer 2s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        @keyframes popupEnterFullScreen {
-            0% {
-                transform: scale(0.5) rotateY(20deg) translateY(50px);
-                opacity: 0;
-                filter: blur(10px);
-            }
-            50% {
-                transform: scale(1.05) rotateY(-5deg) translateY(-10px);
-                opacity: 0.8;
-                filter: blur(2px);
-            }
-            100% {
-                transform: scale(1) rotateY(0deg) translateY(0);
-                opacity: 1;
-                filter: blur(0px);
-            }
-        }
-        
-        @keyframes popupExit {
-            0% {
-                transform: scale(1) rotateY(0deg) translateY(0);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(0.7) rotateY(-15deg) translateY(50px);
-                opacity: 0;
-                filter: blur(10px);
-            }
-        }
-        
-        .popup.exiting {
-            animation: popupExit 0.3s ease-in forwards;
-        }
-        
-        .popup-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--gray-border);
-            position: relative;
-        }
-        
-        .popup-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        }
-        
-        .popup-icon {
-            font-size: 36px;
-            animation: popupIconBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-        }
-        
-        @keyframes popupIconBounce {
-            0% { 
-                transform: scale(0) rotate(-180deg);
-                opacity: 0;
-            }
-            50% { 
-                transform: scale(1.3) rotate(10deg);
-            }
-            75% {
-                transform: scale(0.9) rotate(-5deg);
-            }
-            100% { 
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
-        }
-        
-        .popup-close {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid var(--gray-border);
-            color: var(--gray);
-            font-size: 28px;
-            cursor: pointer;
-            padding: 0;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .popup-close::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s;
-        }
-        
-        .popup-close:hover::before {
-            width: 100%;
-            height: 100%;
-        }
-        
-        .popup-close:hover {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: #ef4444;
-            color: #ef4444;
-            transform: rotate(90deg) scale(1.1);
-        }
-        
-        .popup-message {
-            color: var(--gray);
-            font-size: 16px;
-            line-height: 1.7;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            border: 1px solid var(--gray-border);
-            animation: messageFadeIn 0.4s ease-out 0.2s both;
-        }
-        
-        @keyframes messageFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .popup-actions {
-            display: flex;
-            gap: 16px;
-            justify-content: flex-end;
-            margin-top: 10px;
-        }
-        
-        .popup-btn {
-            padding: 14px 28px;
-            border-radius: 12px;
-            border: none;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .popup-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.4s, height 0.4s;
-        }
-        
-        .popup-btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .popup-btn-primary {
-            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
-            color: var(--white);
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-        }
-        
-        .popup-btn-primary:hover {
-            background: linear-gradient(135deg, var(--blue-light) 0%, var(--blue) 100%);
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
-        }
-        
-        .popup-btn-primary:active {
-            transform: translateY(0) scale(0.98);
-        }
-        
-        .popup-btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--gray);
-            border: 2px solid var(--gray-border);
-        }
-        
-        .popup-btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--white);
-            color: var(--white);
-            transform: translateY(-2px) scale(1.05);
-        }
-        
-        .popup-success .popup-icon { 
-            color: #22c55e;
-            filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
-        }
-        .popup-error .popup-icon { 
-            color: #ef4444;
-            filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.5));
-        }
-        .popup-warning .popup-icon { 
-            color: #f59e0b;
-            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
-        }
-        .popup-info .popup-icon { 
-            color: var(--blue);
-            filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.5));
-        }
-        
-        /* Popup background glow effect */
-        .popup-success {
-            box-shadow: 
-                0 30px 80px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(34, 197, 94, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 40px rgba(34, 197, 94, 0.2);
-        }
-        
-        .popup-error {
-            box-shadow: 
-                0 30px 80px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(239, 68, 68, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 40px rgba(239, 68, 68, 0.2);
-        }
-        
-        .popup-warning {
-            box-shadow: 
-                0 30px 80px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(245, 158, 11, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 40px rgba(245, 158, 11, 0.2);
-        }
-        
-        .popup-info {
-            box-shadow: 
-                0 30px 80px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(37, 99, 235, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 40px rgba(37, 99, 235, 0.2);
-        }
-        
         /* Dice Betting Styles */
         .dice-bets-list, .dice-history-list {
             display: flex;
@@ -3207,6 +2626,65 @@
             .nav-item { flex: 1 1 33%; padding: 12px; font-size: 12px; }
             .cart-panel { width: 100%; right: -100%; }
             .admin-form { flex-direction: column; }
+        }
+
+        /* ==================== NOTIFICATION POPUP ==================== */
+        .notification-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 10000;
+            animation: slideInNotification 0.4s ease-out, fadeOutNotification 0.4s ease-in 2.6s forwards;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 400px;
+        }
+        
+        .notification-popup.success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border: 1px solid #22c55e;
+        }
+        
+        .notification-popup.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: 1px solid #ef4444;
+        }
+        
+        .notification-popup.info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: 1px solid #3b82f6;
+        }
+        
+        .notification-popup .notif-icon {
+            font-size: 20px;
+        }
+        
+        @keyframes slideInNotification {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOutNotification {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
         }
 
         /* ==================== ENHANCED ANIMATIONS ==================== */
@@ -3952,6 +3430,257 @@
             100% {
                 outline-width: 2px;
             }
+}
+
+        /* Payment Proof Upload Styles */
+        .payment-proof-upload {
+            margin-top: 8px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--gray-border);
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--black-lighter);
+        }
+
+        .upload-area:hover {
+            border-color: var(--blue);
+            background: var(--black);
+        }
+
+        .upload-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .upload-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .upload-subtext {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .proof-preview {
+            margin-top: 12px;
+        }
+
+        .preview-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .remove-proof {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .remove-proof:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        /* Enhanced Admin Request Styles */
+        .balance-request-item {
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .balance-request-item:hover {
+            border-color: var(--blue);
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .request-user-info {
+            flex: 1;
+        }
+
+        .request-amount {
+            text-align: right;
+        }
+
+        .request-amount .amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--blue);
+        }
+
+        .request-amount .method {
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .request-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .request-proof {
+            background: var(--black);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .request-proof-label {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .proof-thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .proof-thumbnail:hover {
+            transform: scale(1.05);
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-approve {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .btn-approve:hover {
+            background: #16a34a;
+        }
+
+        .btn-reject {
+            background: transparent;
+            color: var(--gray);
+            border: 1px solid var(--gray-border);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .btn-reject:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .btn-review-proof {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-review-proof:hover {
+            background: var(--blue-light);
+        }
+
+        /* Proof Review Modal */
+        .proof-review-modal {
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .proof-review-content {
+            display: flex;
+            gap: 24px;
+        }
+
+        .proof-image-container {
+            flex: 1;
+            text-align: center;
+        }
+
+        .proof-image-container img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .proof-details {
+            flex: 0 0 300px;
+        }
+
+        .admin-comment-section {
+            margin-top: 20px;
+        }
+
+        .admin-comment {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            background: var(--black-lighter);
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            resize: vertical;
+        }
+
+        .admin-comment:focus {
+            outline: none;
+            border-color: var(--blue);
         }
     </style>
 </head>
@@ -4069,7 +3798,7 @@
                 <div class="balance-display">
                     <span class="balance-amount">$<span class="value" id="userBalance">0.00</span></span>
                     <span style="color: var(--gray);">(Total: $<span id="totalRecharge">0.00</span>)</span>
-                    <button class="btn-sm" onclick="openAddFundsChat()">Add Funds</button>
+                    <button class="btn-sm" onclick="openFundsModal()">Add Funds</button>
                 </div>
             </div>
             <div class="top-right">
@@ -4089,9 +3818,8 @@
             <a class="nav-item" onclick="showPage('wholesale', this)">Wholesale</a>
             <a class="nav-item" onclick="showPage('orders', this)">Orders</a>
             <a class="nav-item" onclick="showPage('tickets', this)">Tickets</a>
-            <a class="nav-item" onclick="showPage('chat', this)">Chat</a>
-            <a class="nav-item" onclick="showPage('dice', this)">Dice</a>
             <a class="nav-item admin-nav" id="adminNavItem" onclick="showPage('admin', this)" style="display:none;">Admin</a>
+            <a class="nav-item admin-nav" id="adminDiceNavItem" onclick="showPage('admin-dice', this)" style="display:none;">Dice</a>
             <a class="nav-item settings-nav" onclick="openSettings()">⚙</a>
         </nav>
 
@@ -4430,14 +4158,10 @@
                     <h2>User Management</h2>
                     <p style="margin-bottom: 24px;">Grant or revoke admin access for users. Only the owner can manage admin privileges.</p>
                     
-                    <div class="admin-section" id="addAdminSection" style="display:none;">
+                    <div class="admin-section">
                         <div class="section-title">Add Admin</div>
-                        <div class="admin-form" style="flex-direction: column; gap: 12px;">
+                        <div class="admin-form">
                             <input type="text" class="input-field" id="newAdminUser" placeholder="Enter username to grant admin">
-                            <select class="input-field" id="adminRoleSelect">
-                                <option value="admin">Admin (Can view chats and respond)</option>
-                                <option value="topadmin">Top Admin (Can load balances + view chats)</option>
-                            </select>
                             <button class="btn btn-admin" onclick="addAdmin()">Grant Access</button>
                         </div>
                     </div>
@@ -4456,19 +4180,13 @@
                         </div>
                     </div>
 
-                    <div class="admin-section" id="balanceLoadSection" style="display:none;">
-                        <div class="section-title">Load Balance (Top Admin Only)</div>
-                        <div class="admin-form" style="flex-direction: column; gap: 12px;">
-                            <input type="text" class="input-field" id="loadBalanceUsername" placeholder="Enter username">
-                            <input type="number" class="input-field" id="loadBalanceAmount" placeholder="Enter amount" step="0.01" min="0.01">
-                            <button class="btn btn-admin" onclick="loadUserBalance()" style="background: #22c55e;">Load Balance</button>
-                        </div>
-                    </div>
-
                     <div class="admin-section">
-                        <div class="section-title">Chat Management</div>
-                        <div style="margin-bottom: 12px;">
-                            <button class="btn btn-admin" onclick="showPage('admin-chat', null)" style="background: #3b82f6;">Open Chat Support</button>
+                        <div class="section-title">Load User Balance</div>
+                        <p style="margin-bottom: 12px; color: var(--gray); font-size: 14px;">Directly add balance to any user's account.</p>
+                        <div class="admin-form" style="flex-direction: column; gap: 12px; max-width: 500px;">
+                            <input type="text" class="input-field" id="loadBalanceUsername" placeholder="Enter username">
+                            <input type="number" class="input-field" id="loadBalanceAmount" placeholder="Amount to add (e.g., 50.00)" min="0.01" step="0.01">
+                            <button class="btn btn-admin" onclick="adminLoadBalance()" style="background: #22c55e;">Load Balance</button>
                         </div>
                     </div>
 
@@ -4516,161 +4234,10 @@
                 </div>
             </div>
 
-            <!-- ADMIN PRIVATE SUPPLY PAGE -->
-            <div class="page-content" id="page-admin-supply" style="display:none;">
-                <div class="page-header">
-                    <h1>Admin Private Supply</h1>
-                    <div class="line" style="background: #22c55e;"></div>
-                </div>
-                
-                <div class="content-card" style="border-color: #22c55e;">
-                    <h2 style="color: #22c55e;">📦 Your Private Supply</h2>
-                    <p style="margin-bottom: 20px; color: var(--gray);">Manage your own products. Only you can see and manage these items. Other admins cannot access your supply.</p>
-                    
-                    <div class="admin-section">
-                        <div class="section-title">Add New Product</div>
-                        <div class="admin-form">
-                            <input type="text" class="input-field" id="newProductBin" placeholder="BIN (e.g., 400000)" maxlength="20">
-                            <input type="text" class="input-field" id="newProductBrand" placeholder="Brand (VISA, MASTERCARD, etc.)" maxlength="20">
-                            <input type="text" class="input-field" id="newProductPrice" placeholder="Price (e.g., 10.50)" maxlength="10">
-                            <button class="btn btn-admin" onclick="addMyProduct()" style="background: #22c55e;">Add Product</button>
-                        </div>
-                    </div>
-
-                    <div class="admin-section">
-                        <div class="section-title">My Products (<span id="myStockCount">0</span>)</div>
-                        <div class="my-stock-list" id="myStockList">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- USER CHAT PAGE -->
-            <div class="page-content" id="page-chat" style="display:none;">
-                <div class="page-header">
-                    <h1>Support Chat</h1>
-                    <div class="line" style="background: #3b82f6;"></div>
-                </div>
-                
-                <div class="content-card" style="border-color: #3b82f6;">
-                    <h2 style="color: #3b82f6;">💬 Chat with Support</h2>
-                    <p style="margin-bottom: 20px; color: var(--gray);">Start a conversation with our support team. We'll respond as soon as possible.</p>
-                    
-                    <div class="chat-container" id="userChatContainer">
-                        <div class="chat-header">
-                            <h3 id="chatHeaderTitle">Your Chat</h3>
-                            <span class="chat-status open" id="chatStatus">Open</span>
-                        </div>
-                        <div class="chat-messages" id="userChatMessages">
-                            <div class="empty-chat">
-                                <div class="empty-chat-icon">💬</div>
-                                <p>Start a conversation by sending a message below</p>
-                            </div>
-                        </div>
-                        <div class="chat-input-area">
-                            <textarea 
-                                class="chat-input" 
-                                id="userChatInput" 
-                                placeholder="Type your message here..."
-                                rows="1"
-                                onkeydown="handleChatInputKeydown(event, 'user')"
-                            ></textarea>
-                            <button class="chat-send-btn" onclick="sendUserMessage()" id="userChatSendBtn">Send</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- USER DICE BETTING PAGE -->
-            <div class="page-content" id="page-dice" style="display:none;">
-                <div class="page-header">
-                    <h1>Dice Betting</h1>
-                    <div class="line" style="background: #8b5cf6;"></div>
-                </div>
-                
-                <div class="content-card" style="border-color: #8b5cf6;">
-                    <h2 style="color: #8b5cf6;">🎲 Player vs Player Dice</h2>
-                    <p style="margin-bottom: 20px; color: var(--gray);">Bet against other players! Create a bet or accept an existing one. Choose your bet amount ($1-$5) and wait for an opponent to join.</p>
-                    
-                    <div class="admin-section">
-                        <div class="section-title">Create Bet</div>
-                        <div class="admin-form" style="flex-direction: column; gap: 16px;">
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $5)</label>
-                                <input type="number" class="input-field" id="userDiceBetAmount" placeholder="Enter amount (1-5)" min="1" max="5" step="0.01">
-                            </div>
-                            <button class="btn btn-primary" onclick="createDiceBet()" style="background: #8b5cf6; width: 100%;">Create Bet</button>
-                        </div>
-                    </div>
-
-                    <div class="admin-section">
-                        <div class="section-title">Active Bets</div>
-                        <div class="dice-bets-list" id="userDiceBetsList">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <div class="admin-section">
-                        <div class="section-title">Bet History</div>
-                        <div class="dice-history-list" id="userDiceHistoryList">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ADMIN CHAT MANAGEMENT PAGE (Accessible via admin panel link) -->
-            <div class="page-content" id="page-admin-chat" style="display:none;">
-                <div class="page-header">
-                    <h1>Chat Support Management</h1>
-                    <div class="line" style="background: #3b82f6;"></div>
-                </div>
-                
-                <div class="content-card" style="border-color: #3b82f6;">
-                    <h2 style="color: #3b82f6;">💬 Manage Customer Chats</h2>
-                    <p style="margin-bottom: 20px; color: var(--gray);">View and respond to customer chat messages.</p>
-                    
-                    <div style="display: grid; grid-template-columns: 300px 1fr; gap: 20px; height: 600px;">
-                        <!-- Chat List -->
-                        <div style="background: var(--black-lighter); border: 1px solid var(--gray-border); border-radius: 12px; padding: 16px; overflow-y: auto;">
-                            <div class="section-title" style="margin-bottom: 16px;">Active Chats</div>
-                            <div class="chat-list" id="adminChatList">
-                                <!-- Populated by JS -->
-                            </div>
-                        </div>
-                        
-                        <!-- Chat View -->
-                        <div class="chat-container" id="adminChatContainer">
-                            <div class="chat-header">
-                                <h3 id="adminChatHeaderTitle">Select a chat to view messages</h3>
-                                <span class="chat-status closed" id="adminChatStatus" style="display:none;">Closed</span>
-                            </div>
-                            <div class="chat-messages" id="adminChatMessages">
-                                <div class="empty-chat">
-                                    <div class="empty-chat-icon">💬</div>
-                                    <p>Select a chat from the list to start responding</p>
-                                </div>
-                            </div>
-                            <div class="chat-input-area" id="adminChatInputArea" style="display:none;">
-                                <textarea 
-                                    class="chat-input" 
-                                    id="adminChatInput" 
-                                    placeholder="Type your response here..."
-                                    rows="1"
-                                    onkeydown="handleChatInputKeydown(event, 'admin')"
-                                ></textarea>
-                                <button class="chat-send-btn" onclick="sendAdminMessage()" id="adminChatSendBtn">Send</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- ADMIN DICE BETTING PAGE -->
             <div class="page-content" id="page-admin-dice" style="display:none;">
                 <div class="page-header">
-                    <h1>Dice Betting (Admin)</h1>
+                    <h1>Dice Betting</h1>
                     <div class="line" style="background: #8b5cf6;"></div>
                 </div>
                 
@@ -4724,15 +4291,15 @@
             </div>
         </div>
 
-        <!-- Add Funds Modal -->
+<!-- Add Funds Modal -->
         <div class="modal-overlay" id="fundsModal">
-            <div class="modal">
+            <div class="modal" style="max-width: 500px;">
                 <button class="modal-close" onclick="closeFundsModal()">×</button>
                 <h2>Add Funds</h2>
                 <form onsubmit="addFunds(event)">
                     <div class="form-group">
                         <label>Payment Method</label>
-                        <select id="payMethod">
+                        <select id="payMethod" onchange="updatePaymentInstructions()">
                             <option value="btc">Bitcoin (BTC)</option>
                             <option value="cashapp">CashApp</option>
                             <option value="ltc">Litecoin (LTC)</option>
@@ -4745,6 +4312,27 @@
                     <div class="form-group">
                         <label>Bonus Code (Optional)</label>
                         <input type="text" class="input-field" id="bonusCode" placeholder="Enter code">
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Proof (Required)</label>
+                        <div class="payment-proof-upload">
+                            <input type="file" id="paymentProof" accept="image/*,.pdf" style="display: none;" onchange="handlePaymentProof(event)">
+                            <div class="upload-area" onclick="document.getElementById('paymentProof').click()" id="uploadArea">
+                                <div class="upload-icon">📷</div>
+                                <div class="upload-text">Click to upload payment proof</div>
+                                <div class="upload-subtext">Supports images and PDFs</div>
+                            </div>
+                            <div class="proof-preview" id="proofPreview" style="display: none;">
+                                <div class="preview-container">
+                                    <img id="previewImage" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
+                                    <button type="button" class="remove-proof" onclick="removePaymentProof()">×</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="payment-instructions" id="paymentInstructions" style="background: var(--black-lighter); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                        <div style="font-weight: 600; margin-bottom: 8px; color: var(--blue);">Payment Instructions:</div>
+                        <div id="instructionText" style="font-size: 14px; color: var(--gray); line-height: 1.5;"></div>
                     </div>
                     <button type="submit" class="btn btn-primary" style="width:100%;">Submit Request</button>
                 </form>
@@ -4804,9 +4392,6 @@
                 </form>
             </div>
         </div>
-
-        <!-- Animated Popup Container -->
-        <div id="popupContainer" class="popup-container" style="display: none;"></div>
 
         <!-- Create Ticket Modal -->
         <div class="modal-overlay" id="createTicketModal">
@@ -4873,222 +4458,13 @@
     </div>
 
     <script>
-        // ==================== ANIMATED POPUP SYSTEM ====================
-        function showPopup(options) {
-            const {
-                title = '',
-                message = '',
-                type = 'info', // success, error, warning, info
-                icon = '',
-                onConfirm = null,
-                onCancel = null,
-                confirmText = 'OK',
-                cancelText = null,
-                autoClose = null
-            } = options;
-            
-            const container = document.getElementById('popupContainer');
-            if (!container) return;
-            
-            // Show container
-            container.style.display = 'flex';
-            container.style.pointerEvents = 'all';
-            
-            const icons = {
-                success: '✓',
-                error: '✕',
-                warning: '⚠',
-                info: 'ℹ'
-            };
-            
-            const displayIcon = icon || icons[type] || '';
-            
-            const popup = document.createElement('div');
-            popup.className = `popup popup-${type}`;
-            popup.innerHTML = `
-                <div class="popup-header">
-                    <div class="popup-title">
-                        <span class="popup-icon">${displayIcon}</span>
-                        <span>${title || type.charAt(0).toUpperCase() + type.slice(1)}</span>
-                    </div>
-                    <button class="popup-close" onclick="closePopup(this)">×</button>
-                </div>
-                <div class="popup-message">${message}</div>
-                <div class="popup-actions">
-                    ${cancelText ? `<button class="popup-btn popup-btn-secondary" onclick="handlePopupCancel(this)">${cancelText}</button>` : ''}
-                    <button class="popup-btn popup-btn-primary" onclick="handlePopupConfirm(this)">${confirmText}</button>
-                </div>
-            `;
-            
-            // Store callbacks
-            popup.dataset.onConfirm = onConfirm ? 'true' : 'false';
-            popup.dataset.onCancel = onCancel ? 'true' : 'false';
-            popup.dataset.confirmCallback = onConfirm ? onConfirm.toString() : '';
-            popup.dataset.cancelCallback = onCancel ? onCancel.toString() : '';
-            
-            container.appendChild(popup);
-            
-            // Auto close if specified
-            if (autoClose) {
-                setTimeout(() => {
-                    closePopup(popup.querySelector('.popup-close'));
-                }, autoClose);
-            }
-        }
-        
-        function closePopup(btn) {
-            const popup = btn.closest('.popup');
-            if (popup) {
-                popup.classList.add('exiting');
-                setTimeout(() => {
-                    popup.remove();
-                    
-                    // Hide container if no more popups
-                    const container = document.getElementById('popupContainer');
-                    if (container && container.children.length === 0) {
-                        container.style.display = 'none';
-                        container.style.pointerEvents = 'none';
-                    }
-                }, 300);
-            }
-        }
-        
-        function handlePopupConfirm(btn) {
-            const popup = btn.closest('.popup');
-            const hasCallback = popup.dataset.onConfirm === 'true';
-            closePopup(btn);
-            if (hasCallback) {
-                // Execute callback if provided
-                try {
-                    const callback = new Function('return ' + popup.dataset.confirmCallback)();
-                    if (typeof callback === 'function') callback();
-                } catch (e) {
-                    console.error('Error executing popup callback:', e);
-                }
-            }
-        }
-        
-        function handlePopupCancel(btn) {
-            const popup = btn.closest('.popup');
-            const hasCallback = popup.dataset.onCancel === 'true';
-            closePopup(btn);
-            if (hasCallback) {
-                try {
-                    const callback = new Function('return ' + popup.dataset.cancelCallback)();
-                    if (typeof callback === 'function') callback();
-                } catch (e) {
-                    console.error('Error executing popup callback:', e);
-                }
-            }
-        }
-        
-        // Convenience functions
-        function showSuccess(message, title = 'Success') {
-            showPopup({ title, message, type: 'success', icon: '✓' });
-        }
-        
-        function showError(message, title = 'Error') {
-            showPopup({ title, message, type: 'error', icon: '✕' });
-        }
-        
-        function showWarning(message, title = 'Warning') {
-            showPopup({ title, message, type: 'warning', icon: '⚠' });
-        }
-        
-        function showInfo(message, title = 'Info') {
-            showPopup({ title, message, type: 'info', icon: 'ℹ' });
-        }
-        
-        function showConfirm(message, title = 'Confirm', onConfirm, onCancel) {
-            const popupId = 'confirm_' + Date.now();
-            const container = document.getElementById('popupContainer');
-            if (!container) return;
-            
-            const popup = document.createElement('div');
-            popup.className = 'popup popup-warning';
-            popup.id = popupId;
-            popup.innerHTML = `
-                <div class="popup-header">
-                    <div class="popup-title">
-                        <span class="popup-icon">⚠</span>
-                        <span>${title}</span>
-                    </div>
-                    <button class="popup-close" onclick="closePopup(this)">×</button>
-                </div>
-                <div class="popup-message">${message}</div>
-                <div class="popup-actions">
-                    <button class="popup-btn popup-btn-secondary" onclick="handleConfirmCancel('${popupId}')">No</button>
-                    <button class="popup-btn popup-btn-primary" onclick="handleConfirmYes('${popupId}')">Yes</button>
-                </div>
-            `;
-            
-            // Store callbacks
-            popup.dataset.onConfirm = onConfirm ? 'true' : 'false';
-            popup.dataset.onCancel = onCancel ? 'true' : 'false';
-            window[popupId + '_confirm'] = onConfirm;
-            window[popupId + '_cancel'] = onCancel;
-            
-            container.appendChild(popup);
-        }
-        
-        function handleConfirmYes(popupId) {
-            const popup = document.getElementById(popupId);
-            if (popup && popup.dataset.onConfirm === 'true') {
-                const callback = window[popupId + '_confirm'];
-                if (typeof callback === 'function') {
-                    callback();
-                }
-            }
-            closePopup(popup.querySelector('.popup-close'));
-            delete window[popupId + '_confirm'];
-            delete window[popupId + '_cancel'];
-        }
-        
-        function handleConfirmCancel(popupId) {
-            const popup = document.getElementById(popupId);
-            if (popup && popup.dataset.onCancel === 'true') {
-                const callback = window[popupId + '_cancel'];
-                if (typeof callback === 'function') {
-                    callback();
-                }
-            }
-            closePopup(popup.querySelector('.popup-close'));
-            delete window[popupId + '_confirm'];
-            delete window[popupId + '_cancel'];
-        }
-        
-        window.handleConfirmYes = handleConfirmYes;
-        window.handleConfirmCancel = handleConfirmCancel;
-        
-        // Make globally accessible
-        window.showPopup = showPopup;
-        window.showSuccess = showSuccess;
-        window.showError = showError;
-        window.showWarning = showWarning;
-        window.showInfo = showInfo;
-        window.showConfirm = showConfirm;
-        window.closePopup = closePopup;
-        
         // State
         let userData = JSON.parse(localStorage.getItem('pluxoUser')) || null;
         let captchaAnswer = 12;
 
-        // Admin system - NBTNate is the top admin (owner)
+        // Admin system - NBTNate is the owner
         const OWNER = 'NBTNate';
         let adminList = JSON.parse(localStorage.getItem('pluxoAdmins')) || [OWNER.toLowerCase()];
-        let topAdminList = JSON.parse(localStorage.getItem('pluxoTopAdmins')) || [OWNER.toLowerCase()];
-        
-        // Check if user is top admin
-        function isTopAdmin(username) {
-            if (!username) return false;
-            const normalized = username.toLowerCase().trim();
-            return topAdminList.includes(normalized) || normalized === OWNER.toLowerCase();
-        }
-        
-        // Check if user can access admin chat (both top admin and admin)
-        function canAccessAdminChat(username) {
-            return isAdmin(username);
-        }
         
         // Security: Rate limiting storage
         const rateLimitStore = JSON.parse(localStorage.getItem('pluxoRateLimit')) || {};
@@ -5313,12 +4689,17 @@
             
             // Show/hide admin nav based on role
             const adminNav = document.getElementById('adminNavItem');
-            // Admin Dice nav removed - dice is now for all users
+            const adminSupplyNav = document.getElementById('adminSupplyNavItem');
+            const adminDiceNav = document.getElementById('adminDiceNavItem');
             
             if (isAdmin(userData.username)) {
                 if (adminNav) adminNav.style.display = 'block';
+                if (adminSupplyNav) adminSupplyNav.style.display = 'block';
+                if (adminDiceNav) adminDiceNav.style.display = 'block';
             } else {
                 if (adminNav) adminNav.style.display = 'none';
+                if (adminSupplyNav) adminSupplyNav.style.display = 'none';
+                if (adminDiceNav) adminDiceNav.style.display = 'none';
             }
             
             // Update admin badge
@@ -5333,85 +4714,73 @@
 
         // Admin functions - Secured
         function addAdmin() {
-            // Security: Only owner/top admin can add admins
-            if (!userData || (!isOwner(userData.username) && !isTopAdmin(userData.username))) {
-                showError('Only top admin can add admins');
+            // Security: Only owner can add admins
+            if (!userData || !isOwner(userData.username)) {
+                alert('Only the owner can add admins');
                 return;
             }
             
             // Security: Rate limiting
             const rateCheck = checkRateLimit('addAdmin', 5, 60000);
             if (!rateCheck.allowed) {
-                showError(rateCheck.message);
+                alert(rateCheck.message);
                 return;
             }
             
             const usernameInput = document.getElementById('newAdminUser');
-            const roleSelect = document.getElementById('adminRoleSelect');
             let username = usernameInput.value.trim();
-            const role = roleSelect?.value || 'admin';
             
             // Security: Input validation
             if (!username) {
-                showError('Enter a username');
-                if (usernameInput) shakeElement(usernameInput);
+                alert('Enter a username');
+                shakeElement(usernameInput);
                 return;
             }
             
             // Security: Sanitize and validate username
             username = sanitizeInput(username);
             if (username.length < 3 || username.length > 30) {
-                showError('Username must be 3-30 characters');
-                if (usernameInput) shakeElement(usernameInput);
+                alert('Username must be 3-30 characters');
+                shakeElement(usernameInput);
                 return;
             }
             
             // Security: Prevent adding owner as admin (already admin)
             if (username.toLowerCase() === OWNER.toLowerCase()) {
-                showWarning('Owner is already a top admin');
+                alert('Owner is already an admin');
                 return;
             }
             
             // Security: Check if user exists
             const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
             if (!users[username.toLowerCase()]) {
-                showError('User does not exist. User must register first.');
-                if (usernameInput) shakeElement(usernameInput);
+                alert('User does not exist. User must register first.');
+                shakeElement(usernameInput);
                 return;
             }
             
             if (adminList.includes(username.toLowerCase())) {
-                showWarning('User is already an admin');
+                alert('User is already an admin');
                 return;
             }
             
-            // Add to admin list
             adminList.push(username.toLowerCase());
             localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
-            
-            // Add to top admin list if role is topadmin
-            if (role === 'topadmin') {
-                if (!topAdminList.includes(username.toLowerCase())) {
-                    topAdminList.push(username.toLowerCase());
-                    localStorage.setItem('pluxoTopAdmins', JSON.stringify(topAdminList));
-                }
-            }
-            
             usernameInput.value = '';
             renderAdminPanel();
-            showSuccess(`${username} has been granted ${role === 'topadmin' ? 'top admin' : 'admin'} access`);
+            alert(username + ' has been granted admin access');
         }
 
         function revokeAdmin(username) {
-            // Security: Only owner/top admin can revoke admins
-            if (!userData || (!isOwner(userData.username) && !isTopAdmin(userData.username))) {
-                showError('Only top admin can revoke admin access');
+            // Security: Only owner can revoke admins
+            if (!userData || !isOwner(userData.username)) {
+                alert('Only the owner can revoke admin access');
                 return;
             }
             
             // Security: Input validation
             if (!username || typeof username !== 'string') {
-                showError('Invalid username');
+                alert('Invalid username');
                 return;
             }
             
@@ -5420,69 +4789,53 @@
             
             // Security: Prevent revoking owner
             if (username.toLowerCase() === OWNER.toLowerCase()) {
-                showWarning('Cannot revoke owner\'s admin access');
+                alert('Cannot revoke owner\'s admin access');
                 return;
             }
             
             // Security: Rate limiting
             const rateCheck = checkRateLimit('revokeAdmin', 5, 60000);
             if (!rateCheck.allowed) {
-                showError(rateCheck.message);
+                alert(rateCheck.message);
                 return;
             }
             
-            showConfirm('Revoke admin access from ' + username + '?', 'Revoke Admin', () => {
+            if (confirm('Revoke admin access from ' + username + '?')) {
                 adminList = adminList.filter(a => a !== username.toLowerCase());
                 localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
-                
-                // Also remove from top admin list if present
-                topAdminList = topAdminList.filter(a => a !== username.toLowerCase());
-                localStorage.setItem('pluxoTopAdmins', JSON.stringify(topAdminList));
-                
                 renderAdminPanel();
-                showSuccess(username + ' admin access has been revoked');
-            });
+            }
         }
 
         function grantAdminFromList(username) {
             // Security: Only owner can grant admin
-            if (!userData || (!isOwner(userData.username) && !isTopAdmin(userData.username))) {
-                showError('Only top admin can grant admin access');
+            if (!userData || !isOwner(userData.username)) {
+                alert('Only the owner can add admins');
                 return;
             }
             
             // Security: Input validation
             if (!username || typeof username !== 'string') {
-                showError('Invalid username');
+                alert('Invalid username');
                 return;
             }
             
             // Security: Sanitize username
             username = sanitizeInput(username).trim();
             
-            // Security: Prevent granting owner (already admin)
-            if (username.toLowerCase() === OWNER.toLowerCase()) {
-                showWarning('Owner is already a top admin');
-                return;
-            }
-            
             // Security: Rate limiting
             const rateCheck = checkRateLimit('grantAdmin', 5, 60000);
             if (!rateCheck.allowed) {
-                showError(rateCheck.message);
+                alert(rateCheck.message);
                 return;
             }
             
-            if (adminList.includes(username.toLowerCase())) {
-                showWarning('User is already an admin');
-                return;
+            if (!adminList.includes(username.toLowerCase())) {
+                adminList.push(username.toLowerCase());
+                localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
+                renderAdminPanel();
+                alert(username + ' has been granted admin access');
             }
-            
-            // Add as regular admin (not top admin) when granted from list
-            adminList.push(username.toLowerCase());
-            localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
-            renderAdminPanel();
-            showSuccess(username + ' has been granted admin access');
         }
 
         function renderAdminPanel() {
@@ -5500,27 +4853,20 @@
                     // Security: Sanitize admin name
                     const safeAdmin = sanitizeInput(admin);
                     const isOwnerUser = admin === OWNER.toLowerCase();
-                    const isTopAdminUser = isTopAdmin(admin) || isOwnerUser;
                     const safeOnClick = `revokeAdmin('${safeAdmin.replace(/'/g, "\\'")}')`;
                     
                     return `
                         <div class="admin-item">
                             <div>
                                 <span class="name">${safeAdmin}</span>
-                                <span class="role">${isOwnerUser ? '<span class="owner-badge">TOP ADMIN</span>' : (isTopAdminUser ? '<span class="owner-badge">TOP ADMIN</span>' : '<span class="admin-badge-sm">ADMIN</span>')}</span>
+                                <span class="role">${isOwnerUser ? '<span class="owner-badge">OWNER</span>' : '<span class="admin-badge-sm">ADMIN</span>'}</span>
                             </div>
-                            ${!isOwnerUser && (isOwner(userData?.username) || isTopAdmin(userData?.username)) ? 
+                            ${!isOwnerUser && isOwner(userData?.username) ? 
                                 `<button class="btn-revoke" onclick="${safeOnClick}">Revoke</button>` : 
                                 ''}
                         </div>
                     `;
                 }).join('');
-            }
-            
-            // Show add admin section for top admin only
-            const addAdminSection = document.getElementById('addAdminSection');
-            if (addAdminSection) {
-                addAdminSection.style.display = (isOwner(userData?.username) || isTopAdmin(userData?.username)) ? 'block' : 'none';
             }
             
             // Render users list - Security: Sanitize all outputs
@@ -5566,150 +4912,7 @@
             
             // Render balance requests
             renderBalanceRequests();
-            
-            // Show balance load section for top admin only
-            const balanceLoadSection = document.getElementById('balanceLoadSection');
-            if (balanceLoadSection) {
-                balanceLoadSection.style.display = isTopAdmin(userData?.username) ? 'block' : 'none';
-            }
         }
-        
-        // Load balance for user (Top Admin Only)
-        async function loadUserBalance() {
-            if (!isTopAdmin(userData?.username)) {
-                showError('Only top admins can load balances');
-                return;
-            }
-            
-            const usernameInput = document.getElementById('loadBalanceUsername');
-            const amountInput = document.getElementById('loadBalanceAmount');
-            const username = usernameInput?.value.trim();
-            const amount = parseFloat(amountInput?.value);
-            
-            if (!username) {
-                showError('Please enter a username');
-                if (usernameInput) shakeElement(usernameInput);
-                return;
-            }
-            
-            if (!amount || isNaN(amount) || amount <= 0) {
-                showError('Please enter a valid amount');
-                if (amountInput) shakeElement(amountInput);
-                return;
-            }
-            
-            showConfirm(`Load $${amount.toFixed(2)} to ${username}'s balance?`, 'Load Balance', async () => {
-                try {
-                    // Wait for Firebase
-                    let firestoreDb = window.db;
-                    let firestore = window.firestoreFunctions;
-                    let retries = 0;
-                    while ((!firestoreDb || !firestore) && retries < 10) {
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                        firestoreDb = window.db;
-                        firestore = window.firestoreFunctions;
-                        retries++;
-                    }
-                    
-                    if (!firestoreDb || !firestore) {
-                        throw new Error('Firebase not initialized');
-                    }
-                    
-                    // Find user by username
-                    const { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } = firestore;
-                    
-                    // First, try to find user in users collection
-                    const userRef = doc(firestoreDb, 'users', username.toLowerCase());
-                    const userDoc = await getDoc(userRef);
-                    
-                    let userId = null;
-                    if (userDoc.exists()) {
-                        // User found, now find their Firebase UID
-                        const { collection: authCollection } = firestore;
-                        // We need to find the user's Firebase UID - check userBalances for username match
-                        const balancesRef = collection(firestoreDb, 'userBalances');
-                        const q = query(balancesRef, where('username', '==', username.toLowerCase()));
-                        const snapshot = await getDocs(q);
-                        
-                        snapshot.forEach(doc => {
-                            userId = doc.id; // This is the Firebase UID
-                        });
-                    }
-                    
-                    // If still no userId, search userBalances by username
-                    if (!userId) {
-                        const balancesRef = collection(firestoreDb, 'userBalances');
-                        const q = query(balancesRef, where('username', '==', username.toLowerCase()));
-                        const snapshot = await getDocs(q);
-                        
-                        snapshot.forEach(doc => {
-                            userId = doc.id;
-                        });
-                    }
-                    
-                    // If userId found, update balance
-                    if (userId) {
-                        const balanceRef = doc(firestoreDb, 'userBalances', userId);
-                        const balanceDoc = await getDoc(balanceRef);
-                        
-                        if (balanceDoc.exists()) {
-                            const currentBalance = balanceDoc.data().balance || 0;
-                            await updateDoc(balanceRef, {
-                                balance: currentBalance + amount,
-                                totalRecharge: (balanceDoc.data().totalRecharge || 0) + amount,
-                                updatedAt: new Date().toISOString()
-                            });
-                            showSuccess(`Balance loaded successfully! ${username} now has $${(currentBalance + amount).toFixed(2)}`);
-                        } else {
-                            await setDoc(balanceRef, {
-                                username: username.toLowerCase(),
-                                balance: amount,
-                                totalRecharge: amount,
-                                createdAt: new Date().toISOString()
-                            });
-                            showSuccess(`Balance loaded successfully! ${username} now has $${amount.toFixed(2)}`);
-                        }
-                    } else {
-                        // User not found in Firebase, but we can still create a balance record
-                        // We'll need to create it when they login next time
-                        // For now, store in a temporary location or show error
-                        showError('User not found in system. User must login at least once.');
-                    }
-                    
-                    // Clear inputs
-                    if (usernameInput) usernameInput.value = '';
-                    if (amountInput) amountInput.value = '';
-                } catch (error) {
-                    console.error('Error loading balance:', error);
-                    showError('Failed to load balance: ' + (error.message || 'Unknown error'));
-                }
-            });
-        }
-        
-        // Helper function to find user by email
-        async function findUserByEmail(email) {
-            try {
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                if (!firestoreDb || !firestore) return null;
-                
-                const { collection, query, where, getDocs } = firestore;
-                const usersRef = collection(firestoreDb, 'users');
-                const q = query(usersRef, where('email', '==', email));
-                const snapshot = await getDocs(q);
-                
-                let userId = null;
-                snapshot.forEach(doc => {
-                    userId = doc.id;
-                });
-                return userId;
-            } catch (error) {
-                console.error('Error finding user:', error);
-                return null;
-            }
-        }
-        
-        window.loadUserBalance = loadUserBalance;
         
         // Load and render balance requests for admin
         async function renderBalanceRequests() {
@@ -5767,31 +4970,56 @@
                         const safeUsername = sanitizeInput(req.username || 'Unknown');
                         const safeUserId = sanitizeInput(req.userId || '');
                         const safeAmount = parseFloat(req.amount || 0).toFixed(2);
-                        const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
+const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
                         const safeBonusCode = req.bonusCode ? sanitizeInput(req.bonusCode) : '';
                         const safeCreatedAt = req.createdAt ? new Date(req.createdAt).toLocaleString() : 'N/A';
+                        const safeProofUrl = sanitizeInput(req.paymentProofUrl || '');
+                        const safeProofFileName = sanitizeInput(req.paymentProofFileName || '');
+                        
+                        // Create request details object for modal
+                        const requestDetails = {
+                            username: safeUsername,
+                            amount: safeAmount,
+                            paymentMethod: safePaymentMethod,
+                            createdAt: req.createdAt
+                        };
                         
                         // Security: Escape quotes in onclick handlers
                         const safeApproveOnClick = `approveBalanceRequest('${safeId.replace(/'/g, "\\'")}', '${safeUserId.replace(/'/g, "\\'")}', ${safeAmount}, '${safeUsername.replace(/'/g, "\\'")}')`;
                         const safeRejectOnClick = `rejectBalanceRequest('${safeId.replace(/'/g, "\\'")}')`;
+                        const safeReviewProofOnClick = `openProofReviewModal('${safeId.replace(/'/g, "\\'")}', '${safeProofUrl.replace(/'/g, "\\'")}', ${JSON.stringify(requestDetails).replace(/'/g, "\\'")})`;
                         
                         return `
-                            <div class="balance-request-item" style="background: var(--black-lighter); border: 1px solid var(--gray-border); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
-                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 4px;">${safeUsername}</div>
-                                        <div style="color: var(--gray); font-size: 13px;">Request ID: ${safeId}</div>
-                                        <div style="color: var(--gray); font-size: 13px;">${safeCreatedAt}</div>
+                            <div class="balance-request-item">
+                                <div class="request-header">
+                                    <div class="request-user-info">
+                                        <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">${safeUsername}</div>
+                                        <div class="request-meta">
+                                            <div>Request ID: ${safeId}</div>
+                                            <div>${safeCreatedAt}</div>
+                                        </div>
                                     </div>
-                                    <div style="text-align: right;">
-                                        <div style="font-size: 20px; font-weight: 700; color: var(--blue);">$${safeAmount}</div>
-                                        <div style="color: var(--gray); font-size: 12px; text-transform: uppercase;">${safePaymentMethod}</div>
+                                    <div class="request-amount">
+                                        <div class="amount">$${safeAmount}</div>
+                                        <div class="method">${safePaymentMethod}</div>
                                     </div>
                                 </div>
                                 ${safeBonusCode ? `<div style="margin-bottom: 12px; font-size: 13px; color: var(--gray);">Bonus Code: <strong>${safeBonusCode}</strong></div>` : ''}
-                                <div style="display: flex; gap: 8px;">
-                                    <button class="btn btn-primary" style="flex: 1; padding: 8px;" onclick="${safeApproveOnClick}">Approve</button>
-                                    <button class="btn" style="flex: 1; padding: 8px; background: transparent; border: 1px solid var(--gray-border);" onclick="${safeRejectOnClick}">Reject</button>
+                                ${safeProofUrl ? `
+                                    <div class="request-proof">
+                                        <div class="request-proof-label">Payment Proof</div>
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <img src="${safeProofUrl}" alt="Payment Proof" class="proof-thumbnail" onclick="window.open('${safeProofUrl}', '_blank')">
+                                            <div>
+                                                <div style="font-size: 12px; color: var(--gray);">${safeProofFileName}</div>
+                                                <button class="btn-review-proof" onclick="${safeReviewProofOnClick}">Review Full Proof</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                <div class="request-actions">
+                                    <button class="btn-approve" onclick="${safeApproveOnClick}">Approve</button>
+                                    <button class="btn-reject" onclick="${safeRejectOnClick}">Reject</button>
                                 </div>
                             </div>
                         `;
@@ -5808,40 +5036,40 @@
         window.rejectBalanceRequest = rejectBalanceRequest;
         
         // Approve balance request - Secured
-        async function approveBalanceRequest(requestId, userId, amount, username) {
+        async function approveBalanceRequest(requestId, userId, amount, username, adminComment = null) {
             // Security: Verify admin access
             if (!verifyAdminAccess()) {
-                showError('Only admins can approve requests');
+                alert('Only admins can approve requests');
                 return;
             }
             
             // Security: Input validation
             if (!requestId || typeof requestId !== 'string' || requestId.length > 100) {
-                showError('Invalid request ID');
+                alert('Invalid request ID');
                 return;
             }
             
             if (!userId || typeof userId !== 'string' || userId.length > 100) {
-                showError('Invalid user ID');
+                alert('Invalid user ID');
                 return;
             }
             
             if (!username || typeof username !== 'string' || username.length > 50) {
-                showError('Invalid username');
+                alert('Invalid username');
                 return;
             }
             
             // Security: Validate amount
             const amountNum = parseFloat(amount);
             if (isNaN(amountNum) || amountNum <= 0 || amountNum > 100000) {
-                showError('Invalid amount');
+                alert('Invalid amount');
                 return;
             }
             
             // Security: Rate limiting
             const rateCheck = checkRateLimit('approveBalance', 20, 60000);
             if (!rateCheck.allowed) {
-                showError(rateCheck.message);
+                alert(rateCheck.message);
                 return;
             }
             
@@ -5849,8 +5077,9 @@
             const safeUsername = sanitizeInput(username);
             const safeAmount = amountNum.toFixed(2);
             
-            showConfirm(`Approve $${safeAmount} balance for ${safeUsername}?`, 'Approve Balance Request', async () => {
-                try {
+            if (!confirm(`Approve $${safeAmount} balance for ${safeUsername}?`)) return;
+            
+            try {
                 // Get Firestore db and functions
                 let firestoreDb = window.db;
                 let firestore = window.firestoreFunctions;
@@ -5871,12 +5100,13 @@
                 
                 const { doc, updateDoc, getDoc, setDoc } = firestore;
                 
-                // Update request status
+// Update request status
                 const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 await updateDoc(requestRef, {
                     status: 'approved',
                     approvedBy: userData.username,
-                    approvedAt: new Date().toISOString()
+                    approvedAt: new Date().toISOString(),
+                    adminComment: adminComment || null
                 });
                 
                 // Update user balance in Firestore
@@ -5908,46 +5138,46 @@
                     updateUI();
                 }
                 
-                    showSuccess('Balance request approved!');
-                    renderBalanceRequests();
-                } catch (error) {
-                    console.error('Error approving balance request:', error);
-                    let errorMsg = 'Error approving request. ';
-                    if (error.message) {
-                        errorMsg += error.message;
-                    } else if (error.code) {
-                        errorMsg += `Error code: ${error.code}`;
-                    } else {
-                        errorMsg += 'Please try again.';
-                    }
-                    showError(errorMsg);
+                alert('Balance request approved!');
+                renderBalanceRequests();
+            } catch (error) {
+                console.error('Error approving balance request:', error);
+                let errorMsg = 'Error approving request. ';
+                if (error.message) {
+                    errorMsg += error.message;
+                } else if (error.code) {
+                    errorMsg += `Error code: ${error.code}`;
+                } else {
+                    errorMsg += 'Please try again.';
                 }
-            });
+                alert(errorMsg);
+            }
         }
         
         // Reject balance request - Secured
-        async function rejectBalanceRequest(requestId) {
+        async function rejectBalanceRequest(requestId, adminComment = null) {
             // Security: Verify admin access
             if (!verifyAdminAccess()) {
-                showError('Only admins can reject requests');
+                alert('Only admins can reject requests');
                 return;
             }
             
             // Security: Input validation
             if (!requestId || typeof requestId !== 'string' || requestId.length > 100) {
-                showError('Invalid request ID');
+                alert('Invalid request ID');
                 return;
             }
             
             // Security: Rate limiting
             const rateCheck = checkRateLimit('rejectBalance', 20, 60000);
             if (!rateCheck.allowed) {
-                showError(rateCheck.message);
+                alert(rateCheck.message);
                 return;
             }
             
-            showConfirm('Reject this balance request?', 'Reject Balance Request', async () => {
-                try {
+            if (!confirm('Reject this balance request?')) return;
+            
+            try {
                 // Get Firestore db and functions
                 let firestoreDb = window.db;
                 let firestore = window.firestoreFunctions;
@@ -5968,33 +5198,219 @@
                 
                 const { doc, updateDoc } = firestore;
                 
-                const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
+const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 await updateDoc(requestRef, {
                     status: 'rejected',
                     approvedBy: userData.username,
-                    approvedAt: new Date().toISOString()
+                    approvedAt: new Date().toISOString(),
+                    adminComment: adminComment || null
                 });
                 
-                    showSuccess('Balance request rejected');
-                    renderBalanceRequests();
-                } catch (error) {
-                    console.error('Error rejecting balance request:', error);
-                    let errorMsg = 'Error rejecting request. ';
-                    if (error.message) {
-                        errorMsg += error.message;
-                    } else if (error.code) {
-                        errorMsg += `Error code: ${error.code}`;
-                    } else {
-                        errorMsg += 'Please try again.';
-                    }
-                    showError(errorMsg);
+                alert('Balance request rejected');
+                renderBalanceRequests();
+            } catch (error) {
+                console.error('Error rejecting balance request:', error);
+                let errorMsg = 'Error rejecting request. ';
+                if (error.message) {
+                    errorMsg += error.message;
+                } else if (error.code) {
+                    errorMsg += `Error code: ${error.code}`;
+                } else {
+                    errorMsg += 'Please try again.';
                 }
-            });
+                alert(errorMsg);
+            }
+        }
+        
+        // Admin direct balance loading - Secured
+        async function adminLoadBalance() {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                showNotification('Only admins can load balance', 'error');
+                return;
+            }
+            
+            const usernameInput = document.getElementById('loadBalanceUsername');
+            const amountInput = document.getElementById('loadBalanceAmount');
+            
+            if (!usernameInput || !amountInput) {
+                showNotification('Form elements not found', 'error');
+                return;
+            }
+            
+            const username = usernameInput.value.trim().toLowerCase();
+            const amount = parseFloat(amountInput.value);
+            
+            // Security: Input validation
+            if (!username || username.length < 1 || username.length > 50) {
+                showNotification('Please enter a valid username', 'error');
+                return;
+            }
+            
+            if (isNaN(amount) || amount <= 0 || amount > 100000) {
+                showNotification('Please enter a valid amount (0.01 - 100,000)', 'error');
+                return;
+            }
+            
+            // Security: Rate limiting
+            const rateCheck = checkRateLimit('adminLoadBalance', 20, 60000);
+            if (!rateCheck.allowed) {
+                showNotification(rateCheck.message, 'error');
+                return;
+            }
+            
+            const safeAmount = amount.toFixed(2);
+            
+            if (!confirm(`Load $${safeAmount} to user "${username}"?`)) return;
+            
+            try {
+                // Get Firestore db and functions
+                let firestoreDb = window.db;
+                let firestore = window.firestoreFunctions;
+                let retries = 0;
+                const maxRetries = 10;
+                
+                // Wait for Firebase to be initialized
+                while ((!firestoreDb || !firestore) && retries < maxRetries) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    firestoreDb = window.db;
+                    firestore = window.firestoreFunctions;
+                    retries++;
+                }
+                
+                if (!firestoreDb || !firestore) {
+                    throw new Error('Firebase not initialized. Please refresh the page and try again.');
+                }
+                
+                const { collection, query, where, getDocs, doc, updateDoc, getDoc, setDoc } = firestore;
+                
+                // Try to get user document directly by lowercase username (document ID)
+                const userDocRef = doc(firestoreDb, 'users', username);
+                const userDocSnap = await getDoc(userDocRef);
+                
+                if (!userDocSnap.exists()) {
+                    showNotification(`User "${username}" not found`, 'error');
+                    return;
+                }
+                
+                const targetUserData = userDocSnap.data();
+                
+                // Try to find the user's balance document
+                // First check if firebaseUID is stored in user doc
+                let targetUserId = targetUserData.firebaseUID;
+                let userBalanceRef;
+                let userBalanceDoc;
+                
+                if (targetUserId) {
+                    // Use Firebase UID if available
+                    userBalanceRef = doc(firestoreDb, 'userBalances', targetUserId);
+                    userBalanceDoc = await getDoc(userBalanceRef);
+                } else {
+                    // No Firebase UID stored, search userBalances by username field
+                    const balancesRef = collection(firestoreDb, 'userBalances');
+                    const balanceQuery = query(balancesRef, where('username', '==', username));
+                    const balanceSnapshot = await getDocs(balanceQuery);
+                    
+                    if (!balanceSnapshot.empty) {
+                        // Found existing balance doc by username
+                        balanceSnapshot.forEach((docSnap) => {
+                            targetUserId = docSnap.id;
+                            userBalanceDoc = docSnap;
+                        });
+                        userBalanceRef = doc(firestoreDb, 'userBalances', targetUserId);
+                    } else {
+                        // No balance doc exists, create one with username as ID
+                        targetUserId = username;
+                        userBalanceRef = doc(firestoreDb, 'userBalances', targetUserId);
+                        userBalanceDoc = await getDoc(userBalanceRef);
+                    }
+                }
+                
+                // Check if balance doc exists (handle both DocumentSnapshot and QueryDocumentSnapshot)
+                const docExists = userBalanceDoc && (typeof userBalanceDoc.exists === 'function' ? userBalanceDoc.exists() : userBalanceDoc.exists);
+                
+                if (docExists) {
+                    const balanceData = typeof userBalanceDoc.data === 'function' ? userBalanceDoc.data() : userBalanceDoc;
+                    const currentBalance = balanceData.balance || 0;
+                    const currentRecharge = balanceData.totalRecharge || 0;
+                    await updateDoc(userBalanceRef, {
+                        balance: currentBalance + amount,
+                        totalRecharge: currentRecharge + amount,
+                        updatedAt: new Date().toISOString(),
+                        lastLoadedBy: userData.username,
+                        lastLoadedAt: new Date().toISOString()
+                    });
+                } else {
+                    await setDoc(userBalanceRef, {
+                        balance: amount,
+                        totalRecharge: amount,
+                        username: username,
+                        createdAt: new Date().toISOString(),
+                        lastLoadedBy: userData.username,
+                        lastLoadedAt: new Date().toISOString()
+                    });
+                }
+                
+                // Update local userData if it's the current user
+                if (userData.username.toLowerCase() === username) {
+                    userData.balance = (userData.balance || 0) + amount;
+                    userData.totalRecharge = (userData.totalRecharge || 0) + amount;
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    updateUI();
+                }
+                
+                // Clear form inputs
+                usernameInput.value = '';
+                amountInput.value = '';
+                
+                showNotification(`Successfully loaded $${safeAmount} to ${username}'s account!`, 'success');
+            } catch (error) {
+                console.error('Error loading balance:', error);
+                let errorMsg = 'Error loading balance. ';
+                if (error.message) {
+                    errorMsg += error.message;
+                } else if (error.code) {
+                    errorMsg += `Error code: ${error.code}`;
+                } else {
+                    errorMsg += 'Please try again.';
+                }
+                showNotification(errorMsg, 'error');
+            }
         }
         
         // Make functions globally accessible
         window.approveBalanceRequest = approveBalanceRequest;
         window.rejectBalanceRequest = rejectBalanceRequest;
+        window.adminLoadBalance = adminLoadBalance;
+        
+        /* ==================== NOTIFICATION SYSTEM ==================== */
+        
+        function showNotification(message, type = 'info') {
+            // Remove any existing notifications
+            const existing = document.querySelectorAll('.notification-popup');
+            existing.forEach(n => n.remove());
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification-popup ${type}`;
+            
+            // Set icon based on type
+            let icon = '';
+            if (type === 'success') icon = '✓';
+            else if (type === 'error') icon = '✕';
+            else icon = 'ℹ';
+            
+            notification.innerHTML = `<span class="notif-icon">${icon}</span><span>${message}</span>`;
+            document.body.appendChild(notification);
+            
+            // Remove after animation
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Make globally accessible
+        window.showNotification = showNotification;
         
         /* ==================== ADMIN STOCK MANAGEMENT (SECURE) ==================== */
         
@@ -6293,179 +5709,78 @@
         
         /* ==================== DICE BETTING SYSTEM ==================== */
         
-        // Get all dice bets from Firebase
-        async function getAllDiceBets() {
-            try {
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                
-                if (firestoreDb && firestore) {
-                    const { collection, query, where, getDocs } = firestore;
-                    const betsRef = collection(firestoreDb, 'diceBets');
-                    const q = query(betsRef, where('status', 'in', ['waiting', 'active']));
-                    const snapshot = await getDocs(q);
-                    const bets = [];
-                    snapshot.forEach(doc => {
-                        bets.push({ id: doc.id, ...doc.data() });
-                    });
-                    return bets;
-                }
-            } catch (error) {
-                console.error('Error loading dice bets from Firebase:', error);
-            }
-            
-            // Fallback to empty array
-            return [];
+        // Get all dice bets from storage
+        function getAllDiceBets() {
+            return JSON.parse(localStorage.getItem('pluxoDiceBets')) || [];
         }
 
-        // Save dice bet to Firebase
-        async function saveDiceBet(bet) {
-            try {
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                
-                if (firestoreDb && firestore) {
-                    const { collection, doc, setDoc } = firestore;
-                    const betRef = doc(collection(firestoreDb, 'diceBets'), bet.id);
-                    await setDoc(betRef, bet);
-                    return true;
-                }
-            } catch (error) {
-                console.error('Error saving dice bet to Firebase:', error);
-                showError('Failed to save bet. Please try again.');
-                return false;
-            }
-            return false;
-        }
-        
-        // Delete dice bet from Firebase
-        async function deleteDiceBet(betId) {
-            try {
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                
-                if (firestoreDb && firestore) {
-                    const { doc, deleteDoc } = firestore;
-                    const betRef = doc(firestoreDb, 'diceBets', betId);
-                    await deleteDoc(betRef);
-                    return true;
-                }
-            } catch (error) {
-                console.error('Error deleting dice bet from Firebase:', error);
-                return false;
-            }
-            return false;
+        // Save dice bets to storage
+        function saveDiceBets(bets) {
+            localStorage.setItem('pluxoDiceBets', JSON.stringify(bets));
         }
 
-        // Get dice bet history from Firebase
-        async function getDiceHistory() {
-            try {
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                
-                if (firestoreDb && firestore) {
-                    const { collection, query, where, getDocs, orderBy, limit } = firestore;
-                    const betsRef = collection(firestoreDb, 'diceBets');
-                    const q = query(
-                        betsRef,
-                        where('status', '==', 'completed'),
-                        orderBy('completedAt', 'desc'),
-                        limit(50)
-                    );
-                    const snapshot = await getDocs(q);
-                    const history = [];
-                    snapshot.forEach(doc => {
-                        history.push({ id: doc.id, ...doc.data() });
-                    });
-                    return history;
-                }
-            } catch (error) {
-                console.error('Error loading dice history from Firebase:', error);
-            }
-            
-            return [];
+        // Get dice bet history
+        function getDiceHistory() {
+            return JSON.parse(localStorage.getItem('pluxoDiceHistory')) || [];
         }
 
-        // Save dice bet history to Firebase (moves completed bet to history)
-        async function saveDiceHistory(bet) {
-            // Bet is already saved, just mark as completed
-            bet.status = 'completed';
-            bet.completedAt = new Date().toISOString();
-            return await saveDiceBet(bet);
+        // Save dice bet history
+        function saveDiceHistory(history) {
+            localStorage.setItem('pluxoDiceHistory', JSON.stringify(history));
         }
 
         // Create a new dice bet
-        async function createDiceBet() {
-            // Allow all logged-in users (not just admins)
-            if (!userData || !userData.username) {
-                showError('Please login to create bets');
+        function createDiceBet() {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                alert('Only admins can create bets');
                 return;
             }
             
-            const amountInput = document.getElementById('diceBetAmount') || document.getElementById('userDiceBetAmount');
-            if (!amountInput) return;
-            
+            const amountInput = document.getElementById('diceBetAmount');
             const amount = parseFloat(amountInput.value);
             
             // Validate bet amount
             if (!amount || isNaN(amount) || amount < 1 || amount > 5) {
-                showError('Bet amount must be between $1 and $5');
+                alert('Bet amount must be between $1 and $5');
                 shakeElement(amountInput);
                 return;
             }
             
             // Check user balance
-            if (userData.balance < amount) {
-                showError('Insufficient balance');
+            if (!userData || userData.balance < amount) {
+                alert('Insufficient balance');
                 return;
             }
             
             // Security: Rate limiting
             const rateCheck = checkRateLimit('createDiceBet', 10, 60000);
             if (!rateCheck.allowed) {
-                showError(rateCheck.message);
+                alert(rateCheck.message);
                 return;
             }
             
-            // Wait for Firebase
-            let firestoreDb = window.db;
-            let firestore = window.firestoreFunctions;
-            let retries = 0;
-            while ((!firestoreDb || !firestore) && retries < 10) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                firestoreDb = window.db;
-                firestore = window.firestoreFunctions;
-                retries++;
-            }
-            
-            if (!firestoreDb || !firestore) {
-                showError('Firebase not initialized. Please refresh and try again.');
-                return;
-            }
-            
-            const username = userData.username.toLowerCase();
+            const bets = getAllDiceBets();
+            const adminUsername = userData.username.toLowerCase();
             
             // Check if user already has an active bet
-            const bets = await getAllDiceBets();
             const existingBet = bets.find(b => 
-                (b.creator === username || b.opponent === username) && 
-                (b.status === 'waiting' || b.status === 'active')
+                (b.creator === adminUsername || b.opponent === adminUsername) && 
+                b.status === 'waiting'
             );
             
             if (existingBet) {
-                showWarning('You already have an active bet. Please complete or cancel it first.');
+                alert('You already have an active bet. Please complete or cancel it first.');
                 return;
             }
             
             // Create new bet
             const newBet = {
                 id: 'DICE_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-                creator: username,
+                creator: adminUsername,
                 creatorName: userData.username,
-                creatorUID: userData.firebaseUID || null,
                 opponent: null,
                 opponentName: null,
-                opponentUID: null,
                 amount: amount.toFixed(2),
                 status: 'waiting',
                 creatorRoll: null,
@@ -6475,121 +5790,63 @@
                 completedAt: null
             };
             
-            // Save to Firebase
-            const saved = await saveDiceBet(newBet);
-            if (!saved) {
-                return;
-            }
+            bets.push(newBet);
+            saveDiceBets(bets);
             
-            // Deduct balance (update Firebase balance)
-            if (userData.firebaseUID) {
-                try {
-                    const { doc, getDoc, setDoc, updateDoc } = firestore;
-                    const userBalanceRef = doc(firestoreDb, 'userBalances', userData.firebaseUID);
-                    const userBalanceDoc = await getDoc(userBalanceRef);
-                    
-                    if (userBalanceDoc.exists()) {
-                        const currentBalance = userBalanceDoc.data().balance || 0;
-                        await updateDoc(userBalanceRef, {
-                            balance: currentBalance - amount,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                } catch (error) {
-                    console.error('Error updating balance:', error);
-                }
-            }
-            
-            // Update local balance
+            // Deduct balance
             userData.balance -= amount;
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
             updateUI();
             
             amountInput.value = '';
-            await renderDiceBets();
+            renderDiceBets();
             
-            showSuccess('Bet created! Waiting for opponent...', 'Bet Created');
+            alert('Bet created! Waiting for opponent...');
         }
 
         // Accept a dice bet
-        async function acceptDiceBet(betId) {
-            // Allow all logged-in users (not just admins)
-            if (!userData || !userData.username) {
-                showError('Please login to accept bets');
+        function acceptDiceBet(betId) {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                alert('Only admins can accept bets');
                 return;
             }
             
-            // Wait for Firebase
-            let firestoreDb = window.db;
-            let firestore = window.firestoreFunctions;
-            let retries = 0;
-            while ((!firestoreDb || !firestore) && retries < 10) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                firestoreDb = window.db;
-                firestore = window.firestoreFunctions;
-                retries++;
-            }
-            
-            if (!firestoreDb || !firestore) {
-                showError('Firebase not initialized. Please refresh and try again.');
-                return;
-            }
-            
-            const bets = await getAllDiceBets();
+            const bets = getAllDiceBets();
             const bet = bets.find(b => b.id === betId);
             
             if (!bet) {
-                showError('Bet not found');
+                alert('Bet not found');
                 return;
             }
             
             if (bet.status !== 'waiting') {
-                showWarning('This bet is no longer available');
-                await renderDiceBets();
+                alert('This bet is no longer available');
+                renderDiceBets();
                 return;
             }
             
-            const username = userData.username.toLowerCase();
+            const adminUsername = userData.username.toLowerCase();
             
             // Can't accept own bet
-            if (bet.creator === username) {
-                showWarning('You cannot accept your own bet');
+            if (bet.creator === adminUsername) {
+                alert('You cannot accept your own bet');
                 return;
             }
             
             // Check balance
             const betAmount = parseFloat(bet.amount);
             if (userData.balance < betAmount) {
-                showError('Insufficient balance');
+                alert('Insufficient balance');
                 return;
             }
             
             // Accept bet
-            bet.opponent = username;
+            bet.opponent = adminUsername;
             bet.opponentName = userData.username;
-            bet.opponentUID = userData.firebaseUID || null;
             bet.status = 'active';
             
-            // Deduct balance from opponent (Firebase)
-            if (userData.firebaseUID) {
-                try {
-                    const { doc, getDoc, updateDoc } = firestore;
-                    const userBalanceRef = doc(firestoreDb, 'userBalances', userData.firebaseUID);
-                    const userBalanceDoc = await getDoc(userBalanceRef);
-                    
-                    if (userBalanceDoc.exists()) {
-                        const currentBalance = userBalanceDoc.data().balance || 0;
-                        await updateDoc(userBalanceRef, {
-                            balance: currentBalance - betAmount,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                } catch (error) {
-                    console.error('Error updating balance:', error);
-                }
-            }
-            
-            // Update local balance
+            // Deduct balance from opponent
             userData.balance -= betAmount;
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
             updateUI();
@@ -6602,11 +5859,9 @@
             if (bet.creatorRoll > bet.opponentRoll) {
                 bet.winner = bet.creator;
                 bet.winnerName = bet.creatorName;
-                bet.winnerUID = bet.creatorUID;
             } else if (bet.opponentRoll > bet.creatorRoll) {
                 bet.winner = bet.opponent;
                 bet.winnerName = bet.opponentName;
-                bet.winnerUID = bet.opponentUID;
             } else {
                 // Tie - refund both players
                 bet.winner = 'tie';
@@ -6616,204 +5871,118 @@
             bet.status = 'completed';
             bet.completedAt = new Date().toISOString();
             
-            // Update balances in Firebase
-            const { doc, getDoc, updateDoc } = firestore;
-            const totalWinnings = betAmount * 2;
+            // Update balances
+            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+            const creatorUserData = JSON.parse(localStorage.getItem('pluxoUser')) || {};
             
             if (bet.winner === 'tie') {
                 // Refund both players
-                if (bet.creatorUID) {
-                    try {
-                        const creatorBalanceRef = doc(firestoreDb, 'userBalances', bet.creatorUID);
-                        const creatorBalanceDoc = await getDoc(creatorBalanceRef);
-                        if (creatorBalanceDoc.exists()) {
-                            const currentBalance = creatorBalanceDoc.data().balance || 0;
-                            await updateDoc(creatorBalanceRef, {
-                                balance: currentBalance + betAmount,
-                                updatedAt: new Date().toISOString()
-                            });
-                        }
-                    } catch (error) {
-                        console.error('Error refunding creator:', error);
-                    }
-                }
-                
-                if (bet.opponentUID) {
-                    try {
-                        const opponentBalanceRef = doc(firestoreDb, 'userBalances', bet.opponentUID);
-                        const opponentBalanceDoc = await getDoc(opponentBalanceRef);
-                        if (opponentBalanceDoc.exists()) {
-                            const currentBalance = opponentBalanceDoc.data().balance || 0;
-                            await updateDoc(opponentBalanceRef, {
-                                balance: currentBalance + betAmount,
-                                updatedAt: new Date().toISOString()
-                            });
-                        }
-                    } catch (error) {
-                        console.error('Error refunding opponent:', error);
-                    }
-                }
-                
-                // Update local balance if current user
-                if (bet.creator === username) {
-                    userData.balance += betAmount;
-                } else if (bet.opponent === username) {
+                if (bet.creator === userData.username.toLowerCase()) {
                     userData.balance += betAmount;
                 }
-            } else {
-                // Winner gets both bets
-                const winnerUID = bet.winnerUID;
-                if (winnerUID) {
-                    try {
-                        const winnerBalanceRef = doc(firestoreDb, 'userBalances', winnerUID);
-                        const winnerBalanceDoc = await getDoc(winnerBalanceRef);
-                        if (winnerBalanceDoc.exists()) {
-                            const currentBalance = winnerBalanceDoc.data().balance || 0;
-                            await updateDoc(winnerBalanceRef, {
-                                balance: currentBalance + totalWinnings,
-                                updatedAt: new Date().toISOString()
-                            });
-                        }
-                    } catch (error) {
-                        console.error('Error updating winner balance:', error);
-                    }
-                }
-                
-                // Update local balance if current user won
-                if (bet.winner === username) {
-                    userData.balance += totalWinnings;
-                }
+                // Note: In a real system, you'd need to update the creator's balance too
+            } else if (bet.winner === adminUsername) {
+                // Opponent wins - already deducted, add winnings
+                userData.balance += betAmount * 2;
             }
             
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
             updateUI();
             
-            // Save completed bet to Firebase
-            await saveDiceHistory(bet);
+            // Move to history
+            const history = getDiceHistory();
+            history.unshift(bet);
+            if (history.length > 50) history.pop(); // Keep last 50
+            saveDiceHistory(history);
             
-            await renderDiceBets();
+            // Remove from active bets
+            const updatedBets = bets.filter(b => b.id !== betId);
+            saveDiceBets(updatedBets);
             
-            // Show result with popup
-            let resultMsg = `Dice Roll Results:<br><br>`;
-            resultMsg += `<strong>${bet.creatorName}:</strong> ${bet.creatorRoll}<br>`;
-            resultMsg += `<strong>${bet.opponentName}:</strong> ${bet.opponentRoll}<br><br>`;
+            renderDiceBets();
+            
+            // Show result
+            let resultMsg = `Dice Roll Results:\n`;
+            resultMsg += `${bet.creatorName}: ${bet.creatorRoll}\n`;
+            resultMsg += `${bet.opponentName}: ${bet.opponentRoll}\n\n`;
             if (bet.winner === 'tie') {
-                resultMsg += '🎲 <strong>Tie! Both players refunded.</strong>';
-                showInfo(resultMsg, 'Dice Game Result');
+                resultMsg += 'Tie! Both players refunded.';
             } else {
-                resultMsg += `🎉 <strong>Winner: ${bet.winnerName}!</strong>`;
-                if (bet.winner === username) {
-                    showSuccess(resultMsg, 'You Won!');
-                } else {
-                    showInfo(resultMsg, 'Dice Game Result');
-                }
+                resultMsg += `Winner: ${bet.winnerName} ($${bet.amount})`;
             }
+            alert(resultMsg);
         }
 
         // Cancel a dice bet
-        async function cancelDiceBet(betId) {
-            // Allow all logged-in users
-            if (!userData || !userData.username) {
-                showError('Please login to cancel bets');
+        function cancelDiceBet(betId) {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                alert('Unauthorized access');
                 return;
             }
             
-            const username = userData.username.toLowerCase();
-            
-            // Wait for Firebase
-            let firestoreDb = window.db;
-            let firestore = window.firestoreFunctions;
-            let retries = 0;
-            while ((!firestoreDb || !firestore) && retries < 10) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                firestoreDb = window.db;
-                firestore = window.firestoreFunctions;
-                retries++;
-            }
-            
-            if (!firestoreDb || !firestore) {
-                showError('Firebase not initialized. Please refresh and try again.');
-                return;
-            }
-            
-            const bets = await getAllDiceBets();
+            const bets = getAllDiceBets();
             const bet = bets.find(b => b.id === betId);
             
             if (!bet) {
-                showError('Bet not found');
+                alert('Bet not found');
                 return;
             }
             
+            const adminUsername = userData.username.toLowerCase();
+            
             // Only creator can cancel
-            if (bet.creator !== username) {
-                showWarning('Only the bet creator can cancel');
+            if (bet.creator !== adminUsername) {
+                alert('Only the bet creator can cancel');
                 return;
             }
             
             if (bet.status !== 'waiting') {
-                showWarning('Cannot cancel a bet that has been accepted');
+                alert('Cannot cancel a bet that has been accepted');
                 return;
             }
             
-            showConfirm('Cancel this bet? Your bet amount will be refunded.', 'Cancel Bet', async () => {
-                // Refund balance (Firebase)
-                const betAmount = parseFloat(bet.amount);
-                
-                if (userData.firebaseUID) {
-                    try {
-                        const { doc, getDoc, updateDoc } = firestore;
-                        const userBalanceRef = doc(firestoreDb, 'userBalances', userData.firebaseUID);
-                        const userBalanceDoc = await getDoc(userBalanceRef);
-                        
-                        if (userBalanceDoc.exists()) {
-                            const currentBalance = userBalanceDoc.data().balance || 0;
-                            await updateDoc(userBalanceRef, {
-                                balance: currentBalance + betAmount,
-                                updatedAt: new Date().toISOString()
-                            });
-                        }
-                    } catch (error) {
-                        console.error('Error refunding balance:', error);
-                    }
-                }
-                
-                // Update local balance
-                userData.balance += betAmount;
-                localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                updateUI();
-                
-                // Delete bet from Firebase
-                await deleteDiceBet(betId);
-                
-                await renderDiceBets();
-                showSuccess('Bet cancelled. Amount refunded.');
-            });
+            if (!confirm('Cancel this bet? Your bet amount will be refunded.')) {
+                return;
+            }
+            
+            // Refund balance
+            const betAmount = parseFloat(bet.amount);
+            userData.balance += betAmount;
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            updateUI();
+            
+            // Remove bet
+            const updatedBets = bets.filter(b => b.id !== betId);
+            saveDiceBets(updatedBets);
+            
+            renderDiceBets();
+            alert('Bet cancelled. Amount refunded.');
         }
 
-        // Render dice bets (for all users)
-        async function renderDiceBets() {
-            // Allow all logged-in users
-            if (!userData || !userData.username) {
-                const betsList = document.getElementById('diceBetsList') || document.getElementById('userDiceBetsList');
-                const historyList = document.getElementById('diceHistoryList') || document.getElementById('userDiceHistoryList');
-                if (betsList) betsList.innerHTML = '<p style="color: var(--gray);">Please login to view bets</p>';
-                if (historyList) historyList.innerHTML = '<p style="color: var(--gray);">Please login to view history</p>';
+        // Render dice bets
+        function renderDiceBets() {
+            // Security: Verify admin access
+            if (!verifyAdminAccess()) {
+                const betsList = document.getElementById('diceBetsList');
+                const historyList = document.getElementById('diceHistoryList');
+                if (betsList) betsList.innerHTML = '<p style="color: var(--gray);">Access denied</p>';
+                if (historyList) historyList.innerHTML = '<p style="color: var(--gray);">Access denied</p>';
                 return;
             }
             
-            const bets = await getAllDiceBets();
-            const history = await getDiceHistory();
-            const username = userData.username.toLowerCase();
+            const bets = getAllDiceBets();
+            const history = getDiceHistory();
+            const adminUsername = userData.username.toLowerCase();
             
-            // Filter bets: show waiting bets from others, or active bets involving current user
+            // Filter bets: show waiting bets from others, or active/completed bets involving current user
             const relevantBets = bets.filter(b => 
-                (b.status === 'waiting' && b.creator !== username) ||
-                (b.status === 'active' && (b.creator === username || b.opponent === username)) ||
-                (b.status === 'waiting' && b.creator === username)
+                (b.status === 'waiting' && b.creator !== adminUsername) ||
+                (b.creator === adminUsername || b.opponent === adminUsername)
             );
             
-            const betsList = document.getElementById('diceBetsList') || document.getElementById('userDiceBetsList');
-            const historyList = document.getElementById('diceHistoryList') || document.getElementById('userDiceHistoryList');
+            const betsList = document.getElementById('diceBetsList');
+            const historyList = document.getElementById('diceHistoryList');
             
             if (!betsList || !historyList) return;
             
@@ -6832,7 +6001,7 @@
                     const safeCreator = sanitizeInput(bet.creatorName || bet.creator);
                     const safeOpponent = bet.opponentName ? sanitizeInput(bet.opponentName) : 'Waiting for opponent...';
                     const safeAmount = sanitizeInput(bet.amount);
-                    const isCreator = bet.creator === username;
+                    const isCreator = bet.creator === adminUsername;
                     const isWaiting = bet.status === 'waiting';
                     const safeOnClickAccept = `acceptDiceBet('${safeId.replace(/'/g, "\\'")}')`;
                     const safeOnClickCancel = `cancelDiceBet('${safeId.replace(/'/g, "\\'")}')`;
@@ -6878,7 +6047,7 @@
             
             // Render history (only user's bets)
             const userHistory = history.filter(h => 
-                h.creator === username || h.opponent === username
+                h.creator === adminUsername || h.opponent === adminUsername
             ).slice(0, 10); // Show last 10
             
             if (userHistory.length === 0) {
@@ -6936,1013 +6105,6 @@
             }
         }
 
-        /* ==================== CHAT SYSTEM ==================== */
-        
-        let currentAdminChatId = null;
-        window.currentAdminChatId = null;
-        
-        // Get user's chat ID (one chat per user)
-        /*
-         * ====================================================================
-         * FIRESTORE SECURITY RULES - REQUIRED FOR CHAT SYSTEM
-         * ====================================================================
-         * 
-         * Copy these rules to Firebase Console → Firestore → Rules
-         * 
-         * rules_version = '2';
-         * service cloud.firestore {
-         *   match /databases/{database}/documents {
-         *     
-         *     match /chats/{chatId} {
-         *       // User can read/create/update their own chat
-         *       // Using request.resource.data for creates (when resource.data doesn't exist yet)
-         *       allow read, create, update: if request.auth != null &&
-         *         (request.resource.data.userId == request.auth.uid ||
-         *          resource.data.userId == request.auth.uid);
-         *       
-         *       // Admin can read all chats
-         *       allow read: if request.auth != null &&
-         *         get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.isAdmin == true;
-         *       
-         *       // Messages subcollection
-         *       match /messages/{messageId} {
-         *         // User can create messages in their own chat
-         *         allow create: if request.auth != null &&
-         *           get(/databases/$(database)/documents/chats/$(chatId)).data.userId == request.auth.uid;
-         *         
-         *         // Admin can create/update messages in any chat
-         *         allow create, update: if request.auth != null &&
-         *           get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.isAdmin == true;
-         *         
-         *         // Anyone authenticated can read messages
-         *         allow read: if request.auth != null;
-         *       }
-         *     }
-         *   }
-         * }
-         * 
-         * IMPORTANT NOTES:
-         * - Use request.resource.data for creates (when document doesn't exist yet)
-         * - Use resource.data for reads/updates (when document exists)
-         * - Messages are stored in subcollections: chats/{chatId}/messages/{messageId}
-         * - Chat documents do NOT contain a messages array
-         * ====================================================================
-         */
-        
-        function getUserChatId() {
-            if (!userData || !userData.firebaseUID) return null;
-            return 'CHAT_' + userData.firebaseUID;
-        }
-        
-        // Create or get user chat (chat document only, no messages array)
-        async function getUserChat() {
-            const chatId = getUserChatId();
-            if (!chatId) return null;
-            
-            try {
-                await window.firebaseReady;
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                
-                if (!firestoreDb || !firestore) return null;
-                
-                const { doc, getDoc, setDoc, serverTimestamp } = firestore;
-                const chatRef = doc(firestoreDb, 'chats', chatId);
-                const chatDoc = await getDoc(chatRef);
-                
-                if (chatDoc.exists()) {
-                    return { id: chatDoc.id, ...chatDoc.data() };
-                } else {
-                    // Create new chat document (no messages array)
-                    const newChat = {
-                        id: chatId,
-                        userId: userData.firebaseUID,
-                        username: userData.username,
-                        status: 'open',
-                        createdAt: serverTimestamp(),
-                        updatedAt: serverTimestamp()
-                    };
-                    await setDoc(chatRef, newChat);
-                    return newChat;
-                }
-            } catch (error) {
-                console.error('Error getting user chat:', error);
-                return null;
-            }
-        }
-        
-        // Open chat for Add Funds
-        async function openAddFundsChat() {
-            if (!userData || !userData.firebaseUID) {
-                showError('Please login to add funds');
-                return;
-            }
-            
-            // Show info message first
-            showInfo('To load funds contact support in chatbot. Shouldn\'t take longer than 10 min', 'Add Funds', () => {
-                // Navigate to chat page after user clicks OK
-                const chatNav = document.querySelector('.nav-item[onclick*="chat"]');
-                if (chatNav) {
-                    showPage('chat', chatNav);
-                }
-                
-                // Check if user already has a message about funds
-                setTimeout(async () => {
-                    try {
-                        await window.firebaseReady;
-                        const chatId = getUserChatId();
-                        if (!chatId) return;
-                        
-                        const firestoreDb = window.db;
-                        const firestore = window.firestoreFunctions;
-                        
-                        if (!firestoreDb || !firestore) return;
-                        
-                        // Check if funds message already exists in subcollection
-                        const { collection, query, where, getDocs } = firestore;
-                        const messagesRef = collection(firestoreDb, 'chats', chatId, 'messages');
-                        const fundsQuery = query(
-                            messagesRef, 
-                            where('text', '>=', 'add funds'),
-                            where('text', '<=', 'add funds\uf8ff')
-                        );
-                        const snapshot = await getDocs(fundsQuery);
-                        
-                        const hasFundsMessage = !snapshot.empty || 
-                            Array.from(snapshot.docs).some(doc => {
-                                const text = doc.data().text?.toLowerCase() || '';
-                                return text.includes('add funds') || text.includes('bitcoin') || text.includes('btc');
-                            });
-                        
-                        // If no funds-related message exists, send initial message
-                        if (!hasFundsMessage) {
-                            // Ensure chat document exists first
-                            await getUserChat();
-                            
-                            const { collection, addDoc, doc, updateDoc, serverTimestamp } = firestore;
-                            
-                            // Add initial message to subcollection (chats/{chatId}/messages/{messageId})
-                            const messagesRef = collection(firestoreDb, 'chats', chatId, 'messages');
-                            await addDoc(messagesRef, {
-                                text: 'Hi, I would like to add funds. Please send me a Bitcoin address so I can send payment.',
-                                sender: 'user',
-                                senderName: userData.username,
-                                timestamp: serverTimestamp(),
-                                read: false
-                            });
-                            
-                            // Update chat document's updatedAt timestamp
-                            const chatRef = doc(firestoreDb, 'chats', chatId);
-                            await updateDoc(chatRef, {
-                                updatedAt: serverTimestamp(),
-                                status: 'open'
-                            });
-                        }
-                    } catch (error) {
-                        console.error('Error sending initial funds message:', error);
-                    }
-                }, 500);
-            });
-        }
-        
-        window.openAddFundsChat = openAddFundsChat;
-        
-        // Store unsubscribe functions for cleanup
-        let userChatUnsubscribe = null;
-        let adminChatUnsubscribe = null;
-        
-        // Note: clientId is used for reconciliation instead of tracking pending messages
-        
-        // Add message to UI optimistically (instant rendering)
-        function addMessageToUI(message, isPending = false) {
-            const messagesEl = document.getElementById('userChatMessages');
-            if (!messagesEl) return null;
-            
-            // Remove empty state if present
-            const emptyState = messagesEl.querySelector('.empty-chat');
-            if (emptyState) {
-                emptyState.remove();
-            }
-            
-            const bubble = document.createElement('div');
-            const isUser = message.sender === 'user';
-            bubble.className = `chat-message ${isUser ? 'user' : 'admin'} ${isPending ? 'pending' : ''}`;
-            
-            // Store clientId for reconciliation
-            if (message.clientId) {
-                bubble.dataset.clientId = message.clientId;
-            }
-            if (message.id) {
-                bubble.dataset.messageId = message.id;
-            }
-            
-            let safeMessage;
-            try {
-                safeMessage = sanitizeInput(message.text || '');
-            } catch {
-                safeMessage = '[Invalid message]';
-            }
-            
-            const time = message.timestamp instanceof Date 
-                ? message.timestamp.toLocaleString() 
-                : (message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date().toLocaleString());
-            
-            bubble.innerHTML = `
-                <div class="message-bubble">${safeMessage}</div>
-                <div class="message-meta">${isPending ? 'Sending…' : time}</div>
-            `;
-            
-            messagesEl.appendChild(bubble);
-            messagesEl.scrollTop = messagesEl.scrollHeight;
-            
-            return bubble;
-        }
-        
-        // Add admin message to UI optimistically
-        function addAdminMessageToUI(message, isPending = false) {
-            const messagesEl = document.getElementById('adminChatMessages');
-            if (!messagesEl) return null;
-            
-            const emptyState = messagesEl.querySelector('.empty-chat');
-            if (emptyState) {
-                emptyState.remove();
-            }
-            
-            const bubble = document.createElement('div');
-            const isAdmin = message.sender === 'admin';
-            bubble.className = `chat-message ${isAdmin ? 'admin' : 'user'} ${isPending ? 'pending' : ''}`;
-            
-            // Store clientId for reconciliation
-            if (message.clientId) {
-                bubble.dataset.clientId = message.clientId;
-            }
-            if (message.id) {
-                bubble.dataset.messageId = message.id;
-            }
-            
-            let safeMessage;
-            try {
-                safeMessage = sanitizeInput(message.text || '');
-            } catch {
-                safeMessage = '[Invalid message]';
-            }
-            
-            const time = message.timestamp instanceof Date 
-                ? message.timestamp.toLocaleString() 
-                : (message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date().toLocaleString());
-            
-            bubble.innerHTML = `
-                <div class="message-bubble">${safeMessage}</div>
-                <div class="message-meta">${message.senderName || (isAdmin ? 'Admin' : 'User')} • ${isPending ? 'Sending…' : time}</div>
-            `;
-            
-            messagesEl.appendChild(bubble);
-            messagesEl.scrollTop = messagesEl.scrollHeight;
-            
-            return bubble;
-        }
-        
-        // Render message from Firestore (reconciles with pending messages)
-        function renderMessageFromFirestore(msg, isAdminChat = false) {
-            const messagesEl = isAdminChat 
-                ? document.getElementById('adminChatMessages')
-                : document.getElementById('userChatMessages');
-            
-            if (!messagesEl) return;
-            
-            // DEBUG: Log reconciliation attempt
-            console.log('RECONCILE', {
-                clientId: msg.clientId,
-                messageId: msg.id,
-                text: msg.text?.substring(0, 20),
-                hasTimestamp: !!msg.timestamp
-            });
-            
-            // If message has clientId, find and update pending bubble
-            if (msg.clientId) {
-                // Try exact match first
-                let pendingBubble = messagesEl.querySelector(`.chat-message.pending[data-client-id="${msg.clientId}"]`);
-                
-                // Fallback: try without .pending class (in case it was already removed)
-                if (!pendingBubble) {
-                    pendingBubble = messagesEl.querySelector(`.chat-message[data-client-id="${msg.clientId}"]`);
-                }
-                
-                if (pendingBubble) {
-                    console.log('✅ MATCHED pending bubble by clientId:', msg.clientId);
-                    
-                    // Replace pending state with confirmed message
-                    pendingBubble.classList.remove('pending');
-                    if (msg.id) {
-                        pendingBubble.dataset.messageId = msg.id;
-                    }
-                    
-                    const metaEl = pendingBubble.querySelector('.message-meta');
-                    if (metaEl) {
-                        // Handle serverTimestamp() - might be null initially
-                        let timestamp;
-                        if (msg.timestamp?.toDate) {
-                            timestamp = msg.timestamp.toDate();
-                        } else if (msg.timestamp) {
-                            timestamp = new Date(msg.timestamp);
-                        } else {
-                            timestamp = new Date(); // Fallback for serverTimestamp() pending
-                        }
-                        
-                        if (isAdminChat) {
-                            metaEl.textContent = `${msg.senderName || (msg.sender === 'admin' ? 'Admin' : 'User')} • ${timestamp.toLocaleString()}`;
-                        } else {
-                            metaEl.textContent = timestamp.toLocaleString();
-                        }
-                    }
-                    return; // ⛔ CRITICAL: Stop here to prevent duplicate
-                } else {
-                    console.log('❌ No pending bubble found for clientId:', msg.clientId);
-                    // Log all pending bubbles for debugging
-                    const allPending = messagesEl.querySelectorAll('.chat-message.pending');
-                    console.log('Pending bubbles:', Array.from(allPending).map(b => ({
-                        clientId: b.dataset.clientId,
-                        text: b.querySelector('.message-bubble')?.textContent?.substring(0, 20)
-                    })));
-                }
-            } else {
-                console.log('⚠️ Message has no clientId:', msg);
-            }
-            
-            // Check if message already exists by ID (prevent duplicates)
-            if (msg.id) {
-                const existingBubble = messagesEl.querySelector(`[data-message-id="${msg.id}"]`);
-                if (existingBubble) {
-                    console.log('⚠️ Message already rendered by ID:', msg.id);
-                    return; // Already rendered
-                }
-            }
-            
-            // New message from Firestore (not from optimistic UI)
-            const message = {
-                id: msg.id,
-                ...msg,
-                timestamp: msg.timestamp?.toDate ? msg.timestamp.toDate() : (msg.timestamp ? new Date(msg.timestamp) : new Date())
-            };
-            
-            console.log('➕ Adding new message (not from optimistic UI)');
-            if (isAdminChat) {
-                addAdminMessageToUI(message, false);
-            } else {
-                addMessageToUI(message, false);
-            }
-        }
-        
-        // Load user chat messages using real-time listener (with incremental updates)
-        async function loadUserChat() {
-            if (!userData || !userData.firebaseUID) {
-                const messagesEl = document.getElementById('userChatMessages');
-                if (messagesEl) {
-                    messagesEl.innerHTML = '<div class="empty-chat"><div class="empty-chat-icon">💬</div><p>Please login to use chat</p></div>';
-                }
-                return;
-            }
-            
-            // Unsubscribe from previous listener
-            if (userChatUnsubscribe) {
-                userChatUnsubscribe();
-                userChatUnsubscribe = null;
-            }
-            
-            const chatId = getUserChatId();
-            if (!chatId) return;
-            
-            // Ensure chat document exists
-            await getUserChat();
-            
-            const messagesEl = document.getElementById('userChatMessages');
-            if (!messagesEl) return;
-            
-            try {
-                await window.firebaseReady;
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                
-                if (!firestoreDb || !firestore) return;
-                
-                const { collection, query, orderBy, onSnapshot } = firestore;
-                const messagesRef = collection(firestoreDb, 'chats', chatId, 'messages');
-                const q = query(messagesRef, orderBy('timestamp', 'asc'));
-                
-                // Set up real-time listener with incremental updates
-                userChatUnsubscribe = onSnapshot(q, (snapshot) => {
-                    // DEBUG: Log snapshot events
-                    console.log('📡 SNAPSHOT FIRED', {
-                        changes: snapshot.docChanges().length,
-                        totalDocs: snapshot.size
-                    });
-                    
-                    // Use docChanges() for incremental updates
-                    snapshot.docChanges().forEach(change => {
-                        console.log('📝 CHANGE', change.type, {
-                            id: change.doc.id,
-                            data: change.doc.data()
-                        });
-                        
-                        if (change.type === 'added') {
-                            const data = change.doc.data();
-                            const message = {
-                                id: change.doc.id,
-                                ...data,
-                                timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : (data.timestamp ? new Date(data.timestamp) : null)
-                            };
-                            
-                            // Render message (will reconcile with pending if clientId matches)
-                            renderMessageFromFirestore(message, false);
-                        }
-                    });
-                    
-                    // If no messages, show empty state
-                    if (messagesEl.children.length === 0 || 
-                        (messagesEl.children.length === 1 && messagesEl.querySelector('.empty-chat'))) {
-                        messagesEl.innerHTML = '<div class="empty-chat"><div class="empty-chat-icon">💬</div><p>Start a conversation by sending a message below</p></div>';
-                    }
-                    
-                    messagesEl.scrollTop = messagesEl.scrollHeight;
-                }, (error) => {
-                    console.error('Error loading chat messages:', error);
-                    if (messagesEl.children.length === 0) {
-                        messagesEl.innerHTML = '<div class="empty-chat"><p>Error loading messages. Please refresh.</p></div>';
-                    }
-                });
-            } catch (error) {
-                console.error('Error setting up chat listener:', error);
-                const messagesEl = document.getElementById('userChatMessages');
-                if (messagesEl && messagesEl.children.length === 0) {
-                    messagesEl.innerHTML = '<div class="empty-chat"><p>Error loading messages. Please refresh.</p></div>';
-                }
-            }
-        }
-        
-        // Send user message with optimistic UI (instant feedback)
-        async function sendUserMessage() {
-            if (!userData || !userData.firebaseUID) {
-                showError('Please login to send messages');
-                return;
-            }
-            
-            const input = document.getElementById('userChatInput');
-            const sendBtn = document.getElementById('userChatSendBtn');
-            const messageText = input?.value.trim();
-            
-            if (!messageText) return;
-            
-            // Clear input immediately for better UX
-            input.value = '';
-            
-            // Don't disable button - it adds perceived lag
-            // if (sendBtn) {
-            //     sendBtn.disabled = true;
-            //     sendBtn.textContent = 'Sending...';
-            // }
-            
-            // Generate clientId for message reconciliation
-            const clientId = crypto.randomUUID ? crypto.randomUUID() : `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-            
-            console.log('📤 SENDING MESSAGE', {
-                clientId: clientId,
-                text: messageText.substring(0, 20)
-            });
-            
-            // Show message instantly (optimistic UI)
-            const tempMessage = {
-                text: messageText,
-                sender: 'user',
-                senderName: userData.username,
-                timestamp: new Date(),
-                clientId: clientId
-            };
-            const pendingBubble = addMessageToUI(tempMessage, true);
-            
-            // Verify pending bubble was created with clientId
-            if (pendingBubble) {
-                console.log('✅ Pending bubble created', {
-                    hasClientId: !!pendingBubble.dataset.clientId,
-                    clientId: pendingBubble.dataset.clientId,
-                    selector: `.chat-message.pending[data-client-id="${clientId}"]`
-                });
-            } else {
-                console.error('❌ Failed to create pending bubble');
-            }
-            
-            try {
-                // Wait for Firebase initialization
-                await window.firebaseReady;
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                
-                if (!firestoreDb || !firestore) {
-                    throw new Error('Firebase not initialized. Please refresh and try again.');
-                }
-                
-                const chatId = getUserChatId();
-                if (!chatId) {
-                    throw new Error('Unable to get chat ID');
-                }
-                
-                // Ensure chat document exists (creates if doesn't exist)
-                await getUserChat();
-                
-                const { collection, addDoc, doc, updateDoc, serverTimestamp } = firestore;
-                
-                // Add message to subcollection (background write) with clientId
-                const messagesRef = collection(firestoreDb, 'chats', chatId, 'messages');
-                const messageData = {
-                    text: messageText,
-                    sender: 'user',
-                    senderName: userData.username,
-                    timestamp: serverTimestamp(),
-                    read: false,
-                    clientId: clientId // Key for reconciliation
-                };
-                
-                console.log('💾 Writing to Firestore', {
-                    clientId: clientId,
-                    chatId: chatId,
-                    hasClientId: !!messageData.clientId
-                });
-                
-                await addDoc(messagesRef, messageData);
-                
-                console.log('✅ Firestore write complete');
-                
-                // Update chat document's updatedAt timestamp
-                const chatRef = doc(firestoreDb, 'chats', chatId);
-                await updateDoc(chatRef, {
-                    updatedAt: serverTimestamp(),
-                    status: 'open'
-                });
-                
-                // onSnapshot will automatically reconcile the pending message via clientId
-            } catch (error) {
-                console.error('Error sending message:', error);
-                
-                // Mark as failed
-                if (pendingBubble) {
-                    pendingBubble.classList.remove('pending');
-                    pendingBubble.classList.add('failed');
-                    const metaEl = pendingBubble.querySelector('.message-meta');
-                    if (metaEl) {
-                        metaEl.textContent = 'Failed to send • Tap to retry';
-                        metaEl.style.cursor = 'pointer';
-                        metaEl.onclick = () => {
-                            input.value = messageText;
-                            pendingBubble.remove();
-                            sendUserMessage();
-                        };
-                    }
-                }
-                
-                let errorMsg = 'Failed to send message. Please try again.';
-                if (error.code === 'permission-denied') {
-                    errorMsg = 'Permission denied. Please check your account permissions.';
-                } else if (error.code === 'unavailable') {
-                    errorMsg = 'Service temporarily unavailable. Please try again.';
-                } else if (error.message) {
-                    errorMsg = `Error: ${error.message}`;
-                }
-                
-                // Show error but don't block UI
-                console.error('Send error:', errorMsg);
-            }
-        }
-        
-        // Load all chats for admin (with real-time updates)
-        async function loadAdminChats() {
-            if (!canAccessAdminChat(userData?.username)) {
-                console.log('❌ Admin chat access denied for:', userData?.username);
-                return;
-            }
-            
-            console.log('🔍 Loading admin chats...');
-            
-            try {
-                await window.firebaseReady;
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                
-                if (!firestoreDb || !firestore) {
-                    console.error('❌ Firebase not initialized');
-                    return;
-                }
-                
-                const { collection, query, orderBy, onSnapshot, getDocs } = firestore;
-                const chatsRef = collection(firestoreDb, 'chats');
-                
-                const chatListEl = document.getElementById('adminChatList');
-                if (!chatListEl) {
-                    console.error('❌ adminChatList element not found');
-                    return;
-                }
-                
-                // Try to query with orderBy, but fallback if it fails
-                let q;
-                try {
-                    q = query(chatsRef, orderBy('updatedAt', 'desc'));
-                } catch (orderByError) {
-                    console.warn('⚠️ orderBy failed, trying without:', orderByError);
-                    // Fallback: get all chats without ordering
-                    q = chatsRef;
-                }
-                
-                // Set up real-time listener for chat list
-                console.log('📡 Setting up admin chats listener...');
-                onSnapshot(q, async (snapshot) => {
-                    console.log('📡 ADMIN CHATS SNAPSHOT FIRED', {
-                        size: snapshot.size,
-                        empty: snapshot.empty
-                    });
-                    
-                    const chats = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        chats.push({ 
-                            id: doc.id, 
-                            ...data,
-                            createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : (data.createdAt ? new Date(data.createdAt) : new Date()),
-                            updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : (data.updatedAt ? new Date(data.updatedAt) : new Date())
-                        });
-                    });
-                    
-                    console.log('📋 Found chats:', chats.length, chats.map(c => ({ id: c.id, username: c.username })));
-                    
-                    if (chats.length === 0) {
-                        chatListEl.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 20px;">No active chats</p>';
-                        return;
-                    }
-                    
-                    // Sort manually if orderBy failed
-                    chats.sort((a, b) => {
-                        const aTime = a.updatedAt || a.createdAt || new Date(0);
-                        const bTime = b.updatedAt || b.createdAt || new Date(0);
-                        return bTime - aTime; // Descending
-                    });
-                    
-                    // Get last message and unread count for each chat
-                    const chatsWithMetadata = await Promise.all(chats.map(async (chat) => {
-                        try {
-                            const messagesRef = collection(firestoreDb, 'chats', chat.id, 'messages');
-                            let messagesQuery;
-                            try {
-                                messagesQuery = query(messagesRef, orderBy('timestamp', 'desc'));
-                            } catch (e) {
-                                // Fallback if orderBy fails
-                                messagesQuery = messagesRef;
-                            }
-                            const messagesSnapshot = await getDocs(messagesQuery);
-                            
-                            const messages = [];
-                            messagesSnapshot.forEach(msgDoc => {
-                                const msgData = msgDoc.data();
-                                messages.push({
-                                    id: msgDoc.id,
-                                    ...msgData,
-                                    timestamp: msgData.timestamp?.toDate ? msgData.timestamp.toDate() : (msgData.timestamp ? new Date(msgData.timestamp) : new Date())
-                                });
-                            });
-                            
-                            // Sort manually if orderBy failed
-                            messages.sort((a, b) => b.timestamp - a.timestamp);
-                            
-                            const lastMessage = messages[0] || null;
-                            const unreadCount = messages.filter(m => m.sender === 'user' && !m.read).length;
-                            
-                            return {
-                                ...chat,
-                                lastMessage,
-                                unreadCount,
-                                messageCount: messages.length
-                            };
-                        } catch (error) {
-                            console.error(`❌ Error loading metadata for chat ${chat.id}:`, error);
-                            return {
-                                ...chat,
-                                lastMessage: null,
-                                unreadCount: 0,
-                                messageCount: 0
-                            };
-                        }
-                    }));
-                    
-                    console.log('✅ Rendering', chatsWithMetadata.length, 'chats');
-                    
-                    chatListEl.innerHTML = chatsWithMetadata.map(chat => {
-                        const preview = chat.lastMessage ? chat.lastMessage.text.substring(0, 50) : 'No messages yet';
-                        const time = chat.lastMessage 
-                            ? (chat.lastMessage.timestamp instanceof Date ? chat.lastMessage.timestamp.toLocaleString() : new Date(chat.lastMessage.timestamp).toLocaleString())
-                            : (chat.createdAt instanceof Date ? chat.createdAt.toLocaleString() : new Date(chat.createdAt).toLocaleString());
-                        const unreadCount = chat.unreadCount || 0;
-                        const isActive = chat.id === currentAdminChatId;
-                        
-                        let safeUsername, safePreview;
-                        try {
-                            safeUsername = sanitizeInput(chat.username || 'Unknown');
-                            safePreview = sanitizeInput(preview);
-                        } catch {
-                            safeUsername = 'Unknown';
-                            safePreview = '[Invalid preview]';
-                        }
-                        
-                        return `
-                            <div class="chat-item ${isActive ? 'active' : ''}" onclick="selectAdminChat('${chat.id}')">
-                                <div class="chat-item-header">
-                                    <div class="chat-item-user">
-                                        ${safeUsername}
-                                        ${unreadCount > 0 ? '<span class="chat-item-unread"></span>' : ''}
-                                    </div>
-                                    <div class="chat-item-time">${time}</div>
-                                </div>
-                                <div class="chat-item-preview">${safePreview}</div>
-                            </div>
-                        `;
-                    }).join('');
-                }, (error) => {
-                    console.error('❌ Error loading admin chats:', error);
-                    console.error('Error details:', {
-                        code: error.code,
-                        message: error.message,
-                        stack: error.stack
-                    });
-                    chatListEl.innerHTML = `<p style="color: var(--red); text-align: center; padding: 20px;">Error loading chats: ${error.message || 'Unknown error'}</p>`;
-                });
-            } catch (error) {
-                console.error('Error setting up admin chats listener:', error);
-            }
-        }
-        
-        // Select and load admin chat
-        async function selectAdminChat(chatId) {
-            currentAdminChatId = chatId;
-            window.currentAdminChatId = chatId;
-            await loadAdminChatMessages(chatId);
-            
-            // Show input area
-            const inputArea = document.getElementById('adminChatInputArea');
-            if (inputArea) inputArea.style.display = 'flex';
-        }
-        
-        // Load messages for selected chat (using real-time listener with incremental updates)
-        async function loadAdminChatMessages(chatId) {
-            if (!chatId) return;
-            
-            // Unsubscribe from previous listener
-            if (adminChatUnsubscribe) {
-                adminChatUnsubscribe();
-                adminChatUnsubscribe = null;
-            }
-            
-            try {
-                await window.firebaseReady;
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                
-                if (!firestoreDb || !firestore) return;
-                
-                const { doc, getDoc, updateDoc, collection, query, orderBy, onSnapshot } = firestore;
-                const chatRef = doc(firestoreDb, 'chats', chatId);
-                const chatDoc = await getDoc(chatRef);
-                
-                if (!chatDoc.exists()) {
-                    const messagesEl = document.getElementById('adminChatMessages');
-                    if (messagesEl) {
-                        messagesEl.innerHTML = '<div class="empty-chat"><p>Chat not found</p></div>';
-                    }
-                    return;
-                }
-                
-                const chat = chatDoc.data();
-                const messagesEl = document.getElementById('adminChatMessages');
-                const headerEl = document.getElementById('adminChatHeaderTitle');
-                const statusEl = document.getElementById('adminChatStatus');
-                
-                if (headerEl) {
-                    headerEl.textContent = `Chat with ${chat.username || 'User'}`;
-                }
-                
-                if (statusEl) {
-                    statusEl.textContent = chat.status === 'open' ? 'Open' : 'Closed';
-                    statusEl.className = `chat-status ${chat.status}`;
-                    statusEl.style.display = 'inline-block';
-                }
-                
-                if (!messagesEl) return;
-                
-                // Set up real-time listener with incremental updates
-                const messagesRef = collection(firestoreDb, 'chats', chatId, 'messages');
-                const q = query(messagesRef, orderBy('timestamp', 'asc'));
-                
-                adminChatUnsubscribe = onSnapshot(q, async (snapshot) => {
-                    // DEBUG: Log snapshot events
-                    console.log('📡 ADMIN SNAPSHOT FIRED', {
-                        changes: snapshot.docChanges().length,
-                        totalDocs: snapshot.size
-                    });
-                    
-                    // Use docChanges() for incremental updates
-                    snapshot.docChanges().forEach(change => {
-                        console.log('📝 ADMIN CHANGE', change.type, {
-                            id: change.doc.id,
-                            data: change.doc.data()
-                        });
-                        
-                        if (change.type === 'added') {
-                            const data = change.doc.data();
-                            const message = {
-                                id: change.doc.id,
-                                ...data,
-                                timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : (data.timestamp ? new Date(data.timestamp) : null)
-                            };
-                            
-                            // Render message (will reconcile with pending if clientId matches)
-                            renderMessageFromFirestore(message, true);
-                        }
-                    });
-                    
-                    // If no messages, show empty state
-                    if (messagesEl.children.length === 0 || 
-                        (messagesEl.children.length === 1 && messagesEl.querySelector('.empty-chat'))) {
-                        messagesEl.innerHTML = '<div class="empty-chat"><p>No messages yet</p></div>';
-                    }
-                    
-                    messagesEl.scrollTop = messagesEl.scrollHeight;
-                    
-                    // Mark unread messages as read
-                    const unreadMessages = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        if (data.sender === 'user' && !data.read) {
-                            unreadMessages.push({ id: doc.id, ...data });
-                        }
-                    });
-                    
-                    if (unreadMessages.length > 0) {
-                        const batch = [];
-                        unreadMessages.forEach(msg => {
-                            const msgRef = doc(firestoreDb, 'chats', chatId, 'messages', msg.id);
-                            batch.push(updateDoc(msgRef, { read: true }));
-                        });
-                        await Promise.all(batch);
-                    }
-                }, (error) => {
-                    console.error('Error loading admin chat messages:', error);
-                    if (messagesEl.children.length === 0) {
-                        messagesEl.innerHTML = '<div class="empty-chat"><p>Error loading messages</p></div>';
-                    }
-                });
-            } catch (error) {
-                console.error('Error setting up admin chat messages listener:', error);
-            }
-        }
-        
-        // Send admin message with optimistic UI (instant feedback)
-        async function sendAdminMessage() {
-            if (!canAccessAdminChat(userData?.username)) {
-                showError('Only admins can send messages');
-                return;
-            }
-            
-            if (!currentAdminChatId) {
-                showError('Please select a chat first');
-                return;
-            }
-            
-            const input = document.getElementById('adminChatInput');
-            const sendBtn = document.getElementById('adminChatSendBtn');
-            const messageText = input?.value.trim();
-            
-            if (!messageText) return;
-            
-            // Clear input immediately
-            input.value = '';
-            
-            // Generate clientId for message reconciliation
-            const clientId = crypto.randomUUID ? crypto.randomUUID() : `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-            
-            console.log('📤 ADMIN SENDING MESSAGE', {
-                clientId: clientId,
-                text: messageText.substring(0, 20)
-            });
-            
-            // Show message instantly (optimistic UI)
-            const tempMessage = {
-                text: messageText,
-                sender: 'admin',
-                senderName: userData.username,
-                timestamp: new Date(),
-                clientId: clientId
-            };
-            const pendingBubble = addAdminMessageToUI(tempMessage, true);
-            
-            // Verify pending bubble was created with clientId
-            if (pendingBubble) {
-                console.log('✅ Admin pending bubble created', {
-                    hasClientId: !!pendingBubble.dataset.clientId,
-                    clientId: pendingBubble.dataset.clientId
-                });
-            }
-            
-            try {
-                await window.firebaseReady;
-                const firestoreDb = window.db;
-                const firestore = window.firestoreFunctions;
-                
-                if (!firestoreDb || !firestore) {
-                    throw new Error('Firebase not initialized');
-                }
-                
-                const { doc, getDoc, updateDoc, collection, addDoc, serverTimestamp } = firestore;
-                const chatRef = doc(firestoreDb, 'chats', currentAdminChatId);
-                const chatDoc = await getDoc(chatRef);
-                
-                if (!chatDoc.exists()) {
-                    throw new Error('Chat not found');
-                }
-                
-                // Add message to subcollection (background write) with clientId
-                const messagesRef = collection(firestoreDb, 'chats', currentAdminChatId, 'messages');
-                const messageData = {
-                    text: messageText,
-                    sender: 'admin',
-                    senderName: userData.username,
-                    timestamp: serverTimestamp(),
-                    read: false,
-                    clientId: clientId // Key for reconciliation
-                };
-                
-                console.log('💾 ADMIN Writing to Firestore', {
-                    clientId: clientId,
-                    chatId: currentAdminChatId,
-                    hasClientId: !!messageData.clientId
-                });
-                
-                await addDoc(messagesRef, messageData);
-                
-                console.log('✅ Admin Firestore write complete');
-                
-                // Update chat document's updatedAt timestamp
-                await updateDoc(chatRef, {
-                    updatedAt: serverTimestamp(),
-                    status: 'open'
-                });
-                
-                // onSnapshot will automatically reconcile the pending message via clientId
-            } catch (error) {
-                console.error('Error sending admin message:', error);
-                
-                // Mark as failed
-                if (pendingBubble) {
-                    pendingBubble.classList.remove('pending');
-                    pendingBubble.classList.add('failed');
-                    const metaEl = pendingBubble.querySelector('.message-meta');
-                    if (metaEl) {
-                        metaEl.textContent = 'Failed to send • Tap to retry';
-                        metaEl.style.cursor = 'pointer';
-                        metaEl.onclick = () => {
-                            input.value = messageText;
-                            pendingBubble.remove();
-                            sendAdminMessage();
-                        };
-                    }
-                }
-                
-                let errorMsg = 'Failed to send message. Please try again.';
-                if (error.code === 'permission-denied') {
-                    errorMsg = 'Permission denied. Please check your admin permissions.';
-                } else if (error.code === 'unavailable') {
-                    errorMsg = 'Service temporarily unavailable. Please try again.';
-                } else if (error.message) {
-                    errorMsg = `Error: ${error.message}`;
-                }
-                
-                console.error('Admin send error:', errorMsg);
-            }
-        }
-        
-        // Handle chat input keydown (Enter to send)
-        function handleChatInputKeydown(e, type) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                if (type === 'user') {
-                    sendUserMessage();
-                } else {
-                    sendAdminMessage();
-                }
-            }
-        }
-        
-        // Make functions globally accessible
-        window.sendUserMessage = sendUserMessage;
-        window.sendAdminMessage = sendAdminMessage;
-        window.selectAdminChat = selectAdminChat;
-        window.handleChatInputKeydown = handleChatInputKeydown;
-        window.loadUserChat = loadUserChat;
-        window.loadAdminChats = loadAdminChats;
-        
         function updateTime() {
             const now = new Date();
             const opts = { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
@@ -7965,69 +6127,9 @@
                 renderAdminPanel();
             }
             
-            // Render admin supply if showing admin-supply page
-            if (name === 'admin-supply') {
-                renderMyStock();
-            }
-            
-            // Render dice bets if showing dice page (user or admin)
-            if (name === 'admin-dice' || name === 'dice') {
+            // Render dice bets if showing admin-dice page
+            if (name === 'admin-dice') {
                 renderDiceBets();
-                // Auto-refresh dice bets every 3 seconds
-                if (window.diceRefreshInterval) {
-                    clearInterval(window.diceRefreshInterval);
-                }
-                window.diceRefreshInterval = setInterval(() => {
-                    if (document.getElementById('page-dice')?.style.display !== 'none' || 
-                        document.getElementById('page-admin-dice')?.style.display !== 'none') {
-                        renderDiceBets();
-                    } else {
-                        clearInterval(window.diceRefreshInterval);
-                    }
-                }, 3000);
-            } else {
-                // Clear interval when leaving dice page
-                if (window.diceRefreshInterval) {
-                    clearInterval(window.diceRefreshInterval);
-                    window.diceRefreshInterval = null;
-                }
-            }
-            
-            // Render chat if showing chat page (real-time updates via onSnapshot)
-            if (name === 'chat') {
-                loadUserChat();
-            } else {
-                // Clean up user chat listener when leaving page
-                if (userChatUnsubscribe) {
-                    userChatUnsubscribe();
-                    userChatUnsubscribe = null;
-                }
-            }
-            
-            // Render admin chat if showing admin-chat page (real-time updates via onSnapshot)
-            // Note: Admin chat page is accessible but nav item is hidden
-            if (name === 'admin-chat') {
-                if (canAccessAdminChat(userData?.username)) {
-                    console.log('🔐 Admin access confirmed, loading chats...');
-                    // Small delay to ensure page is visible
-                    setTimeout(() => {
-                        loadAdminChats();
-                        // If a chat was previously selected, reload it
-                        if (window.currentAdminChatId) {
-                            loadAdminChatMessages(window.currentAdminChatId);
-                        }
-                    }, 100);
-                } else {
-                    console.log('❌ Admin access denied');
-                    showError('Access denied. Admin access required.');
-                    showPage('news', document.querySelector('.nav-item'));
-                }
-            } else {
-                // Clean up admin chat listeners when leaving page
-                if (adminChatUnsubscribe) {
-                    adminChatUnsubscribe();
-                    adminChatUnsubscribe = null;
-                }
             }
             
             // Render products if showing products page
@@ -8061,8 +6163,15 @@
         window.toggleCart = toggleCart;
 
         function openFundsModal() { document.getElementById('fundsModal').classList.add('active'); }
+function openFundsModal() {
+            document.getElementById('fundsModal').classList.add('active');
+            updatePaymentInstructions();
+        }
+
         function closeFundsModal() { 
             document.getElementById('fundsModal').classList.remove('active');
+            // Reset form when closing
+            removePaymentProof();
             document.getElementById('fundAmt').value = '';
             document.getElementById('bonusCode').value = '';
         }
@@ -8075,114 +6184,169 @@
             document.getElementById('approvalAnimationModal').classList.remove('active');
         }
         
-        // Make globally accessible
+// Make globally accessible
         window.closeApprovalAnimation = closeApprovalAnimation;
+
+        // Payment Proof Upload Functions
+        let uploadedProofFile = null;
+        let uploadedProofUrl = null;
+
+        function handlePaymentProof(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please upload an image (JPG, PNG, GIF) or PDF file');
+                event.target.value = '';
+                return;
+            }
+
+            // Validate file size (max 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File size must be less than 10MB');
+                event.target.value = '';
+                return;
+            }
+
+            uploadedProofFile = file;
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('proofPreview');
+                const previewImage = document.getElementById('previewImage');
+                const uploadArea = document.getElementById('uploadArea');
+
+                if (file.type.startsWith('image/')) {
+                    previewImage.src = e.target.result;
+                    preview.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                } else {
+                    // For PDFs, show a placeholder
+                    previewImage.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMUEyQTNEIi8+CjxwYXRoIGQ9Ik02MCA2MEgxNDBWMTQwSDYwVjYwWiIgZmlsbD0iIzM2ODJGRiIvPgo8cGF0aCBkPSJNODAgOTBIMTIwVjEwMEg4MFY5MFoiIGZpbGw9IiMxQTFBMkQiLz4KPHN2Zz4K';
+                    preview.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removePaymentProof() {
+            uploadedProofFile = null;
+            uploadedProofUrl = null;
+            document.getElementById('paymentProof').value = '';
+            document.getElementById('proofPreview').style.display = 'none';
+            document.getElementById('uploadArea').style.display = 'block';
+        }
+
+        function updatePaymentInstructions() {
+            const method = document.getElementById('payMethod').value;
+            const instructionText = document.getElementById('instructionText');
+            
+            const instructions = {
+                'btc': 'Send the exact amount to: BTC Address Here\n\nAfter payment, upload a screenshot of the transaction with visible transaction ID.',
+                'cashapp': 'Send payment to: $CashAppTag\n\nAfter payment, upload a screenshot of the payment confirmation showing amount and recipient.',
+                'ltc': 'Send the exact amount to: LTC Address Here\n\nAfter payment, upload a screenshot of the transaction with visible transaction ID.'
+            };
+            
+            instructionText.textContent = instructions[method] || 'Please complete the payment and upload proof of transaction.';
+        }
+
+        // Upload proof to Firebase Storage
+        async function uploadPaymentProofToStorage(file, requestId) {
+            if (!window.firebaseStorage) {
+                throw new Error('Firebase Storage not initialized');
+            }
+
+            const storageRef = window.firebaseStorage.ref();
+            const proofRef = storageRef.child(`payment-proofs/${requestId}/${file.name}`);
+            
+            try {
+                const snapshot = await proofRef.put(file);
+                const downloadURL = await snapshot.ref.getDownloadURL();
+                return downloadURL;
+            } catch (error) {
+                console.error('Error uploading payment proof:', error);
+                throw error;
+            }
+        }
+
+        // Make functions globally accessible
+        window.handlePaymentProof = handlePaymentProof;
+        window.removePaymentProof = removePaymentProof;
+        window.updatePaymentInstructions = updatePaymentInstructions;
 
         async function addFunds(e) {
             e.preventDefault();
-            e.stopPropagation();
-            
-            console.log('addFunds called');
-            
-            // Disable submit button to prevent double submission
-            const submitBtn = e.target.querySelector('button[type="submit"]') || document.querySelector('#fundsModal button[type="submit"]');
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitting...';
+            if (!userData || !userData.firebaseUID) {
+                alert('Please login to add funds');
+                return;
             }
             
+            const amt = parseFloat(document.getElementById('fundAmt').value);
+            const paymentMethod = document.getElementById('payMethod').value;
+            const bonusCode = document.getElementById('bonusCode').value.trim();
+            
+if (amt < 10) {
+                alert('Minimum amount is $10');
+                return;
+            }
+
+            // Validate payment proof
+            if (!uploadedProofFile) {
+                alert('Please upload payment proof to continue');
+                return;
+            }
+
+// Create pending balance request
+            const requestId = 'BR' + Date.now() + Math.random().toString(36).substr(2, 9);
+            
+            // First upload payment proof
+            let proofUrl = null;
             try {
-                if (!userData || !userData.firebaseUID) {
-                    console.error('No user data or firebaseUID');
-                    if (typeof showError === 'function') {
-                        showError('Please login to add funds');
-                    } else {
-                        alert('Please login to add funds');
-                    }
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Submit Request';
-                    }
-                    return;
-                }
-                
-                const amtInput = document.getElementById('fundAmt');
-                const amt = parseFloat(amtInput?.value);
-                const paymentMethod = document.getElementById('payMethod')?.value;
-                const bonusCodeInput = document.getElementById('bonusCode');
-                const bonusCode = bonusCodeInput?.value.trim() || '';
-                
-                console.log('Form values:', { amt, paymentMethod, bonusCode });
-                
-                // Validate amount
-                if (!amt || isNaN(amt)) {
-                    console.error('Invalid amount');
-                    if (typeof showError === 'function') {
-                        showError('Please enter a valid amount');
-                    } else {
-                        alert('Please enter a valid amount');
-                    }
-                    if (amtInput) shakeElement(amtInput);
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Submit Request';
-                    }
-                    return;
-                }
-                
-                if (amt < 10) {
-                    console.error('Amount too low');
-                    if (typeof showError === 'function') {
-                        showError('Minimum amount is $10');
-                    } else {
-                        alert('Minimum amount is $10');
-                    }
-                    if (amtInput) shakeElement(amtInput);
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Submit Request';
-                    }
-                    return;
-                }
-                
-                // Create pending balance request
-                const requestId = 'BR' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                const balanceRequest = {
-                    id: requestId,
-                    userId: userData.firebaseUID,
-                    username: userData.username,
-                    amount: amt,
-                    paymentMethod: paymentMethod || 'btc',
-                    bonusCode: bonusCode || null,
-                    status: 'pending',
-                    createdAt: new Date().toISOString(),
-                    approvedBy: null,
-                    approvedAt: null
-                };
-                
-                console.log('Creating balance request:', balanceRequest);
-                
+                proofUrl = await uploadPaymentProofToStorage(uploadedProofFile, requestId);
+                console.log('Payment proof uploaded successfully:', proofUrl);
+            } catch (proofError) {
+                console.error('Error uploading payment proof:', proofError);
+                alert('Error uploading payment proof. Please try again.');
+                return;
+            }
+
+            const balanceRequest = {
+                id: requestId,
+                userId: userData.firebaseUID,
+                username: userData.username,
+                amount: amt,
+                paymentMethod: paymentMethod,
+                bonusCode: bonusCode || null,
+                paymentProofUrl: proofUrl,
+                paymentProofFileName: uploadedProofFile.name,
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                approvedBy: null,
+                approvedAt: null,
+                adminComment: null
+            };
+            
+            try {
                 // Wait for Firebase to be fully initialized (with retries)
                 let firestoreDb = window.db;
                 let firestore = window.firestoreFunctions;
                 let retries = 0;
                 const maxRetries = 10;
                 
-                console.log('Waiting for Firebase...', { firestoreDb: !!firestoreDb, firestore: !!firestore });
-                
                 while ((!firestoreDb || !firestore) && retries < maxRetries) {
                     await new Promise(resolve => setTimeout(resolve, 500));
                     firestoreDb = window.db;
                     firestore = window.firestoreFunctions;
                     retries++;
-                    console.log(`Retry ${retries}:`, { firestoreDb: !!firestoreDb, firestore: !!firestore });
                 }
                 
                 if (!firestoreDb || !firestore) {
                     throw new Error('Firebase not initialized. Please refresh the page and try again.');
                 }
-                
-                console.log('Firebase ready, saving to Firestore...');
                 
                 // Use the db and functions from window
                 const { collection, doc, setDoc } = firestore;
@@ -8193,25 +6357,14 @@
                 
                 console.log('Balance request submitted successfully:', requestId);
                 
-                // Show success message
-                if (typeof showSuccess === 'function') {
-                    showSuccess(`Balance request submitted successfully! Request ID: ${requestId}`, 'Request Submitted');
-                } else {
-                    alert(`Balance request submitted successfully! Request ID: ${requestId}`);
-                }
-                
                 // Show approval animation
-                if (typeof closeFundsModal === 'function') {
-                    closeFundsModal();
-                }
-                if (typeof showApprovalAnimation === 'function') {
-                    showApprovalAnimation();
-                }
+                closeFundsModal();
+                showApprovalAnimation();
                 
-                // Reset form
-                if (amtInput) amtInput.value = '';
-                if (bonusCodeInput) bonusCodeInput.value = '';
-                
+// Reset form
+                document.getElementById('fundAmt').value = '';
+                document.getElementById('bonusCode').value = '';
+                removePaymentProof();
             } catch (error) {
                 console.error('Error submitting balance request:', error);
                 let errorMsg = 'Error submitting request. ';
@@ -8222,23 +6375,9 @@
                 } else {
                     errorMsg += 'Please make sure you are logged in and try again.';
                 }
-                
-                if (typeof showError === 'function') {
-                    showError(errorMsg);
-                } else {
-                    alert(errorMsg);
-                }
-            } finally {
-                // Re-enable submit button
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit Request';
-                }
+                alert(errorMsg);
             }
         }
-        
-        // Make sure function is globally accessible
-        window.addFunds = addFunds;
 
         function openSettings() { document.getElementById('settingsModal').classList.add('active'); }
         function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
@@ -9407,7 +7546,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove, query, where, getDocs, orderBy, addDoc, serverTimestamp, onSnapshot, Timestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
 
         // Make Firestore functions globally accessible
         window.firestoreFunctions = {
@@ -9421,11 +7561,7 @@
             query,
             where,
             getDocs,
-            orderBy,
-            addDoc,
-            serverTimestamp,
-            onSnapshot,
-            Timestamp
+            orderBy
         };
 
         const firebaseConfig = {
@@ -9438,34 +7574,16 @@
             measurementId: "G-FLP8S5VLWE"
         };
 
-        const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         // Make db globally accessible
         window.db = db;
         window.auth = auth;
-
-        // Create Firebase ready promise to fix race conditions
-        window.firebaseReady = new Promise(resolve => {
-            const check = setInterval(() => {
-                if (window.db && window.firestoreFunctions) {
-                    clearInterval(check);
-                    resolve();
-                }
-            }, 100);
-            
-            // Timeout after 10 seconds
-            setTimeout(() => {
-                clearInterval(check);
-                if (window.db && window.firestoreFunctions) {
-                    resolve();
-                } else {
-                    console.error('Firebase initialization timeout');
-                }
-            }, 10000);
-        });
+        window.firebaseStorage = storage;
 
         console.log("🔥 Firebase fully ready");
 
@@ -9485,6 +7603,7 @@
                 await setDoc(doc(db, 'users', username.toLowerCase()), {
                     username: username.toLowerCase(),
                     email: email,
+                    firebaseUID: userCred.user.uid,
                     createdAt: new Date().toISOString()
                 });
                 
@@ -9517,6 +7636,16 @@
                 userData.username = username; // Update username from Firebase
                 userData.firebaseUID = userCred.user.uid; // Always update Firebase UID
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                
+                // Update user document with Firebase UID if not already stored
+                try {
+                    const userDocRef = doc(db, 'users', username.toLowerCase());
+                    await updateDoc(userDocRef, {
+                        firebaseUID: userCred.user.uid
+                    });
+                } catch (updateErr) {
+                    console.log('Could not update user doc with UID:', updateErr);
+                }
                 
                 // Load orders from Firestore
                 await loadOrdersFromFirestore();
@@ -9823,7 +7952,7 @@
             });
         }
 
-        // Add shake animation to form fields on error
+// Add shake animation to form fields on error
         function shakeElement(element) {
             element.classList.add('shake');
             setTimeout(() => {
@@ -9831,8 +7960,92 @@
             }, 500);
         }
 
-        // Make shake function globally available
-        window.shakeElement = shakeElement;
+        // Proof Review Modal Functions
+        function openProofReviewModal(requestId, proofUrl, requestDetails) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay active';
+            modal.innerHTML = `
+                <div class="modal proof-review-modal">
+                    <button class="modal-close" onclick="closeProofReviewModal()">×</button>
+                    <h2>Review Payment Proof</h2>
+                    <div class="proof-review-content">
+                        <div class="proof-image-container">
+                            <img src="${proofUrl}" alt="Payment Proof" onclick="window.open('${proofUrl}', '_blank')">
+                        </div>
+                        <div class="proof-details">
+                            <div class="request-details">
+                                <h3>Request Details</h3>
+                                <div class="detail-row">
+                                    <span class="label">Request ID:</span>
+                                    <span class="value">${requestId}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Username:</span>
+                                    <span class="value">${requestDetails.username}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Amount:</span>
+                                    <span class="value" style="color: var(--blue);">$${requestDetails.amount}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Method:</span>
+                                    <span class="value">${requestDetails.paymentMethod}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Submitted:</span>
+                                    <span class="value">${new Date(requestDetails.createdAt).toLocaleString()}</span>
+                                </div>
+                            </div>
+                            <div class="admin-comment-section">
+                                <label>Admin Comments (Optional)</label>
+                                <textarea class="admin-comment" id="adminComment" placeholder="Add notes about this approval..."></textarea>
+                            </div>
+                            <div class="request-actions" style="margin-top: 20px;">
+                                <button class="btn-approve" onclick="approveWithProof('${requestId}', '${requestDetails.userId || ''}', ${requestDetails.amount}, '${requestDetails.username}')">Approve</button>
+                                <button class="btn-reject" onclick="rejectWithProof('${requestId}')">Reject</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function closeProofReviewModal() {
+            const modal = document.querySelector('.proof-review-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Enhanced approval with proof review
+        async function approveWithProof(requestId, userId, amount, username) {
+            const adminComment = document.getElementById('adminComment')?.value || '';
+            
+            // Close review modal
+            closeProofReviewModal();
+            
+            // Call to original approve function with additional comment
+            approveBalanceRequest(requestId, userId, amount, username, adminComment);
+        }
+
+        // Enhanced rejection with proof review
+        async function rejectWithProof(requestId) {
+            const adminComment = document.getElementById('adminComment')?.value || '';
+            
+            // Close review modal
+            closeProofReviewModal();
+            
+            // Call to original reject function with additional comment
+            rejectBalanceRequest(requestId, adminComment);
+        }
+
+        // Make functions globally accessible
+        window.openProofReviewModal = openProofReviewModal;
+        window.closeProofReviewModal = closeProofReviewModal;
+        window.approveWithProof = approveWithProof;
+        window.rejectWithProof = rejectWithProof;
     </script>
 </body>
 </html>
