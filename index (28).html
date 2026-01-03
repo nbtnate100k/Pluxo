@@ -5620,15 +5620,39 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
                     
                     if (userDoc.exists()) {
                         const userDataFromFirebase = userDoc.data();
+                        const firebaseUID = userDataFromFirebase.firebaseUID;
                         const currentBalance = parseFloat(userDataFromFirebase.balance || 0);
                         const currentTotalRecharge = parseFloat(userDataFromFirebase.totalRecharge || 0);
                         const newBalance = currentBalance + amount;
                         const newTotalRecharge = currentTotalRecharge + amount;
                         
+                        // Update users collection (by username)
                         await updateDoc(userDocRef, {
                             balance: newBalance,
                             totalRecharge: newTotalRecharge
                         });
+                        
+                        // Also update userBalances collection (by UID) if UID exists
+                        if (firebaseUID) {
+                            const userBalanceRef = doc(window.db, 'userBalances', firebaseUID);
+                            const userBalanceDoc = await getDoc(userBalanceRef);
+                            
+                            if (userBalanceDoc.exists()) {
+                                await updateDoc(userBalanceRef, {
+                                    balance: newBalance,
+                                    totalRecharge: newTotalRecharge,
+                                    updatedAt: new Date().toISOString()
+                                });
+                            } else {
+                                await setDoc(userBalanceRef, {
+                                    balance: newBalance,
+                                    totalRecharge: newTotalRecharge,
+                                    username: normalized,
+                                    createdAt: new Date().toISOString(),
+                                    updatedAt: new Date().toISOString()
+                                });
+                            }
+                        }
                         
                         showAnimatedPopup('Success', `Loaded $${amount.toFixed(2)} to ${normalized}. New balance: $${newBalance.toFixed(2)}`, 'success');
                         
@@ -5637,6 +5661,7 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
                             userData.balance = newBalance;
                             userData.totalRecharge = newTotalRecharge;
                             localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                            await saveUserBalanceToFirestore(); // Sync to Firestore
                             updateUI();
                         }
                     } else {
@@ -6025,6 +6050,7 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
                     userData.balance = (userData.balance || 0) + amountNum;
                     userData.totalRecharge = (userData.totalRecharge || 0) + amountNum;
                     localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    await saveUserBalanceToFirestore(); // Sync to Firestore
                     updateUI();
                 }
                 
@@ -6434,7 +6460,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         }
 
         // Create a new dice bet
-        function createDiceBet() {
+        async function createDiceBet() {
             // Security: Verify admin access
             if (!verifyAdminAccess()) {
                 alert('Only admins can create bets');
@@ -6500,6 +6526,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             // Deduct balance
             userData.balance -= amount;
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            await saveUserBalanceToFirestore(); // Sync to Firestore
             updateUI();
             
             amountInput.value = '';
@@ -6509,7 +6536,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         }
 
         // Accept a dice bet
-        function acceptDiceBet(betId) {
+        async function acceptDiceBet(betId) {
             // Security: Verify admin access
             if (!verifyAdminAccess()) {
                 alert('Only admins can accept bets');
@@ -6553,6 +6580,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             // Deduct balance from opponent
             userData.balance -= betAmount;
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            await saveUserBalanceToFirestore(); // Sync to Firestore
             updateUI();
             
             // Roll dice for both players
@@ -6589,6 +6617,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 // Opponent wins - already deducted, add winnings
                 userData.balance += betAmount * 2;
             }
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            await saveUserBalanceToFirestore(); // Sync to Firestore
+            updateUI();
             
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
             updateUI();
@@ -6618,7 +6649,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         }
 
         // Cancel a dice bet
-        function cancelDiceBet(betId) {
+        async function cancelDiceBet(betId) {
             // Security: Verify admin access
             if (!verifyAdminAccess()) {
                 alert('Unauthorized access');
@@ -6654,6 +6685,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             const betAmount = parseFloat(bet.amount);
             userData.balance += betAmount;
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            await saveUserBalanceToFirestore(); // Sync to Firestore
             updateUI();
             
             // Remove bet
@@ -6803,9 +6835,38 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     userData.totalRecharge = balanceData.totalRecharge || 0;
                     localStorage.setItem('pluxoUser', JSON.stringify(userData));
                     updateUI();
+                } else {
+                    // Create balance document if it doesn't exist
+                    await saveUserBalanceToFirestore();
                 }
             } catch (error) {
                 console.error('Error loading user balance:', error);
+            }
+        }
+
+        // Save user balance to Firestore
+        async function saveUserBalanceToFirestore() {
+            if (!userData || !userData.firebaseUID) return;
+            
+            try {
+                const userBalanceRef = doc(db, 'userBalances', userData.firebaseUID);
+                const userBalanceDoc = await getDoc(userBalanceRef);
+                
+                const balanceData = {
+                    balance: parseFloat(userData.balance || 0),
+                    totalRecharge: parseFloat(userData.totalRecharge || 0),
+                    username: userData.username.toLowerCase(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (userBalanceDoc.exists()) {
+                    await updateDoc(userBalanceRef, balanceData);
+                } else {
+                    balanceData.createdAt = new Date().toISOString();
+                    await setDoc(userBalanceRef, balanceData);
+                }
+            } catch (error) {
+                console.error('Error saving user balance:', error);
             }
         }
 
@@ -7291,6 +7352,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 userData.balance = parseFloat((userData.balance - total).toFixed(2));
                 userData.cart = [];
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                await saveUserBalanceToFirestore(); // Sync to Firestore
                 updateUI();
                 updateCartDisplay();
                 
@@ -8924,6 +8986,11 @@ const app = initializeApp(firebaseConfig);
         onAuthStateChanged(auth, async (user) => {
             if (!user) return;
 
+            // Ensure userData has firebaseUID
+            if (window.userData) {
+                window.userData.firebaseUID = user.uid;
+            }
+
             const userRef = doc(db, "userBalances", user.uid);
             const snap = await getDoc(userRef);
 
@@ -8940,17 +9007,19 @@ const app = initializeApp(firebaseConfig);
                 if (window.userData) {
                     window.userData.balance = 0;
                     window.userData.totalRecharge = 0;
+                    window.userData.firebaseUID = user.uid;
                     localStorage.setItem('pluxoUser', JSON.stringify(window.userData));
                     if (typeof updateUI === 'function') updateUI();
                 }
                 return;
             }
 
-            // User balance exists, load it
+            // User balance exists, load it (this is the source of truth)
             const balanceData = snap.data();
             if (window.userData) {
                 window.userData.balance = balanceData.balance || 0;
                 window.userData.totalRecharge = balanceData.totalRecharge || 0;
+                window.userData.firebaseUID = user.uid;
                 localStorage.setItem('pluxoUser', JSON.stringify(window.userData));
                 if (typeof updateUI === 'function') updateUI();
             }
