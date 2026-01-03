@@ -7689,6 +7689,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     const expYear = String(2027 + Math.floor(Math.random() * 4)); // 2027-2030
                     const cvv = String(Math.floor(Math.random() * 900) + 100);
                     
+                    // Mix of $12 and $15 products (about 30% are $15)
+                    const productPrice = Math.random() < 0.3 ? '15.00' : '12.00';
+                    
                     allProducts.push({
                         id: binIndex * 12 + i + 1,
                         bin: bin,
@@ -7705,7 +7708,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                         bank: banks[Math.floor(Math.random() * banks.length)],
                         base: '2026_1_3_US_Base',
                         refundable: true,
-                        price: '12.00',
+                        price: productPrice,
                         expMonth: expMonth,
                         expYear: expYear,
                         cvv: cvv
