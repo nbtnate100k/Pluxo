@@ -29,9 +29,50 @@
 
         body {
             font-family: 'DM Sans', sans-serif;
-            background: var(--black);
+            background: #000000;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 60px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 50px 50px, #fff, transparent),
+                radial-gradient(1px 1px at 20px 40px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(2px 2px at 90px 20px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.5), transparent),
+                radial-gradient(1px 1px at 160px 30px, rgba(255,255,255,0.6), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
             color: var(--white);
             min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(2px 2px at 40px 60px, #fff, transparent),
+                radial-gradient(1px 1px at 100px 120px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 150px 40px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 200px 100px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 250px 60px, rgba(255,255,255,0.5), transparent);
+            background-repeat: repeat;
+            background-size: 300px 150px;
+            animation: twinkle 8s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.8; }
+        }
+
+        .main-content, .login-page {
+            position: relative;
+            z-index: 1;
         }
 
         /* ==================== LOGIN PAGE ==================== */
@@ -54,6 +95,7 @@
             opacity: 0.3;
             pointer-events: none;
         }
+
 
         .login-left {
             flex: 1;
@@ -340,10 +382,18 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-family: 'Syne', sans-serif;
-            font-size: 48px;
+            font-size: 64px;
             font-weight: 800;
             color: var(--blue);
             text-shadow: 0 0 40px var(--blue-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            line-height: 1;
+            margin: 0;
+            padding: 0;
         }
 
         @keyframes spin {
@@ -356,31 +406,62 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .modal-bg.active {
             display: flex;
+            opacity: 1;
         }
 
         .modal-box {
-            background: var(--black-light);
-            border: 1px solid var(--gray-border);
+            background: linear-gradient(180deg, var(--black-light) 0%, var(--black-lighter) 100%);
+            border: 2px solid var(--blue);
             border-radius: 16px;
             padding: 40px;
             width: 90%;
-            max-width: 420px;
+            max-width: 450px;
             position: relative;
+            transform: scale(0.7) translateY(-50px) rotateX(15deg);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(37, 99, 235, 0.3);
+            overflow: hidden;
+        }
+
+        .modal-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .modal-bg.active .modal-box {
+            transform: scale(1) translateY(0) rotateX(0deg);
+        }
+
+        .modal-bg.active .modal-box::before {
+            left: 100%;
         }
 
         .modal-box h2 {
             font-family: 'Syne', sans-serif;
-            font-size: 24px;
-            margin-bottom: 30px;
+            font-size: 32px;
+            margin-bottom: 28px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.6s ease 0.2s both;
         }
 
         .modal-close {
@@ -400,15 +481,51 @@
 
         .modal-box .form-group {
             margin-bottom: 20px;
+            animation: fadeInUp 0.6s ease both;
         }
+
+        .modal-box .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .modal-box .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .modal-box .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .modal-box .form-group:nth-child(4) { animation-delay: 0.4s; }
 
         .modal-box .input-field {
             max-width: 100%;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-box .input-field:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 0 0 4px var(--blue-glow), 0 0 20px rgba(37, 99, 235, 0.3);
         }
 
         .modal-box .btn {
             width: 100%;
             margin-top: 10px;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-box .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .modal-box .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 6px 25px rgba(37, 99, 235, 0.6);
+        }
+
+        .modal-box .btn:hover::before {
+            left: 100%;
         }
 
         /* ==================== DASHBOARD ==================== */
@@ -880,12 +997,22 @@
             flex: 1;
             overflow-y: auto;
             padding: 24px;
+            background: transparent;
         }
 
         .cart-empty {
             text-align: center;
             color: var(--gray);
-            padding: 60px 20px;
+            padding: 80px 20px;
+            font-size: 16px;
+        }
+
+        .cart-empty::before {
+            content: '🛒';
+            display: block;
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
         }
 
         .cart-item-row {
@@ -1529,19 +1656,31 @@
 
         .cart-foot {
             padding: 24px;
-            border-top: 1px solid var(--gray-border);
+            border-top: 2px solid var(--gray-border);
+            background: rgba(37, 99, 235, 0.05);
         }
 
         .cart-total {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--black-lighter);
+            border-radius: 8px;
+            border: 1px solid var(--gray-border);
         }
 
         .cart-total .amount {
-            color: var(--blue-light);
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--blue-light) 0%, #22c55e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         /* Modals */
@@ -2628,65 +2767,6 @@
             .admin-form { flex-direction: column; }
         }
 
-        /* ==================== NOTIFICATION POPUP ==================== */
-        .notification-popup {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 16px 24px;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            z-index: 10000;
-            animation: slideInNotification 0.4s ease-out, fadeOutNotification 0.4s ease-in 2.6s forwards;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            max-width: 400px;
-        }
-        
-        .notification-popup.success {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            border: 1px solid #22c55e;
-        }
-        
-        .notification-popup.error {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            border: 1px solid #ef4444;
-        }
-        
-        .notification-popup.info {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border: 1px solid #3b82f6;
-        }
-        
-        .notification-popup .notif-icon {
-            font-size: 20px;
-        }
-        
-        @keyframes slideInNotification {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes fadeOutNotification {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-                visibility: hidden;
-            }
-        }
-
         /* ==================== ENHANCED ANIMATIONS ==================== */
         
         /* Page Load Animations */
@@ -3195,6 +3275,117 @@
             transform: translateY(0);
         }
 
+        /* Animated Popup System */
+        .animated-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .animated-popup {
+            background: var(--black-light);
+            border: 2px solid var(--gray-border);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.8) translateY(-20px);
+            animation: popupSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .animated-popup.success {
+            border-color: #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+        }
+
+        .animated-popup.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .animated-popup.info {
+            border-color: var(--blue);
+            box-shadow: 0 0 30px var(--blue-glow);
+        }
+
+        .popup-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: iconBounce 0.6s ease 0.2s both;
+        }
+
+        .popup-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--white);
+        }
+
+        .popup-message {
+            font-size: 15px;
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .popup-button {
+            background: var(--blue);
+            color: var(--white);
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .popup-button:hover {
+            background: var(--blue-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes popupSlideIn {
+            to {
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+
+        @keyframes paidBounce {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.3) rotate(180deg); opacity: 1; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
         /* Shake Animation for Errors */
         @keyframes shake {
             0%, 100% {
@@ -3210,6 +3401,137 @@
 
         .shake {
             animation: shake 0.5s ease-in-out;
+        }
+
+        /* Animated Add Funds Styles */
+        .funds-modal-animated {
+            overflow: hidden;
+        }
+
+        .funds-step {
+            animation: slideInRight 0.4s ease forwards;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .payment-method-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .payment-method-card {
+            background: var(--black-lighter);
+            border: 2px solid var(--gray-border);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-method-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .payment-method-card:hover::before {
+            left: 100%;
+        }
+
+        .payment-method-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+        }
+
+        .payment-method-card.selected {
+            border-color: var(--blue);
+            background: rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .payment-icon {
+            font-size: 64px;
+            margin-bottom: 12px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .payment-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--white);
+        }
+
+        .payment-code {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .amount-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .amount-card {
+            background: var(--black-lighter);
+            border: 2px solid var(--gray-border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .amount-card:hover {
+            border-color: var(--blue);
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+        }
+
+        .amount-card.selected {
+            border-color: var(--blue);
+            background: rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .amount-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .custom-amount .amount-value {
+            font-size: 18px;
         }
 
         /* Gradient Text Animation */
@@ -3715,7 +4037,7 @@
                         <span class="box"></span>
                         Remember me
                     </label>
-                    <a href="#" class="forgot" onclick="event.preventDefault(); alert('Contact support for password reset.');">Forgot password?</a>
+                    <a href="#" class="forgot" onclick="event.preventDefault(); showAnimatedPopup('Password Reset', 'Contact @pluxomain on Telegram for password reset.', 'info');">Forgot password?</a>
                 </div>
 
                 <div class="captcha-row">
@@ -3819,6 +4141,8 @@
             <a class="nav-item" onclick="showPage('orders', this)">Orders</a>
             <a class="nav-item" onclick="showPage('tickets', this)">Tickets</a>
             <a class="nav-item admin-nav" id="adminNavItem" onclick="showPage('admin', this)" style="display:none;">Admin</a>
+            <a class="nav-item admin-nav" id="sellerNavItem" onclick="showPage('seller-management', this)" style="display:none;">Seller Management</a>
+            <a class="nav-item seller-nav" id="sellerListingNavItem" onclick="showPage('seller-listing', this)" style="display:none;">My Listings</a>
             <a class="nav-item admin-nav" id="adminDiceNavItem" onclick="showPage('admin-dice', this)" style="display:none;">Dice</a>
             <a class="nav-item settings-nav" onclick="openSettings()">⚙</a>
         </nav>
@@ -3839,10 +4163,18 @@
                     
                     <div class="section-title">Community Links</div>
                     <p>
-                        Channel: <a href="#">t.me/pluxo_official</a><br>
-                        Group: <a href="#">t.me/pluxo_community</a><br>
-                        Support: <strong>@Pluxo_Support</strong>
+                        Channel: <a href="https://t.me/pluxo_official" target="_blank">https://t.me/pluxo_official</a><br>
+                        Chat: <a href="https://t.me/pluxo_chat" target="_blank">https://t.me/pluxo_chat</a><br>
+                        Support: <strong>@pluxomain</strong>
                     </p>
+
+                    <div class="section-title">🎁 Free Piece Offer</div>
+                    <div style="background: rgba(37, 99, 235, 0.1); border: 2px solid var(--blue); border-radius: 12px; padding: 20px; margin: 20px 0;">
+                        <p style="font-size: 16px; line-height: 1.8; margin: 0;">
+                            <strong style="color: var(--blue-light);">Want a free piece?</strong><br>
+                            Add <strong style="color: var(--blue-light);">pluxo.net</strong> to your Telegram name and text <strong style="color: var(--blue-light);">@nonamebackagain</strong> on Telegram to get your prize! 🎉
+                        </p>
+                    </div>
 
                     <div class="section-title">Volume Discounts</div>
                     <ul class="discount-list">
@@ -3852,6 +4184,14 @@
                         <li><span>Total deposits $100,000+</span><span class="percent">30% OFF</span></li>
                         <li><span>Total deposits $300,000+</span><span class="percent">50% OFF</span></li>
                     </ul>
+
+                    <div class="section-title" style="margin-top: 32px;">💎 Why Choose Pluxo?</div>
+                    <div style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(34, 197, 94, 0.15)); border: 2px solid var(--blue); border-radius: 12px; padding: 24px; margin: 20px 0;">
+                        <p style="font-size: 17px; line-height: 1.9; margin: 0; font-weight: 600;">
+                            We're better than those cheap weak sites. <strong style="color: var(--blue-light);">PLUXO</strong> - Get your money's worth on <strong style="color: #22c55e;">P</strong>! 💰<br>
+                            <span style="font-size: 15px; font-weight: 400; color: var(--gray); margin-top: 8px; display: block;">Premium quality, premium service, premium results.</span>
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -3952,9 +4292,7 @@
                                 <label class="filter-label">Base</label>
                                 <select class="filter-select">
                                     <option>All</option>
-                                    <option>2025_12_27_World_Mix</option>
-                                    <option>2025_12_27_US_Base</option>
-                                    <option>2025_12_27_UK_Mix</option>
+                                    <option>2026_1_3_US_Base</option>
                                 </select>
                             </div>
                             <div class="filter-group">
@@ -4111,16 +4449,25 @@
                 </div>
                 
                 <div class="tickets-container">
-                    <div class="tickets-header">
+                    <div class="content-card" style="margin-bottom: 24px; background: rgba(37, 99, 235, 0.1); border-color: var(--blue); padding: 32px; text-align: center;">
+                        <h2 style="color: var(--blue); margin-bottom: 16px; font-size: 28px;">📞 Need Help?</h2>
+                        <p style="font-size: 18px; line-height: 1.8; margin-bottom: 20px;">
+                            For any ticket or problem, contact <strong style="color: var(--blue-light); font-size: 20px;">@pluxomain</strong> on Telegram
+                        </p>
+                        <a href="https://t.me/pluxomain" target="_blank" class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 14px 32px; font-size: 16px;">
+                            📱 Contact @pluxomain on Telegram
+                        </a>
+                    </div>
+                    
+                    <div class="tickets-header" style="display: none;">
                         <div class="ticket-tabs">
                             <button class="ticket-tab active" onclick="filterTickets('all', this)">All</button>
                             <button class="ticket-tab" onclick="filterTickets('progressing', this)">Progressing</button>
                             <button class="ticket-tab" onclick="filterTickets('resolved', this)">Resolved</button>
                         </div>
-                        <button class="btn-create-ticket" onclick="openCreateTicket()">CREATE TICKET</button>
                     </div>
 
-                    <div class="tickets-table-container">
+                    <div class="tickets-table-container" style="display: none;">
                         <table class="tickets-table">
                             <thead>
                                 <tr>
@@ -4159,6 +4506,22 @@
                     <p style="margin-bottom: 24px;">Grant or revoke admin access for users. Only the owner can manage admin privileges.</p>
                     
                     <div class="admin-section">
+                        <div class="section-title">Load Username (Admin Only)</div>
+                        <div class="admin-form">
+                            <button class="btn btn-admin" onclick="loadAnyUsername()" style="background: #8b5cf6; width: 100%;">Load Any Username</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">Load Balance for User</div>
+                        <div class="admin-form" style="flex-direction: column; gap: 12px;">
+                            <input type="text" class="input-field" id="loadBalanceUsername" placeholder="Enter username">
+                            <input type="number" class="input-field" id="loadBalanceAmount" placeholder="Enter amount to load" step="0.01" min="0">
+                            <button class="btn btn-admin" onclick="loadUserBalance()" style="background: #22c55e; width: 100%;">Load Balance</button>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-section">
                         <div class="section-title">Add Admin</div>
                         <div class="admin-form">
                             <input type="text" class="input-field" id="newAdminUser" placeholder="Enter username to grant admin">
@@ -4177,16 +4540,6 @@
                         <div class="section-title">All Registered Users</div>
                         <div class="users-list" id="usersListDisplay">
                             <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <div class="admin-section">
-                        <div class="section-title">Load User Balance</div>
-                        <p style="margin-bottom: 12px; color: var(--gray); font-size: 14px;">Directly add balance to any user's account.</p>
-                        <div class="admin-form" style="flex-direction: column; gap: 12px; max-width: 500px;">
-                            <input type="text" class="input-field" id="loadBalanceUsername" placeholder="Enter username">
-                            <input type="number" class="input-field" id="loadBalanceAmount" placeholder="Amount to add (e.g., 50.00)" min="0.01" step="0.01">
-                            <button class="btn btn-admin" onclick="adminLoadBalance()" style="background: #22c55e;">Load Balance</button>
                         </div>
                     </div>
 
@@ -4230,6 +4583,68 @@
 
                     <div class="admin-tickets-list" id="adminTicketsList">
                         <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- SELLER MANAGEMENT PAGE -->
+            <div class="page-content" id="page-seller-management" style="display:none;">
+                <div class="page-header">
+                    <h1>Seller Management</h1>
+                    <div class="line" style="background: #22c55e;"></div>
+                </div>
+                
+                <div class="content-card" style="border-color: #22c55e;">
+                    <h2 style="color: #22c55e;">👥 Seller Permissions</h2>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Grant or revoke selling permissions for users. Only admins can manage seller access.</p>
+                    
+                    <div class="admin-section">
+                        <div class="section-title">Add Seller</div>
+                        <div class="admin-form">
+                            <input type="text" class="input-field" id="newSellerUser" placeholder="Enter username to grant seller access">
+                            <button class="btn btn-admin" onclick="addSeller()" style="background: #22c55e;">Grant Seller Access</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">Current Sellers</div>
+                        <div class="admin-list" id="sellerListDisplay">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SELLER LISTING PAGE -->
+            <div class="page-content" id="page-seller-listing" style="display:none;">
+                <div class="page-header">
+                    <h1>My Listings</h1>
+                    <div class="line" style="background: #22c55e;"></div>
+                </div>
+                
+                <div class="content-card" style="border-color: #22c55e;">
+                    <h2 style="color: #22c55e;">📦 List Your Products</h2>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Add products to sell. Once listed, they will appear on the Products page for customers to purchase.</p>
+                    
+                    <div class="admin-section">
+                        <div class="section-title">Add New Product</div>
+                        <div class="admin-form" style="flex-direction: column; gap: 12px;">
+                            <input type="text" class="input-field" id="sellerProductBin" placeholder="BIN (e.g., 400022)" maxlength="20">
+                            <input type="text" class="input-field" id="sellerProductBrand" placeholder="Brand (VISA, MASTERCARD, etc.)" maxlength="20">
+                            <input type="number" class="input-field" id="sellerProductPrice" placeholder="Price (e.g., 12.00)" step="0.01" min="0" maxlength="10">
+                            <select class="input-field" id="sellerProductType">
+                                <option value="CREDIT">CREDIT</option>
+                                <option value="DEBIT">DEBIT</option>
+                            </select>
+                            <button class="btn btn-admin" onclick="addSellerProduct()" style="background: #22c55e; width: 100%;">Add Product</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">My Listed Products (<span id="sellerProductsCount">0</span>)</div>
+                        <div class="admin-list" id="sellerProductsList">
+                            <!-- Populated by JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -4291,51 +4706,91 @@
             </div>
         </div>
 
-<!-- Add Funds Modal -->
+<!-- Add Funds Modal - Animated Selection -->
         <div class="modal-overlay" id="fundsModal">
-            <div class="modal" style="max-width: 500px;">
+            <div class="modal funds-modal-animated" style="max-width: 600px;">
                 <button class="modal-close" onclick="closeFundsModal()">×</button>
-                <h2>Add Funds</h2>
-                <form onsubmit="addFunds(event)">
-                    <div class="form-group">
-                        <label>Payment Method</label>
-                        <select id="payMethod" onchange="updatePaymentInstructions()">
-                            <option value="btc">Bitcoin (BTC)</option>
-                            <option value="cashapp">CashApp</option>
-                            <option value="ltc">Litecoin (LTC)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Amount (USD)</label>
-                        <input type="number" class="input-field" id="fundAmt" placeholder="Enter amount" min="10" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Bonus Code (Optional)</label>
-                        <input type="text" class="input-field" id="bonusCode" placeholder="Enter code">
-                    </div>
-                    <div class="form-group">
-                        <label>Payment Proof (Required)</label>
-                        <div class="payment-proof-upload">
-                            <input type="file" id="paymentProof" accept="image/*,.pdf" style="display: none;" onchange="handlePaymentProof(event)">
-                            <div class="upload-area" onclick="document.getElementById('paymentProof').click()" id="uploadArea">
-                                <div class="upload-icon">📷</div>
-                                <div class="upload-text">Click to upload payment proof</div>
-                                <div class="upload-subtext">Supports images and PDFs</div>
-                            </div>
-                            <div class="proof-preview" id="proofPreview" style="display: none;">
-                                <div class="preview-container">
-                                    <img id="previewImage" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
-                                    <button type="button" class="remove-proof" onclick="removePaymentProof()">×</button>
-                                </div>
-                            </div>
+                
+                <!-- Step 1: Payment Method Selection -->
+                <div id="fundsStep1" class="funds-step">
+                    <h2 style="font-family: 'Syne', sans-serif; font-size: 32px; margin-bottom: 12px; background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Choose Payment Method</h2>
+                    <p style="color: var(--gray); margin-bottom: 32px;">Select your preferred cryptocurrency</p>
+                    <div class="payment-method-grid">
+                        <div class="payment-method-card" onclick="selectPaymentMethod('btc')">
+                            <div class="payment-icon">₿</div>
+                            <div class="payment-name">Bitcoin</div>
+                            <div class="payment-code">BTC</div>
+                        </div>
+                        <div class="payment-method-card" onclick="selectPaymentMethod('ltc')">
+                            <div class="payment-icon">Ł</div>
+                            <div class="payment-name">Litecoin</div>
+                            <div class="payment-code">LTC</div>
                         </div>
                     </div>
-                    <div class="payment-instructions" id="paymentInstructions" style="background: var(--black-lighter); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                        <div style="font-weight: 600; margin-bottom: 8px; color: var(--blue);">Payment Instructions:</div>
-                        <div id="instructionText" style="font-size: 14px; color: var(--gray); line-height: 1.5;"></div>
+                </div>
+
+                <!-- Step 2: Amount Selection -->
+                <div id="fundsStep2" class="funds-step" style="display: none;">
+                    <h2 style="font-family: 'Syne', sans-serif; font-size: 32px; margin-bottom: 12px; background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Select Amount</h2>
+                    <p style="color: var(--gray); margin-bottom: 32px;">Choose an amount or enter custom</p>
+                    <div class="amount-selection-grid">
+                        <div class="amount-card" onclick="selectAmount(20)">
+                            <div class="amount-value">$20</div>
+                        </div>
+                        <div class="amount-card" onclick="selectAmount(50)">
+                            <div class="amount-value">$50</div>
+                        </div>
+                        <div class="amount-card" onclick="selectAmount(75)">
+                            <div class="amount-value">$75</div>
+                        </div>
+                        <div class="amount-card" onclick="selectAmount(100)">
+                            <div class="amount-value">$100</div>
+                        </div>
+                        <div class="amount-card custom-amount" onclick="document.getElementById('customAmountInput').focus()">
+                            <div class="amount-value">Custom</div>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%;">Submit Request</button>
-                </form>
+                    <div class="form-group" style="margin-top: 24px;">
+                        <input type="number" class="input-field" id="customAmountInput" placeholder="Enter custom amount" min="10" onchange="selectAmount(parseFloat(this.value))">
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; margin-top: 16px;" onclick="proceedToStep3()">Continue</button>
+                </div>
+
+                <!-- Step 3: Payment Details Form -->
+                <div id="fundsStep3" class="funds-step" style="display: none;">
+                    <h2 style="font-family: 'Syne', sans-serif; font-size: 32px; margin-bottom: 12px; background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Payment Details</h2>
+                    <form onsubmit="event.preventDefault(); markAsPaid();">
+                        <input type="hidden" id="payMethod" value="">
+                        <input type="hidden" id="fundAmt" value="">
+                        <div class="form-group">
+                            <label>Selected Method</label>
+                            <div id="selectedMethodDisplay" style="padding: 16px; background: var(--black-lighter); border-radius: 8px; font-weight: 600; color: var(--blue-light);"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Selected Amount</label>
+                            <div id="selectedAmountDisplay" style="padding: 16px; background: var(--black-lighter); border-radius: 8px; font-weight: 600; color: var(--blue-light); font-size: 24px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Bonus Code (Optional)</label>
+                            <input type="text" class="input-field" id="bonusCode" placeholder="Enter code">
+                        </div>
+                        <div class="payment-instructions" id="paymentInstructions" style="background: var(--black-lighter); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                            <div style="font-weight: 600; margin-bottom: 8px; color: var(--blue);">Payment Instructions:</div>
+                            <div id="instructionText" style="font-size: 14px; color: var(--gray); line-height: 1.5;"></div>
+                        </div>
+                        <button type="button" class="btn btn-primary" style="width:100%; background: linear-gradient(135deg, #22c55e, #16a34a); font-size: 18px; font-weight: 700; padding: 16px;" onclick="markAsPaid()">✓ I Have Paid</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Animated Popup Modal -->
+        <div class="animated-popup-overlay" id="animatedPopupOverlay" style="display: none;">
+            <div class="animated-popup" id="animatedPopup">
+                <div class="popup-icon" id="popupIcon">✨</div>
+                <div class="popup-title" id="popupTitle">Title</div>
+                <div class="popup-message" id="popupMessage">Message</div>
+                <button class="popup-button" onclick="closeAnimatedPopup()">OK</button>
             </div>
         </div>
 
@@ -4465,6 +4920,7 @@
         // Admin system - NBTNate is the owner
         const OWNER = 'NBTNate';
         let adminList = JSON.parse(localStorage.getItem('pluxoAdmins')) || [OWNER.toLowerCase()];
+        let sellerList = JSON.parse(localStorage.getItem('pluxoSellers')) || [];
         
         // Security: Rate limiting storage
         const rateLimitStore = JSON.parse(localStorage.getItem('pluxoRateLimit')) || {};
@@ -4625,15 +5081,15 @@
             const pass = document.getElementById('regPass').value;
             const passC = document.getElementById('regPassConfirm').value;
 
-            if (pass !== passC) { alert('Passwords do not match'); return; }
-            if (pass.length < 6) { alert('Password must be at least 6 characters'); return; }
+            if (pass !== passC) { showAnimatedPopup('Error', 'Passwords do not match', 'error'); return; }
+            if (pass.length < 6) { showAnimatedPopup('Error', 'Password must be at least 6 characters', 'error'); return; }
 
             const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
-            if (users[user]) { alert('Username taken'); return; }
+            if (users[user]) { showAnimatedPopup('Error', 'Username taken', 'error'); return; }
 
             users[user] = { email, pass };
             localStorage.setItem('pluxoUsers', JSON.stringify(users));
-            alert('Account created! You can now sign in.');
+            showAnimatedPopup('Success', 'Account created! You can now sign in.', 'success');
             closeRegister();
             document.getElementById('username').value = user;
         });
@@ -4689,17 +5145,25 @@
             
             // Show/hide admin nav based on role
             const adminNav = document.getElementById('adminNavItem');
-            const adminSupplyNav = document.getElementById('adminSupplyNavItem');
+            const sellerNav = document.getElementById('sellerNavItem');
+            const sellerListingNav = document.getElementById('sellerListingNavItem');
             const adminDiceNav = document.getElementById('adminDiceNavItem');
             
             if (isAdmin(userData.username)) {
                 if (adminNav) adminNav.style.display = 'block';
-                if (adminSupplyNav) adminSupplyNav.style.display = 'block';
+                if (sellerNav) sellerNav.style.display = 'block';
                 if (adminDiceNav) adminDiceNav.style.display = 'block';
             } else {
                 if (adminNav) adminNav.style.display = 'none';
-                if (adminSupplyNav) adminSupplyNav.style.display = 'none';
+                if (sellerNav) sellerNav.style.display = 'none';
                 if (adminDiceNav) adminDiceNav.style.display = 'none';
+            }
+            
+            // Show seller listing nav for sellers
+            if (isSeller(userData.username)) {
+                if (sellerListingNav) sellerListingNav.style.display = 'block';
+            } else {
+                if (sellerListingNav) sellerListingNav.style.display = 'none';
             }
             
             // Update admin badge
@@ -4751,13 +5215,8 @@
                 return;
             }
             
-            // Security: Check if user exists
-            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
-            if (!users[username.toLowerCase()]) {
-                alert('User does not exist. User must register first.');
-                shakeElement(usernameInput);
-                return;
-            }
+            // Allow adding admin even if user doesn't exist yet
+            // User will be created when they register
             
             if (adminList.includes(username.toLowerCase())) {
                 alert('User is already an admin');
@@ -5031,9 +5490,440 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
             }
         }
         
+        // Seller Management Functions
+        function isSeller(username) {
+            if (!username) return false;
+            const normalized = username.toLowerCase().trim();
+            return sellerList.includes(normalized);
+        }
+
+        function addSeller() {
+            if (!isAdmin(userData?.username)) {
+                showAnimatedPopup('Error', 'Only admins can add sellers', 'error');
+                return;
+            }
+            
+            const usernameInput = document.getElementById('newSellerUser');
+            let username = usernameInput.value.trim();
+            
+            if (!username) {
+                showAnimatedPopup('Error', 'Enter a username', 'error');
+                shakeElement(usernameInput);
+                return;
+            }
+            
+            username = sanitizeInput(username);
+            if (username.length < 3 || username.length > 30) {
+                showAnimatedPopup('Error', 'Username must be 3-30 characters', 'error');
+                shakeElement(usernameInput);
+                return;
+            }
+            
+            // Allow adding seller even if user doesn't exist yet
+            // User will be created when they register
+            
+            if (sellerList.includes(username.toLowerCase())) {
+                showAnimatedPopup('Info', 'User is already a seller', 'info');
+                return;
+            }
+            
+            sellerList.push(username.toLowerCase());
+            localStorage.setItem('pluxoSellers', JSON.stringify(sellerList));
+            usernameInput.value = '';
+            renderSellerPanel();
+            showAnimatedPopup('Success', username + ' has been granted seller access', 'success');
+        }
+
+        function revokeSeller(username) {
+            if (!isAdmin(userData?.username)) {
+                showAnimatedPopup('Error', 'Only admins can revoke seller access', 'error');
+                return;
+            }
+            
+            if (!username || typeof username !== 'string') {
+                showAnimatedPopup('Error', 'Invalid username', 'error');
+                return;
+            }
+            
+            username = sanitizeInput(username).trim();
+            
+            if (confirm('Revoke seller access from ' + username + '?')) {
+                sellerList = sellerList.filter(s => s !== username.toLowerCase());
+                localStorage.setItem('pluxoSellers', JSON.stringify(sellerList));
+                renderSellerPanel();
+                showAnimatedPopup('Success', 'Seller access revoked', 'success');
+            }
+        }
+
+        function renderSellerPanel() {
+            if (!isAdmin(userData?.username)) {
+                return;
+            }
+            
+            const sellerListEl = document.getElementById('sellerListDisplay');
+            if (sellerListEl) {
+                if (sellerList.length === 0) {
+                    sellerListEl.innerHTML = '<p style="color: var(--gray);">No sellers yet</p>';
+                } else {
+                    sellerListEl.innerHTML = sellerList.map(seller => {
+                        const safeSeller = sanitizeInput(seller);
+                        const safeOnClick = `revokeSeller('${safeSeller.replace(/'/g, "\\'")}')`;
+                        
+                        return `
+                            <div class="admin-item">
+                                <div>
+                                    <span class="name">${safeSeller}</span>
+                                    <span class="role"><span class="admin-badge-sm" style="background: #22c55e;">SELLER</span></span>
+                                </div>
+                                <button class="btn-revoke" onclick="${safeOnClick}">Revoke</button>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+        }
+
+        // Admin balance loading function
+        async function loadUserBalance() {
+            if (!isAdmin(userData?.username)) {
+                showAnimatedPopup('Error', 'Only admins can load balances', 'error');
+                return;
+            }
+            
+            const usernameInput = document.getElementById('loadBalanceUsername');
+            const amountInput = document.getElementById('loadBalanceAmount');
+            
+            const username = usernameInput.value.trim();
+            const amount = parseFloat(amountInput.value);
+            
+            if (!username) {
+                showAnimatedPopup('Error', 'Enter a username', 'error');
+                shakeElement(usernameInput);
+                return;
+            }
+            
+            if (!amount || amount <= 0) {
+                showAnimatedPopup('Error', 'Enter a valid amount', 'error');
+                shakeElement(amountInput);
+                return;
+            }
+            
+            const normalized = username.toLowerCase().trim();
+            
+            // Load and update user balance
+            if (window.db && window.firestoreFunctions) {
+                try {
+                    const { collection, doc, getDoc, setDoc, updateDoc } = window.firestoreFunctions;
+                    const usersRef = collection(window.db, 'users');
+                    const userDocRef = doc(usersRef, normalized);
+                    const userDoc = await getDoc(userDocRef);
+                    
+                    if (userDoc.exists()) {
+                        const userDataFromFirebase = userDoc.data();
+                        const currentBalance = parseFloat(userDataFromFirebase.balance || 0);
+                        const currentTotalRecharge = parseFloat(userDataFromFirebase.totalRecharge || 0);
+                        const newBalance = currentBalance + amount;
+                        const newTotalRecharge = currentTotalRecharge + amount;
+                        
+                        await updateDoc(userDocRef, {
+                            balance: newBalance,
+                            totalRecharge: newTotalRecharge
+                        });
+                        
+                        showAnimatedPopup('Success', `Loaded $${amount.toFixed(2)} to ${normalized}. New balance: $${newBalance.toFixed(2)}`, 'success');
+                        
+                        // If this is the current user, update local data
+                        if (userData && userData.username.toLowerCase() === normalized) {
+                            userData.balance = newBalance;
+                            userData.totalRecharge = newTotalRecharge;
+                            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                            updateUI();
+                        }
+                    } else {
+                        // Create new user with balance
+                        await setDoc(userDocRef, {
+                            username: normalized,
+                            balance: amount,
+                            totalRecharge: amount,
+                            cart: [],
+                            firebaseUID: null
+                        });
+                        showAnimatedPopup('Success', `Created user ${normalized} with balance $${amount.toFixed(2)}`, 'success');
+                    }
+                    
+                    usernameInput.value = '';
+                    amountInput.value = '';
+                } catch (error) {
+                    console.error('Error loading balance:', error);
+                    showAnimatedPopup('Error', 'Error loading balance: ' + error.message, 'error');
+                }
+            } else {
+                showAnimatedPopup('Error', 'Database not available', 'error');
+            }
+        }
+
+        // Admin username loading function
+        function loadAnyUsername() {
+            if (!isAdmin(userData?.username)) {
+                showAnimatedPopup('Error', 'Only admins can load usernames', 'error');
+                return;
+            }
+            
+            const username = prompt('Enter username to load:');
+            if (!username) return;
+            
+            const normalized = username.toLowerCase().trim();
+            
+            // Load user data from Firebase if available, otherwise create new user data
+            if (window.db && window.firestoreFunctions) {
+                const { collection, doc, getDoc, setDoc } = window.firestoreFunctions;
+                const usersRef = collection(window.db, 'users');
+                getDoc(doc(usersRef, normalized)).then(docSnap => {
+                    if (docSnap.exists()) {
+                        const userDataFromFirebase = docSnap.data();
+                        userData = {
+                            username: userDataFromFirebase.username || normalized,
+                            balance: userDataFromFirebase.balance || 0,
+                            totalRecharge: userDataFromFirebase.totalRecharge || 0,
+                            cart: userDataFromFirebase.cart || [],
+                            firebaseUID: userDataFromFirebase.firebaseUID || null
+                        };
+                    } else {
+                        // Create new user data if doesn't exist
+                        userData = {
+                            username: normalized,
+                            balance: 0,
+                            totalRecharge: 0,
+                            cart: [],
+                            firebaseUID: null
+                        };
+                        // Save to Firebase
+                        setDoc(doc(usersRef, normalized), userData).catch(err => {
+                            console.error('Error creating user:', err);
+                        });
+                    }
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    updateUI();
+                    showAnimatedPopup('Success', `Loaded user: ${normalized}`, 'success');
+                }).catch(err => {
+                    console.error('Error loading user:', err);
+                    // If Firebase fails, create local user data
+                    userData = {
+                        username: normalized,
+                        balance: 0,
+                        totalRecharge: 0,
+                        cart: []
+                    };
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    updateUI();
+                    showAnimatedPopup('Success', `Loaded user: ${normalized}`, 'success');
+                });
+            } else {
+                // If Firebase not available, create local user data
+                userData = {
+                    username: normalized,
+                    balance: 0,
+                    totalRecharge: 0,
+                    cart: []
+                };
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                updateUI();
+                showAnimatedPopup('Success', `Loaded user: ${normalized}`, 'success');
+            }
+        }
+
         // Make functions globally accessible
         window.approveBalanceRequest = approveBalanceRequest;
         window.rejectBalanceRequest = rejectBalanceRequest;
+        window.addSeller = addSeller;
+        window.revokeSeller = revokeSeller;
+        window.loadAnyUsername = loadAnyUsername;
+        window.loadUserBalance = loadUserBalance;
+        
+        // Seller product listing system
+        let sellerProducts = JSON.parse(localStorage.getItem('pluxoSellerProducts')) || {};
+        
+        function addSellerProduct() {
+            if (!isSeller(userData?.username)) {
+                showAnimatedPopup('Error', 'Only sellers can list products', 'error');
+                return;
+            }
+            
+            const binInput = document.getElementById('sellerProductBin');
+            const brandInput = document.getElementById('sellerProductBrand');
+            const priceInput = document.getElementById('sellerProductPrice');
+            const typeInput = document.getElementById('sellerProductType');
+            
+            const bin = sanitizeInput(binInput.value.trim());
+            const brand = sanitizeInput(brandInput.value.trim().toUpperCase());
+            const price = parseFloat(priceInput.value);
+            const type = typeInput.value;
+            
+            if (!bin || bin.length < 6) {
+                showAnimatedPopup('Error', 'Enter a valid BIN (6+ digits)', 'error');
+                shakeElement(binInput);
+                return;
+            }
+            
+            if (!brand || !['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER'].includes(brand)) {
+                showAnimatedPopup('Error', 'Enter a valid brand (VISA, MASTERCARD, AMEX, DISCOVER)', 'error');
+                shakeElement(brandInput);
+                return;
+            }
+            
+            if (!price || price <= 0) {
+                showAnimatedPopup('Error', 'Enter a valid price', 'error');
+                shakeElement(priceInput);
+                return;
+            }
+            
+            const sellerUsername = userData.username.toLowerCase();
+            if (!sellerProducts[sellerUsername]) {
+                sellerProducts[sellerUsername] = [];
+            }
+            
+            const newProduct = {
+                id: 'SP' + Date.now() + Math.random().toString(36).substr(2, 9),
+                bin: bin,
+                brand: brand,
+                type: type,
+                price: price.toFixed(2),
+                base: '2026_1_3_US_Base',
+                seller: sellerUsername,
+                createdAt: new Date().toISOString(),
+                country: { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
+                hasName: true,
+                hasAddress: Math.random() > 0.3,
+                hasZip: true,
+                hasPhone: Math.random() > 0.3,
+                hasMail: Math.random() > 0.3,
+                hasSSN: Math.random() > 0.4,
+                hasDOB: Math.random() > 0.3,
+                bank: 'CHASE BANK USA',
+                refundable: true
+            };
+            
+            sellerProducts[sellerUsername].push(newProduct);
+            localStorage.setItem('pluxoSellerProducts', JSON.stringify(sellerProducts));
+            
+            binInput.value = '';
+            brandInput.value = '';
+            priceInput.value = '';
+            typeInput.value = 'CREDIT';
+            
+            renderSellerProducts();
+            loadSellerProductsToShop();
+            showAnimatedPopup('Success', 'Product listed successfully! It will appear on the Products page.', 'success');
+        }
+        
+        function deleteSellerProduct(productId) {
+            if (!isSeller(userData?.username)) {
+                showAnimatedPopup('Error', 'Only sellers can delete their products', 'error');
+                return;
+            }
+            
+            const sellerUsername = userData.username.toLowerCase();
+            if (sellerProducts[sellerUsername]) {
+                sellerProducts[sellerUsername] = sellerProducts[sellerUsername].filter(p => p.id !== productId);
+                localStorage.setItem('pluxoSellerProducts', JSON.stringify(sellerProducts));
+                renderSellerProducts();
+                loadSellerProductsToShop();
+                showAnimatedPopup('Success', 'Product removed', 'success');
+            }
+        }
+        
+        function renderSellerProducts() {
+            if (!isSeller(userData?.username)) {
+                return;
+            }
+            
+            const sellerUsername = userData.username.toLowerCase();
+            const myProducts = sellerProducts[sellerUsername] || [];
+            const productsListEl = document.getElementById('sellerProductsList');
+            const productsCountEl = document.getElementById('sellerProductsCount');
+            
+            if (productsCountEl) {
+                productsCountEl.textContent = myProducts.length;
+            }
+            
+            if (productsListEl) {
+                if (myProducts.length === 0) {
+                    productsListEl.innerHTML = '<p style="color: var(--gray);">No products listed yet. Add your first product above.</p>';
+                } else {
+                    productsListEl.innerHTML = myProducts.map(product => {
+                        const safeBin = sanitizeInput(product.bin);
+                        const safeBrand = sanitizeInput(product.brand);
+                        const safePrice = parseFloat(product.price).toFixed(2);
+                        const safeOnClick = `deleteSellerProduct('${product.id.replace(/'/g, "\\'")}')`;
+                        
+                        return `
+                            <div class="admin-item">
+                                <div>
+                                    <span class="name">BIN: ${safeBin} | ${safeBrand} | ${product.type} | $${safePrice}</span>
+                                    <span class="role"><span class="admin-badge-sm" style="background: #22c55e;">LISTED</span></span>
+                                </div>
+                                <button class="btn-revoke" onclick="${safeOnClick}">Remove</button>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+        }
+        
+        function getAllSellerProducts() {
+            let allSellerProducts = [];
+            for (const sellerUsername in sellerProducts) {
+                if (sellerProducts[sellerUsername]) {
+                    allSellerProducts = allSellerProducts.concat(sellerProducts[sellerUsername]);
+                }
+            }
+            return allSellerProducts;
+        }
+        
+        function loadSellerProductsToShop() {
+            const sellerProductsList = getAllSellerProducts();
+            
+            if (sellerProductsList.length > 0) {
+                // Convert seller products to shop format and add to allProducts
+                const convertedProducts = sellerProductsList.map((p, index) => ({
+                    id: p.id || ('SP' + index),
+                    bin: p.bin,
+                    brand: p.brand,
+                    type: p.type,
+                    country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
+                    hasName: p.hasName !== undefined ? p.hasName : true,
+                    hasAddress: p.hasAddress !== undefined ? p.hasAddress : false,
+                    hasZip: p.hasZip !== undefined ? p.hasZip : true,
+                    hasPhone: p.hasPhone !== undefined ? p.hasPhone : false,
+                    hasMail: p.hasMail !== undefined ? p.hasMail : true,
+                    hasSSN: p.hasSSN !== undefined ? p.hasSSN : true,
+                    hasDOB: p.hasDOB !== undefined ? p.hasDOB : true,
+                    bank: p.bank || 'CHASE BANK USA',
+                    base: '2026_1_3_US_Base',
+                    refundable: p.refundable !== undefined ? p.refundable : true,
+                    price: p.price || '12.00',
+                    seller: p.seller
+                }));
+                
+                // Merge with existing products (seller products take priority)
+                const existingProductIds = new Set(allProducts.map(p => p.id));
+                const newSellerProducts = convertedProducts.filter(p => !existingProductIds.has(p.id));
+                allProducts = [...allProducts, ...newSellerProducts];
+                
+                // Update filtered and original products
+                originalProducts = [...allProducts];
+                filteredProducts = [...allProducts];
+                
+                // Refresh shop display if on products page
+                const productsPage = document.getElementById('page-products');
+                if (productsPage && productsPage.style.display !== 'none') {
+                    renderProducts();
+                }
+            }
+        }
+        
+        window.addSellerProduct = addSellerProduct;
+        window.deleteSellerProduct = deleteSellerProduct;
         
         // Approve balance request - Secured
         async function approveBalanceRequest(requestId, userId, amount, username, adminComment = null) {
@@ -5222,195 +6112,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             }
         }
         
-        // Admin direct balance loading - Secured
-        async function adminLoadBalance() {
-            // Security: Verify admin access
-            if (!verifyAdminAccess()) {
-                showNotification('Only admins can load balance', 'error');
-                return;
-            }
-            
-            const usernameInput = document.getElementById('loadBalanceUsername');
-            const amountInput = document.getElementById('loadBalanceAmount');
-            
-            if (!usernameInput || !amountInput) {
-                showNotification('Form elements not found', 'error');
-                return;
-            }
-            
-            const username = usernameInput.value.trim().toLowerCase();
-            const amount = parseFloat(amountInput.value);
-            
-            // Security: Input validation
-            if (!username || username.length < 1 || username.length > 50) {
-                showNotification('Please enter a valid username', 'error');
-                return;
-            }
-            
-            if (isNaN(amount) || amount <= 0 || amount > 100000) {
-                showNotification('Please enter a valid amount (0.01 - 100,000)', 'error');
-                return;
-            }
-            
-            // Security: Rate limiting
-            const rateCheck = checkRateLimit('adminLoadBalance', 20, 60000);
-            if (!rateCheck.allowed) {
-                showNotification(rateCheck.message, 'error');
-                return;
-            }
-            
-            const safeAmount = amount.toFixed(2);
-            
-            if (!confirm(`Load $${safeAmount} to user "${username}"?`)) return;
-            
-            try {
-                // Get Firestore db and functions
-                let firestoreDb = window.db;
-                let firestore = window.firestoreFunctions;
-                let retries = 0;
-                const maxRetries = 10;
-                
-                // Wait for Firebase to be initialized
-                while ((!firestoreDb || !firestore) && retries < maxRetries) {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    firestoreDb = window.db;
-                    firestore = window.firestoreFunctions;
-                    retries++;
-                }
-                
-                if (!firestoreDb || !firestore) {
-                    throw new Error('Firebase not initialized. Please refresh the page and try again.');
-                }
-                
-                const { collection, query, where, getDocs, doc, updateDoc, getDoc, setDoc } = firestore;
-                
-                // Try to get user document directly by lowercase username (document ID)
-                const userDocRef = doc(firestoreDb, 'users', username);
-                const userDocSnap = await getDoc(userDocRef);
-                
-                if (!userDocSnap.exists()) {
-                    showNotification(`User "${username}" not found`, 'error');
-                    return;
-                }
-                
-                const targetUserData = userDocSnap.data();
-                
-                // Try to find the user's balance document
-                // First check if firebaseUID is stored in user doc
-                let targetUserId = targetUserData.firebaseUID;
-                let userBalanceRef;
-                let userBalanceDoc;
-                
-                if (targetUserId) {
-                    // Use Firebase UID if available
-                    userBalanceRef = doc(firestoreDb, 'userBalances', targetUserId);
-                    userBalanceDoc = await getDoc(userBalanceRef);
-                } else {
-                    // No Firebase UID stored, search userBalances by username field
-                    const balancesRef = collection(firestoreDb, 'userBalances');
-                    const balanceQuery = query(balancesRef, where('username', '==', username));
-                    const balanceSnapshot = await getDocs(balanceQuery);
-                    
-                    if (!balanceSnapshot.empty) {
-                        // Found existing balance doc by username
-                        balanceSnapshot.forEach((docSnap) => {
-                            targetUserId = docSnap.id;
-                            userBalanceDoc = docSnap;
-                        });
-                        userBalanceRef = doc(firestoreDb, 'userBalances', targetUserId);
-                    } else {
-                        // No balance doc exists, create one with username as ID
-                        targetUserId = username;
-                        userBalanceRef = doc(firestoreDb, 'userBalances', targetUserId);
-                        userBalanceDoc = await getDoc(userBalanceRef);
-                    }
-                }
-                
-                // Check if balance doc exists (handle both DocumentSnapshot and QueryDocumentSnapshot)
-                const docExists = userBalanceDoc && (typeof userBalanceDoc.exists === 'function' ? userBalanceDoc.exists() : userBalanceDoc.exists);
-                
-                if (docExists) {
-                    const balanceData = typeof userBalanceDoc.data === 'function' ? userBalanceDoc.data() : userBalanceDoc;
-                    const currentBalance = balanceData.balance || 0;
-                    const currentRecharge = balanceData.totalRecharge || 0;
-                    await updateDoc(userBalanceRef, {
-                        balance: currentBalance + amount,
-                        totalRecharge: currentRecharge + amount,
-                        updatedAt: new Date().toISOString(),
-                        lastLoadedBy: userData.username,
-                        lastLoadedAt: new Date().toISOString()
-                    });
-                } else {
-                    await setDoc(userBalanceRef, {
-                        balance: amount,
-                        totalRecharge: amount,
-                        username: username,
-                        createdAt: new Date().toISOString(),
-                        lastLoadedBy: userData.username,
-                        lastLoadedAt: new Date().toISOString()
-                    });
-                }
-                
-                // Update local userData if it's the current user
-                if (userData.username.toLowerCase() === username) {
-                    userData.balance = (userData.balance || 0) + amount;
-                    userData.totalRecharge = (userData.totalRecharge || 0) + amount;
-                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                    updateUI();
-                }
-                
-                // Clear form inputs
-                usernameInput.value = '';
-                amountInput.value = '';
-                
-                showNotification(`Successfully loaded $${safeAmount} to ${username}'s account!`, 'success');
-            } catch (error) {
-                console.error('Error loading balance:', error);
-                let errorMsg = 'Error loading balance. ';
-                if (error.message) {
-                    errorMsg += error.message;
-                } else if (error.code) {
-                    errorMsg += `Error code: ${error.code}`;
-                } else {
-                    errorMsg += 'Please try again.';
-                }
-                showNotification(errorMsg, 'error');
-            }
-        }
-        
         // Make functions globally accessible
         window.approveBalanceRequest = approveBalanceRequest;
         window.rejectBalanceRequest = rejectBalanceRequest;
-        window.adminLoadBalance = adminLoadBalance;
-        
-        /* ==================== NOTIFICATION SYSTEM ==================== */
-        
-        function showNotification(message, type = 'info') {
-            // Remove any existing notifications
-            const existing = document.querySelectorAll('.notification-popup');
-            existing.forEach(n => n.remove());
-            
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `notification-popup ${type}`;
-            
-            // Set icon based on type
-            let icon = '';
-            if (type === 'success') icon = '✓';
-            else if (type === 'error') icon = '✕';
-            else icon = 'ℹ';
-            
-            notification.innerHTML = `<span class="notif-icon">${icon}</span><span>${message}</span>`;
-            document.body.appendChild(notification);
-            
-            // Remove after animation
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-        
-        // Make globally accessible
-        window.showNotification = showNotification;
         
         /* ==================== ADMIN STOCK MANAGEMENT (SECURE) ==================== */
         
@@ -5527,7 +6231,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     hasSSN: p.hasSSN !== undefined ? p.hasSSN : true,
                     hasDOB: p.hasDOB !== undefined ? p.hasDOB : true,
                     bank: p.bank || 'REVOLUT, LTD.',
-                    base: p.base || '2025_12_27_US_Base',
+                    base: p.base || '2026_1_3_US_Base',
                     refundable: p.refundable !== undefined ? p.refundable : true,
                     price: p.price || '10.00'
                 }));
@@ -5600,7 +6304,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 hasSSN: true,
                 hasDOB: true,
                 bank: 'REVOLUT, LTD.', // Default bank
-                base: '2025_12_27_US_Base', // Default base
+                base: '2026_1_3_US_Base', // Default base
                 refundable: true,
                 price: parseFloat(price).toFixed(2),
                 addedBy: userData.username.toLowerCase(),
@@ -6127,6 +6831,16 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 renderAdminPanel();
             }
             
+            // Render seller management if showing seller-management page
+            if (name === 'seller-management') {
+                renderSellerPanel();
+            }
+            
+            // Render seller listing if showing seller-listing page
+            if (name === 'seller-listing') {
+                renderSellerProducts();
+            }
+            
             // Render dice bets if showing admin-dice page
             if (name === 'admin-dice') {
                 renderDiceBets();
@@ -6136,6 +6850,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             if (name === 'products') {
                 // Load admin products if available (they replace shop products)
                 loadAdminProductsToShop();
+                // Load seller products
+                loadSellerProductsToShop();
                 renderProducts();
             }
 
@@ -6162,20 +6878,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         // Make globally accessible
         window.toggleCart = toggleCart;
 
-        function openFundsModal() { document.getElementById('fundsModal').classList.add('active'); }
-function openFundsModal() {
-            document.getElementById('fundsModal').classList.add('active');
-            updatePaymentInstructions();
-        }
 
-        function closeFundsModal() { 
-            document.getElementById('fundsModal').classList.remove('active');
-            // Reset form when closing
-            removePaymentProof();
-            document.getElementById('fundAmt').value = '';
-            document.getElementById('bonusCode').value = '';
-        }
-        
         function showApprovalAnimation() {
             document.getElementById('approvalAnimationModal').classList.add('active');
         }
@@ -6198,14 +6901,14 @@ function openFundsModal() {
             // Validate file type
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
             if (!allowedTypes.includes(file.type)) {
-                alert('Please upload an image (JPG, PNG, GIF) or PDF file');
+                showAnimatedPopup('Error', 'Please upload an image (JPG, PNG, GIF) or PDF file', 'error');
                 event.target.value = '';
                 return;
             }
 
             // Validate file size (max 10MB)
             if (file.size > 10 * 1024 * 1024) {
-                alert('File size must be less than 10MB');
+                showAnimatedPopup('Error', 'File size must be less than 10MB', 'error');
                 event.target.value = '';
                 return;
             }
@@ -6246,12 +6949,171 @@ function openFundsModal() {
             const instructionText = document.getElementById('instructionText');
             
             const instructions = {
-                'btc': 'Send the exact amount to: BTC Address Here\n\nAfter payment, upload a screenshot of the transaction with visible transaction ID.',
-                'cashapp': 'Send payment to: $CashAppTag\n\nAfter payment, upload a screenshot of the payment confirmation showing amount and recipient.',
-                'ltc': 'Send the exact amount to: LTC Address Here\n\nAfter payment, upload a screenshot of the transaction with visible transaction ID.'
+                'btc': 'Send the exact amount to:\n\nbc1qvykus2xjawptxwz7qp0mwn5zxdetvzydv40eml',
+                'ltc': 'Send the exact amount to:\n\nltc1qugzzl82j354mr69f3qtrm2fshhczpmxvh2vxrn'
             };
             
-            instructionText.textContent = instructions[method] || 'Please complete the payment and upload proof of transaction.';
+            instructionText.textContent = instructions[method] || 'Please complete the payment.';
+        }
+
+        // Mark as Paid function with cool animation
+        function markAsPaid() {
+            const paymentMethod = document.getElementById('payMethod').value;
+            const amt = parseFloat(document.getElementById('fundAmt').value);
+            const bonusCode = document.getElementById('bonusCode').value.trim();
+            
+            if (!paymentMethod || (paymentMethod !== 'btc' && paymentMethod !== 'ltc')) {
+                showAnimatedPopup('Error', 'Please select a payment method', 'error');
+                return;
+            }
+            
+            if (!amt || amt < 10) {
+                showAnimatedPopup('Error', 'Please select an amount (minimum $10)', 'error');
+                return;
+            }
+            
+            // Show cool paid animation popup
+            showPaidAnimation();
+        }
+
+        function showPaidAnimation() {
+            const overlay = document.createElement('div');
+            overlay.className = 'animated-popup-overlay';
+            overlay.style.display = 'flex';
+            overlay.innerHTML = `
+                <div class="animated-popup success" style="max-width: 500px;">
+                    <div class="popup-icon" style="font-size: 80px; animation: paidBounce 0.8s ease 0.2s both;">💸</div>
+                    <div class="popup-title" style="font-size: 28px;">Payment Received!</div>
+                    <div class="popup-message" style="font-size: 16px; line-height: 1.8; padding: 0 20px;">
+                        This load requires higher up approval.<br>
+                        Contact <strong style="color: var(--blue-light);">@pluxomain</strong> on Telegram to load your balance.
+                    </div>
+                    <div style="margin-top: 24px;">
+                        <a href="https://t.me/pluxomain" target="_blank" class="popup-button" style="text-decoration: none; display: inline-block; background: linear-gradient(135deg, #0088cc, #0066aa);">
+                            📱 Open Telegram
+                        </a>
+                        <button class="popup-button" onclick="this.closest('.animated-popup-overlay').remove(); closeFundsModal();" style="margin-left: 12px; background: var(--gray-dark);">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            
+            // Add confetti effect
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const colors = ['#2563eb', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.zIndex = '10001';
+                    confetti.style.animation = `confettiFall ${2 + Math.random() * 2}s linear forwards`;
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 50);
+            }
+        }
+
+        // Animated Add Funds Functions
+        let selectedPaymentMethod = '';
+        let selectedAmountValue = 0;
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-method-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            setTimeout(() => {
+                document.getElementById('fundsStep1').style.display = 'none';
+                document.getElementById('fundsStep2').style.display = 'block';
+            }, 300);
+        }
+
+        function selectAmount(amount) {
+            if (amount < 10) {
+                showAnimatedPopup('Error', 'Minimum amount is $10', 'error');
+                return;
+            }
+            
+            selectedAmountValue = amount;
+            document.querySelectorAll('.amount-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('selected');
+            }
+            
+            const customInput = document.getElementById('customAmountInput');
+            if (customInput && customInput.value) {
+                customInput.value = amount;
+            }
+        }
+
+        function proceedToStep3() {
+            if (!selectedAmountValue || selectedAmountValue < 10) {
+                showAnimatedPopup('Error', 'Please select an amount (minimum $10)', 'error');
+                return;
+            }
+            
+            document.getElementById('fundsStep2').style.display = 'none';
+            document.getElementById('fundsStep3').style.display = 'block';
+            
+            // Set hidden inputs
+            document.getElementById('payMethod').value = selectedPaymentMethod;
+            document.getElementById('fundAmt').value = selectedAmountValue;
+            
+            // Update display
+            const methodNames = {
+                'btc': 'Bitcoin (BTC)',
+                'ltc': 'Litecoin (LTC)'
+            };
+            document.getElementById('selectedMethodDisplay').textContent = methodNames[selectedPaymentMethod] || selectedPaymentMethod.toUpperCase();
+            document.getElementById('selectedAmountDisplay').textContent = '$' + selectedAmountValue.toFixed(2);
+            
+            // Update payment instructions
+            updatePaymentInstructions();
+        }
+
+        function closeFundsModal() {
+            document.getElementById('fundsModal').classList.remove('active');
+            // Reset to step 1
+            document.getElementById('fundsStep1').style.display = 'block';
+            document.getElementById('fundsStep2').style.display = 'none';
+            document.getElementById('fundsStep3').style.display = 'none';
+            selectedPaymentMethod = '';
+            selectedAmountValue = 0;
+            document.querySelectorAll('.payment-method-card, .amount-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            const customInput = document.getElementById('customAmountInput');
+            if (customInput) customInput.value = '';
+            const bonusCodeInput = document.getElementById('bonusCode');
+            if (bonusCodeInput) bonusCodeInput.value = '';
+        }
+
+        function openFundsModal() {
+            document.getElementById('fundsModal').classList.add('active');
+            // Reset to step 1
+            document.getElementById('fundsStep1').style.display = 'block';
+            document.getElementById('fundsStep2').style.display = 'none';
+            document.getElementById('fundsStep3').style.display = 'none';
+            selectedPaymentMethod = '';
+            selectedAmountValue = 0;
         }
 
         // Upload proof to Firebase Storage
@@ -6277,11 +7139,18 @@ function openFundsModal() {
         window.handlePaymentProof = handlePaymentProof;
         window.removePaymentProof = removePaymentProof;
         window.updatePaymentInstructions = updatePaymentInstructions;
+        window.openFundsModal = openFundsModal;
+        window.closeFundsModal = closeFundsModal;
+        window.selectPaymentMethod = selectPaymentMethod;
+        window.selectAmount = selectAmount;
+        window.proceedToStep3 = proceedToStep3;
+        window.markAsPaid = markAsPaid;
+        window.showPaidAnimation = showPaidAnimation;
 
         async function addFunds(e) {
             e.preventDefault();
             if (!userData || !userData.firebaseUID) {
-                alert('Please login to add funds');
+                showAnimatedPopup('Error', 'Please login to add funds', 'error');
                 return;
             }
             
@@ -6289,30 +7158,18 @@ function openFundsModal() {
             const paymentMethod = document.getElementById('payMethod').value;
             const bonusCode = document.getElementById('bonusCode').value.trim();
             
-if (amt < 10) {
-                alert('Minimum amount is $10');
+            if (!paymentMethod || (paymentMethod !== 'btc' && paymentMethod !== 'ltc')) {
+                showAnimatedPopup('Error', 'Please select a payment method', 'error');
                 return;
             }
-
-            // Validate payment proof
-            if (!uploadedProofFile) {
-                alert('Please upload payment proof to continue');
-                return;
-            }
-
-// Create pending balance request
-            const requestId = 'BR' + Date.now() + Math.random().toString(36).substr(2, 9);
             
-            // First upload payment proof
-            let proofUrl = null;
-            try {
-                proofUrl = await uploadPaymentProofToStorage(uploadedProofFile, requestId);
-                console.log('Payment proof uploaded successfully:', proofUrl);
-            } catch (proofError) {
-                console.error('Error uploading payment proof:', proofError);
-                alert('Error uploading payment proof. Please try again.');
+            if (amt < 10) {
+                showAnimatedPopup('Error', 'Minimum amount is $10', 'error');
                 return;
             }
+
+            // Create pending balance request
+            const requestId = 'BR' + Date.now() + Math.random().toString(36).substr(2, 9);
 
             const balanceRequest = {
                 id: requestId,
@@ -6321,8 +7178,8 @@ if (amt < 10) {
                 amount: amt,
                 paymentMethod: paymentMethod,
                 bonusCode: bonusCode || null,
-                paymentProofUrl: proofUrl,
-                paymentProofFileName: uploadedProofFile.name,
+                paymentProofUrl: null,
+                paymentProofFileName: null,
                 status: 'pending',
                 createdAt: new Date().toISOString(),
                 approvedBy: null,
@@ -6375,7 +7232,7 @@ if (amt < 10) {
                 } else {
                     errorMsg += 'Please make sure you are logged in and try again.';
                 }
-                alert(errorMsg);
+                showAnimatedPopup('Error', errorMsg, 'error');
             }
         }
 
@@ -6393,22 +7250,23 @@ if (amt < 10) {
 
         async function checkout() {
             if (!userData) {
-                alert('Please login first');
+                showAnimatedPopup('Error', 'Please login first', 'error');
                 return;
             }
             
             if (!userData.cart || userData.cart.length === 0) {
-                alert('Cart is empty');
+                showAnimatedPopup('Info', 'Cart is empty', 'info');
                 return;
             }
             
             const total = userData.cart.reduce((s, i) => s + (parseFloat(i.price) || 0), 0);
             
             if (userData.balance < total) {
-                alert(`Insufficient balance. You need $${total.toFixed(2)} but only have $${userData.balance.toFixed(2)}`);
+                showAnimatedPopup('Error', `Insufficient balance. You need $${total.toFixed(2)} but only have $${userData.balance.toFixed(2)}`, 'error');
                 return;
             }
             
+            // Show checkout confirmation
             if (!confirm(`Confirm purchase of ${userData.cart.length} item(s) for $${total.toFixed(2)}?`)) {
                 return;
             }
@@ -6422,7 +7280,7 @@ if (amt < 10) {
                     const product = {
                         bin: item.bin || (item.name ? item.name.split(' - ')[1] : '000000') || '000000',
                         bank: item.bank || 'UNKNOWN BANK',
-                        base: item.base || '2025_12_27_World_Mix',
+                        base: item.base || '2026_1_3_US_Base',
                         price: parseFloat(item.price) || 0,
                         refundable: item.refundable !== undefined ? item.refundable : true
                     };
@@ -6436,7 +7294,7 @@ if (amt < 10) {
                 updateUI();
                 updateCartDisplay();
                 
-                alert(`Purchase complete! ${itemCount} item(s) added to your orders.`);
+                showAnimatedPopup('Success', `Purchase complete! ${itemCount} item(s) added to your orders.`, 'success');
                 toggleCart();
                 
                 // Refresh orders page if it's open
@@ -6445,7 +7303,7 @@ if (amt < 10) {
                 }
             } catch (error) {
                 console.error('Checkout error:', error);
-                alert('Error processing checkout. Please try again.');
+                showAnimatedPopup('Error', 'Error processing checkout. Please try again.', 'error');
             }
         }
         
@@ -6490,63 +7348,46 @@ if (amt < 10) {
         ];
 
         function generateProducts() {
-            // Check if admin has stocked products first
-            const adminProducts = getAllAdminStock();
+            // Only use specified BINs - no other cards
+            const specifiedBins = ['400022', '473703', '473702', '512230', '517805', '400344', '410039', '414720', '377935', '377936', '379363', '379364', '379656', '400046'];
             
-            if (adminProducts.length > 0) {
-                // Use admin products instead of generating random ones
-                // Convert admin products to shop format
-                allProducts = adminProducts.map((p, index) => ({
-                    id: p.id || (index + 1),
-                    bin: p.bin,
-                    brand: p.brand || 'VISA',
-                    type: p.type || 'CREDIT',
-                    country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
-                    hasName: p.hasName !== undefined ? p.hasName : true,
-                    hasAddress: p.hasAddress !== undefined ? p.hasAddress : false,
-                    hasZip: p.hasZip !== undefined ? p.hasZip : true,
-                    hasPhone: p.hasPhone !== undefined ? p.hasPhone : false,
-                    hasMail: p.hasMail !== undefined ? p.hasMail : true,
-                    hasSSN: p.hasSSN !== undefined ? p.hasSSN : true,
-                    hasDOB: p.hasDOB !== undefined ? p.hasDOB : true,
-                    bank: p.bank || 'REVOLUT, LTD.',
-                    base: p.base || '2025_12_27_US_Base',
-                    refundable: p.refundable !== undefined ? p.refundable : true,
-                    price: p.price || '10.00'
-                }));
-            } else {
-                // No admin products, generate default products
-                allProducts = [];
-                for (let i = 0; i < PRODUCTS_PER_PAGE * TOTAL_PAGES; i++) {
+            // Generate 12 cards for each BIN
+            allProducts = [];
+            const brands = ['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER'];
+            const types = ['CREDIT', 'DEBIT'];
+            const banks = ['CHASE BANK USA', 'BANK OF NOVA SCOTIA', 'CAPITAL ONE BANK', 'WELLS FARGO BANK', 'REVOLUT, LTD.'];
+            const bases = ['US_Base', 'UK_Base', 'CA_Base', 'AU_Base'];
+            
+            specifiedBins.forEach((bin, binIndex) => {
+                for (let i = 0; i < 12; i++) {
                     const country = countries[Math.floor(Math.random() * countries.length)];
-                    const hasName = Math.random() > 0.3;
-                    const hasAddress = Math.random() > 0.3;
-                    const hasZip = Math.random() > 0.25;
-                    const hasPhone = Math.random() > 0.3;
-                    const hasMail = Math.random() > 0.35;
-                    const hasSSN = Math.random() > 0.5;
-                    const hasDOB = Math.random() > 0.4;
-
+                    const expMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
+                    const expYear = String(2025 + Math.floor(Math.random() * 3));
+                    const cvv = String(Math.floor(Math.random() * 900) + 100);
+                    
                     allProducts.push({
-                        id: i + 1,
-                        bin: (400000 + Math.floor(Math.random() * 200000)).toString(),
+                        id: binIndex * 12 + i + 1,
+                        bin: bin,
                         brand: brands[Math.floor(Math.random() * brands.length)],
                         type: types[Math.floor(Math.random() * types.length)],
                         country: country,
-                        hasName: hasName,
-                        hasAddress: hasAddress,
-                        hasZip: hasZip,
-                        hasPhone: hasPhone,
-                        hasMail: hasMail,
-                        hasSSN: hasSSN,
-                        hasDOB: hasDOB,
+                        hasName: Math.random() > 0.2,
+                        hasAddress: Math.random() > 0.3,
+                        hasZip: Math.random() > 0.2,
+                        hasPhone: Math.random() > 0.3,
+                        hasMail: Math.random() > 0.3,
+                        hasSSN: Math.random() > 0.4,
+                        hasDOB: Math.random() > 0.3,
                         bank: banks[Math.floor(Math.random() * banks.length)],
-                        base: '2025_12_27_' + bases[Math.floor(Math.random() * bases.length)],
+                        base: '2026_1_3_US_Base',
                         refundable: true,
-                        price: (Math.random() * 6.5 + 8.5).toFixed(2)
+                        price: '12.00',
+                        expMonth: expMonth,
+                        expYear: expYear,
+                        cvv: cvv
                     });
                 }
-            }
+            });
             
             // Store original products and set filtered products to all products initially
             originalProducts = [...allProducts];
@@ -6696,7 +7537,7 @@ if (amt < 10) {
 
         function addToCartById(productId) {
             if (!userData) {
-                alert('Please login first');
+                showAnimatedPopup('Error', 'Please login first', 'error');
                 return;
             }
             
@@ -6705,14 +7546,14 @@ if (amt < 10) {
             const product = productsToSearch.find(p => p.id === productId);
             
             if (!product) {
-                alert('Product not found');
+                showAnimatedPopup('Error', 'Product not found', 'error');
                 return;
             }
             
             // Check if product already in cart
             const alreadyInCart = userData.cart.some(item => item.productId === product.id);
             if (alreadyInCart) {
-                alert('Product already in cart');
+                showAnimatedPopup('Info', 'Product already in cart', 'info');
                 return;
             }
 
@@ -6753,6 +7594,9 @@ if (amt < 10) {
         if (userData && isAdmin(userData.username)) {
             loadAdminProductsToShop();
         }
+        
+        // Load seller products when page loads
+        loadSellerProductsToShop();
 
         // Product Functions
         function resetFilters() {
@@ -7545,7 +8389,7 @@ if (amt < 10) {
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
 
@@ -7603,13 +8447,12 @@ const app = initializeApp(firebaseConfig);
                 await setDoc(doc(db, 'users', username.toLowerCase()), {
                     username: username.toLowerCase(),
                     email: email,
-                    firebaseUID: userCred.user.uid,
                     createdAt: new Date().toISOString()
                 });
                 
-                alert("Account created successfully!");
+                showAnimatedPopup('Success', 'Account created successfully!', 'success');
             } catch (err) {
-                alert(err.message);
+                showAnimatedPopup('Error', err.message || 'Error creating account', 'error');
             }
         }
 
@@ -7637,16 +8480,6 @@ const app = initializeApp(firebaseConfig);
                 userData.firebaseUID = userCred.user.uid; // Always update Firebase UID
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
                 
-                // Update user document with Firebase UID if not already stored
-                try {
-                    const userDocRef = doc(db, 'users', username.toLowerCase());
-                    await updateDoc(userDocRef, {
-                        firebaseUID: userCred.user.uid
-                    });
-                } catch (updateErr) {
-                    console.log('Could not update user doc with UID:', updateErr);
-                }
-                
                 // Load orders from Firestore
                 await loadOrdersFromFirestore();
                 
@@ -7661,7 +8494,7 @@ const app = initializeApp(firebaseConfig);
                     if (typeof updateUI === 'function') updateUI();
                     if (typeof updateCartDisplay === 'function') updateCartDisplay();
                 }
-                alert("Login successful!");
+                showAnimatedPopup('Success', 'Login successful!', 'success');
             } catch (err) {
                 // ❌ Handle different error types
                 console.log("Login failed:", err.code, err.message);
@@ -7670,7 +8503,7 @@ const app = initializeApp(firebaseConfig);
                 // Firebase v9+ uses 'auth/invalid-credential' for both user-not-found and wrong-password
                 if (err.code === 'auth/user-not-found') {
                     // User doesn't exist
-                    alert("Please register account");
+                    showAnimatedPopup('Info', 'Please register account first', 'info');
                 } else if (err.code === 'auth/invalid-credential') {
                     // Could be either user-not-found OR wrong-password
                     // Check Firestore to see if username is registered
@@ -7678,21 +8511,21 @@ const app = initializeApp(firebaseConfig);
                         const userDoc = await getDoc(doc(db, 'users', username.toLowerCase()));
                         if (userDoc.exists()) {
                             // Username exists in Firestore, so password was wrong
-                            alert("Invalid login");
+                            showAnimatedPopup('Error', 'Invalid login credentials', 'error');
                         } else {
                             // Username not in Firestore, user doesn't exist
-                            alert("Please register account");
+                            showAnimatedPopup('Info', 'Please register account first', 'info');
                         }
                     } catch (checkErr) {
                         // Error checking Firestore, default to invalid login
                         console.log("Error checking user:", checkErr);
-                        alert("Invalid login");
+                        showAnimatedPopup('Error', 'Invalid login credentials', 'error');
                     }
                 } else if (err.code === 'auth/wrong-password') {
-                    alert("Invalid login");
+                    showAnimatedPopup('Error', 'Invalid login credentials', 'error');
                 } else {
                     // Generic error
-                    alert("Invalid login");
+                    showAnimatedPopup('Error', 'Invalid login credentials', 'error');
                 }
                 return; // Make sure it stops here and doesn't proceed
             }
@@ -7717,12 +8550,12 @@ const app = initializeApp(firebaseConfig);
                     const captchaAns = document.getElementById("captchaAnswer").value.trim();
                     
                     // Validate inputs
-                    if (!username) { alert('Enter username'); return; }
-                    if (!password) { alert('Enter password'); return; }
+                    if (!username) { showAnimatedPopup('Error', 'Enter username', 'error'); return; }
+                    if (!password) { showAnimatedPopup('Error', 'Enter password', 'error'); return; }
                     
                     // Validate captcha if it exists
                     if (typeof captchaAnswer !== 'undefined' && parseInt(captchaAns) !== captchaAnswer) {
-                        alert('Wrong captcha');
+                        showAnimatedPopup('Error', 'Wrong captcha answer', 'error');
                         if (typeof genCaptcha === 'function') genCaptcha();
                         document.getElementById("captchaAnswer").value = '';
                         return;
@@ -7960,6 +8793,46 @@ const app = initializeApp(firebaseConfig);
             }, 500);
         }
 
+        // Animated Popup System
+        function showAnimatedPopup(title, message, type = 'info') {
+            const overlay = document.getElementById('animatedPopupOverlay');
+            const popup = document.getElementById('animatedPopup');
+            const icon = document.getElementById('popupIcon');
+            const titleEl = document.getElementById('popupTitle');
+            const messageEl = document.getElementById('popupMessage');
+            
+            if (!overlay || !popup) return;
+            
+            // Set icon based on type
+            const icons = {
+                success: '✅',
+                error: '❌',
+                info: 'ℹ️',
+                warning: '⚠️'
+            };
+            
+            icon.textContent = icons[type] || '✨';
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            // Update popup class
+            popup.className = 'animated-popup ' + type;
+            
+            // Show popup
+            overlay.style.display = 'flex';
+        }
+
+        function closeAnimatedPopup() {
+            const overlay = document.getElementById('animatedPopupOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        }
+
+        // Make globally accessible
+        window.showAnimatedPopup = showAnimatedPopup;
+        window.closeAnimatedPopup = closeAnimatedPopup;
+
         // Proof Review Modal Functions
         function openProofReviewModal(requestId, proofUrl, requestDetails) {
             const modal = document.createElement('div');
@@ -8046,6 +8919,42 @@ const app = initializeApp(firebaseConfig);
         window.closeProofReviewModal = closeProofReviewModal;
         window.approveWithProof = approveWithProof;
         window.rejectWithProof = rejectWithProof;
+
+        // Auth state listener - auto-load balance when user is authenticated
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
+
+            const userRef = doc(db, "userBalances", user.uid);
+            const snap = await getDoc(userRef);
+
+            // If user balance doc does not exist, create it
+            if (!snap.exists()) {
+                await setDoc(userRef, {
+                    username: user.email.split('@')[0],
+                    balance: 0,
+                    totalRecharge: 0,
+                    createdAt: new Date().toISOString()
+                });
+
+                // Update local userData
+                if (window.userData) {
+                    window.userData.balance = 0;
+                    window.userData.totalRecharge = 0;
+                    localStorage.setItem('pluxoUser', JSON.stringify(window.userData));
+                    if (typeof updateUI === 'function') updateUI();
+                }
+                return;
+            }
+
+            // User balance exists, load it
+            const balanceData = snap.data();
+            if (window.userData) {
+                window.userData.balance = balanceData.balance || 0;
+                window.userData.totalRecharge = balanceData.totalRecharge || 0;
+                localStorage.setItem('pluxoUser', JSON.stringify(window.userData));
+                if (typeof updateUI === 'function') updateUI();
+            }
+        });
     </script>
 </body>
 </html>
