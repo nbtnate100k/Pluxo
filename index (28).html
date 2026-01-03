@@ -2638,6 +2638,84 @@
             background: rgba(239, 68, 68, 0.1);
         }
 
+        /* Dice Animation Styles */
+        .dice-animation-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .dice-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .dice-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dice-label {
+            color: var(--white);
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .dice {
+            width: 100px;
+            height: 100px;
+            background: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            font-weight: 800;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+            position: relative;
+            animation: diceRoll 1s ease-in-out;
+        }
+
+        .dice.rolling {
+            animation: diceRoll 0.3s infinite;
+        }
+
+        @keyframes diceRoll {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.1); }
+            50% { transform: rotate(180deg) scale(1); }
+            75% { transform: rotate(270deg) scale(1.1); }
+        }
+
+        .dice-result {
+            font-size: 80px;
+            animation: resultPop 0.5s ease-out;
+        }
+
+        @keyframes resultPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .vs-label {
+            color: var(--blue);
+            font-size: 32px;
+            font-weight: 800;
+            text-shadow: 0 0 20px var(--blue-glow);
+        }
+
         .dice-waiting-message {
             text-align: center;
             padding: 40px 20px;
@@ -4658,7 +4736,7 @@
                 
                 <div class="content-card" style="border-color: #8b5cf6;">
                     <h2 style="color: #8b5cf6;">🎲 Dice Game</h2>
-                    <p style="margin-bottom: 20px; color: var(--gray);">Bet against other users. Choose your bet amount ($1-$5) and wait for an opponent.</p>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Bet against other users or play against the bot. Choose your bet amount ($1-$5).</p>
                     
                     <div class="admin-section">
                         <div class="section-title">Create Bet</div>
@@ -4667,7 +4745,10 @@
                                 <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $5)</label>
                                 <input type="number" class="input-field" id="diceBetAmount" placeholder="Enter amount (1-5)" min="1" max="5" step="0.01">
                             </div>
-                            <button class="btn btn-admin" onclick="createDiceBet()" style="background: #8b5cf6; width: 100%;">Create Bet</button>
+                            <div style="display: flex; gap: 12px;">
+                                <button class="btn btn-admin" onclick="createDiceBet('player')" style="background: #8b5cf6; flex: 1;">Create Bet (vs Player)</button>
+                                <button class="btn btn-admin" onclick="createDiceBet('bot')" style="background: #10b981; flex: 1;">Play vs Bot</button>
+                            </div>
                         </div>
                     </div>
 
@@ -5818,12 +5899,12 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
                 createdAt: new Date().toISOString(),
                 country: { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
                 hasName: true,
-                hasAddress: Math.random() > 0.3,
+                hasAddress: true,
                 hasZip: true,
-                hasPhone: Math.random() > 0.3,
-                hasMail: Math.random() > 0.3,
-                hasSSN: Math.random() > 0.4,
-                hasDOB: Math.random() > 0.3,
+                hasPhone: true,
+                hasMail: true,
+                hasSSN: true,
+                hasDOB: true,
                 bank: 'CHASE BANK USA',
                 refundable: true
             };
@@ -6323,9 +6404,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 type: 'CREDIT', // Default type
                 country: { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' }, // Default country
                 hasName: true,
-                hasAddress: false,
+                hasAddress: true,
                 hasZip: true,
-                hasPhone: false,
+                hasPhone: true,
                 hasMail: true,
                 hasSSN: true,
                 hasDOB: true,
@@ -6459,11 +6540,91 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             localStorage.setItem('pluxoDiceHistory', JSON.stringify(history));
         }
 
+        // Show dice animation
+        function showDiceAnimation(callback, isBotGame = false) {
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'dice-animation-overlay';
+            const opponentLabel = isBotGame ? 'Bot' : 'Opponent';
+            overlay.innerHTML = `
+                <div class="dice-container">
+                    <div class="dice-wrapper">
+                        <div class="dice-label">You</div>
+                        <div class="dice rolling" id="playerDice">🎲</div>
+                    </div>
+                    <div class="vs-label">VS</div>
+                    <div class="dice-wrapper">
+                        <div class="dice-label">${opponentLabel}</div>
+                        <div class="dice rolling" id="opponentDice">🎲</div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            
+            // Generate random rolls
+            const playerRoll = Math.floor(Math.random() * 6) + 1;
+            // Bot has slight advantage - weighted towards higher numbers (only for bot games)
+            let opponentRoll;
+            if (isBotGame) {
+                // Bot has 40% chance to roll 4-6, making it harder
+                opponentRoll = Math.random() < 0.4 ? 
+                    Math.floor(Math.random() * 3) + 4 : // 40% chance of 4-6
+                    Math.floor(Math.random() * 6) + 1;  // 60% chance of 1-6
+            } else {
+                // Fair random roll for player vs player
+                opponentRoll = Math.floor(Math.random() * 6) + 1;
+            }
+            
+            // Dice faces emoji mapping
+            const diceFaces = {
+                1: '⚀',
+                2: '⚁',
+                3: '⚂',
+                4: '⚃',
+                5: '⚄',
+                6: '⚅'
+            };
+            
+            // Animate dice rolling
+            let rollCount = 0;
+            const maxRolls = 15;
+            const rollInterval = setInterval(() => {
+                rollCount++;
+                const tempPlayerRoll = Math.floor(Math.random() * 6) + 1;
+                const tempOpponentRoll = Math.floor(Math.random() * 6) + 1;
+                
+                document.getElementById('playerDice').textContent = diceFaces[tempPlayerRoll];
+                document.getElementById('opponentDice').textContent = diceFaces[tempOpponentRoll];
+                
+                if (rollCount >= maxRolls) {
+                    clearInterval(rollInterval);
+                    
+                    // Show final results
+                    const playerDiceEl = document.getElementById('playerDice');
+                    const opponentDiceEl = document.getElementById('opponentDice');
+                    
+                    playerDiceEl.classList.remove('rolling');
+                    opponentDiceEl.classList.remove('rolling');
+                    playerDiceEl.classList.add('dice-result');
+                    opponentDiceEl.classList.add('dice-result');
+                    
+                    playerDiceEl.textContent = diceFaces[playerRoll];
+                    opponentDiceEl.textContent = diceFaces[opponentRoll];
+                    
+                    // Wait a moment then remove overlay and call callback
+                    setTimeout(() => {
+                        overlay.remove();
+                        callback(playerRoll, opponentRoll);
+                    }, 1500);
+                }
+            }, 100);
+        }
+
         // Create a new dice bet
-        async function createDiceBet() {
+        async function createDiceBet(opponentType = 'player') {
             // Security: Verify admin access
             if (!verifyAdminAccess()) {
-                alert('Only admins can create bets');
+                showAnimatedPopup('Error', 'Only admins can create bets', 'error');
                 return;
             }
             
@@ -6472,21 +6633,21 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             
             // Validate bet amount
             if (!amount || isNaN(amount) || amount < 1 || amount > 5) {
-                alert('Bet amount must be between $1 and $5');
+                showAnimatedPopup('Error', 'Bet amount must be between $1 and $5', 'error');
                 shakeElement(amountInput);
                 return;
             }
             
             // Check user balance
             if (!userData || userData.balance < amount) {
-                alert('Insufficient balance');
+                showAnimatedPopup('Error', 'Insufficient balance', 'error');
                 return;
             }
             
             // Security: Rate limiting
             const rateCheck = checkRateLimit('createDiceBet', 10, 60000);
             if (!rateCheck.allowed) {
-                alert(rateCheck.message);
+                showAnimatedPopup('Error', rateCheck.message, 'error');
                 return;
             }
             
@@ -6500,11 +6661,77 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             );
             
             if (existingBet) {
-                alert('You already have an active bet. Please complete or cancel it first.');
+                showAnimatedPopup('Info', 'You already have an active bet. Please complete or cancel it first.', 'info');
                 return;
             }
             
-            // Create new bet
+            // If playing vs bot, immediately start the game
+            if (opponentType === 'bot') {
+                // Deduct balance
+                userData.balance -= amount;
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                await saveUserBalanceToFirestore();
+                updateUI();
+                
+                // Show dice animation (bot game - bot has advantage)
+                showDiceAnimation(async (creatorRoll, botRoll) => {
+                    // Bot roll is already weighted in the animation function (isBotGame=true)
+                    const finalCreatorRoll = creatorRoll;
+                    const finalBotRoll = botRoll;
+                    
+                    // Determine winner
+                    let winner, winnerName, resultMessage;
+                    if (finalCreatorRoll > finalBotRoll) {
+                        winner = adminUsername;
+                        winnerName = userData.username;
+                        userData.balance += amount * 2; // Win double
+                        resultMessage = `You won! Rolled ${finalCreatorRoll} vs Bot's ${finalBotRoll}. You won $${(amount * 2).toFixed(2)}!`;
+                        showAnimatedPopup('Success', resultMessage, 'success');
+                    } else if (finalBotRoll > finalCreatorRoll) {
+                        winner = 'bot';
+                        winnerName = 'Bot';
+                        resultMessage = `Bot won! Rolled ${finalBotRoll} vs your ${finalCreatorRoll}. You lost $${amount.toFixed(2)}.`;
+                        showAnimatedPopup('Error', resultMessage, 'error');
+                    } else {
+                        winner = 'tie';
+                        winnerName = 'Tie';
+                        userData.balance += amount * 0.5; // Refund half
+                        resultMessage = `Tie! Both rolled ${finalCreatorRoll}. You got $${(amount * 0.5).toFixed(2)} refunded (50%).`;
+                        showAnimatedPopup('Info', resultMessage, 'info');
+                    }
+                    
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    await saveUserBalanceToFirestore();
+                    updateUI();
+                    
+                    // Save to history
+                    const history = getDiceHistory();
+                    const betRecord = {
+                        id: 'DICE_BOT_' + Date.now(),
+                        creator: adminUsername,
+                        creatorName: userData.username,
+                        opponent: 'bot',
+                        opponentName: 'Bot',
+                        amount: amount.toFixed(2),
+                        status: 'completed',
+                        creatorRoll: finalCreatorRoll,
+                        opponentRoll: finalBotRoll,
+                        winner: winner,
+                        winnerName: winnerName,
+                        createdAt: new Date().toISOString(),
+                        completedAt: new Date().toISOString()
+                    };
+                    history.unshift(betRecord);
+                    if (history.length > 50) history.pop();
+                    saveDiceHistory(history);
+                    
+                    amountInput.value = '';
+                    renderDiceBets();
+                });
+                return;
+            }
+            
+            // Create new bet for player vs player
             const newBet = {
                 id: 'DICE_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                 creator: adminUsername,
@@ -6532,14 +6759,14 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             amountInput.value = '';
             renderDiceBets();
             
-            alert('Bet created! Waiting for opponent...');
+            showAnimatedPopup('Success', 'Bet created! Waiting for opponent...', 'success');
         }
 
         // Accept a dice bet
         async function acceptDiceBet(betId) {
             // Security: Verify admin access
             if (!verifyAdminAccess()) {
-                alert('Only admins can accept bets');
+                showAnimatedPopup('Error', 'Only admins can accept bets', 'error');
                 return;
             }
             
@@ -6547,12 +6774,12 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             const bet = bets.find(b => b.id === betId);
             
             if (!bet) {
-                alert('Bet not found');
+                showAnimatedPopup('Error', 'Bet not found', 'error');
                 return;
             }
             
             if (bet.status !== 'waiting') {
-                alert('This bet is no longer available');
+                showAnimatedPopup('Info', 'This bet is no longer available', 'info');
                 renderDiceBets();
                 return;
             }
@@ -6561,14 +6788,14 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             
             // Can't accept own bet
             if (bet.creator === adminUsername) {
-                alert('You cannot accept your own bet');
+                showAnimatedPopup('Error', 'You cannot accept your own bet', 'error');
                 return;
             }
             
             // Check balance
             const betAmount = parseFloat(bet.amount);
             if (userData.balance < betAmount) {
-                alert('Insufficient balance');
+                showAnimatedPopup('Error', 'Insufficient balance', 'error');
                 return;
             }
             
@@ -6583,45 +6810,75 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             await saveUserBalanceToFirestore(); // Sync to Firestore
             updateUI();
             
-            // Roll dice for both players
-            bet.creatorRoll = Math.floor(Math.random() * 6) + 1;
-            bet.opponentRoll = Math.floor(Math.random() * 6) + 1;
+            // Show dice animation for player vs player (fair rolls)
+            showDiceAnimation(async (creatorRoll, opponentRoll) => {
+                bet.creatorRoll = creatorRoll;
+                bet.opponentRoll = opponentRoll;
+                
+                // Determine winner (higher roll wins)
+                if (bet.creatorRoll > bet.opponentRoll) {
+                    bet.winner = bet.creator;
+                    bet.winnerName = bet.creatorName;
+                    // Creator wins - they get their bet back + opponent's bet
+                    // Note: Creator's balance will be updated when they view the result
+                } else if (bet.opponentRoll > bet.creatorRoll) {
+                    bet.winner = bet.opponent;
+                    bet.winnerName = bet.opponentName;
+                    // Opponent wins - already deducted, add winnings
+                    userData.balance += betAmount * 2;
+                } else {
+                    // Tie - refund half to both players
+                    bet.winner = 'tie';
+                    bet.winnerName = 'Tie';
+                    userData.balance += betAmount * 0.5; // Refund half to opponent
+                }
+                
+                bet.status = 'completed';
+                bet.completedAt = new Date().toISOString();
+                
+                // Update opponent's balance (current user)
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                await saveUserBalanceToFirestore(); // Sync to Firestore
+                updateUI();
+                
+                // Move to history
+                const history = getDiceHistory();
+                history.unshift(bet);
+                if (history.length > 50) history.pop(); // Keep last 50
+                saveDiceHistory(history);
+                
+                // Remove from active bets
+                const updatedBets = bets.filter(b => b.id !== betId);
+                saveDiceBets(updatedBets);
+                
+                renderDiceBets();
+                
+                // Show result with animated popup
+                let resultMsg = '';
+                let popupType = 'info';
+                
+                if (bet.winner === 'tie') {
+                    resultMsg = `Tie! Both rolled ${bet.creatorRoll}. You got $${(betAmount * 0.5).toFixed(2)} refunded (50%).`;
+                    popupType = 'info';
+                } else if (bet.winner === adminUsername) {
+                    resultMsg = `You won! Rolled ${bet.opponentRoll} vs ${bet.creatorName}'s ${bet.creatorRoll}. You won $${(betAmount * 2).toFixed(2)}!`;
+                    popupType = 'success';
+                } else {
+                    resultMsg = `You lost! Rolled ${bet.opponentRoll} vs ${bet.creatorName}'s ${bet.creatorRoll}. You lost $${betAmount.toFixed(2)}.`;
+                    popupType = 'error';
+                }
+                
+                showAnimatedPopup('Dice Results', resultMsg, popupType);
+            });
             
-            // Determine winner (higher roll wins)
-            if (bet.creatorRoll > bet.opponentRoll) {
-                bet.winner = bet.creator;
-                bet.winnerName = bet.creatorName;
-            } else if (bet.opponentRoll > bet.creatorRoll) {
-                bet.winner = bet.opponent;
-                bet.winnerName = bet.opponentName;
-            } else {
-                // Tie - refund both players
-                bet.winner = 'tie';
-                bet.winnerName = 'Tie';
-            }
+            return; // Exit early, animation callback will handle the rest
             
             bet.status = 'completed';
             bet.completedAt = new Date().toISOString();
             
-            // Update balances
-            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
-            const creatorUserData = JSON.parse(localStorage.getItem('pluxoUser')) || {};
-            
-            if (bet.winner === 'tie') {
-                // Refund both players
-                if (bet.creator === userData.username.toLowerCase()) {
-                    userData.balance += betAmount;
-                }
-                // Note: In a real system, you'd need to update the creator's balance too
-            } else if (bet.winner === adminUsername) {
-                // Opponent wins - already deducted, add winnings
-                userData.balance += betAmount * 2;
-            }
+            // Update opponent's balance (current user)
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
             await saveUserBalanceToFirestore(); // Sync to Firestore
-            updateUI();
-            
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
             updateUI();
             
             // Move to history
@@ -6636,23 +6893,29 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             
             renderDiceBets();
             
-            // Show result
-            let resultMsg = `Dice Roll Results:\n`;
-            resultMsg += `${bet.creatorName}: ${bet.creatorRoll}\n`;
-            resultMsg += `${bet.opponentName}: ${bet.opponentRoll}\n\n`;
+            // Show result with animated popup
+            let resultMsg = '';
+            let popupType = 'info';
+            
             if (bet.winner === 'tie') {
-                resultMsg += 'Tie! Both players refunded.';
+                resultMsg = `Tie! Both rolled ${bet.creatorRoll}. You got $${(betAmount * 0.5).toFixed(2)} refunded (50%).`;
+                popupType = 'info';
+            } else if (bet.winner === adminUsername) {
+                resultMsg = `You won! Rolled ${bet.opponentRoll} vs ${bet.creatorName}'s ${bet.creatorRoll}. You won $${(betAmount * 2).toFixed(2)}!`;
+                popupType = 'success';
             } else {
-                resultMsg += `Winner: ${bet.winnerName} ($${bet.amount})`;
+                resultMsg = `You lost! Rolled ${bet.opponentRoll} vs ${bet.creatorName}'s ${bet.creatorRoll}. You lost $${betAmount.toFixed(2)}.`;
+                popupType = 'error';
             }
-            alert(resultMsg);
+            
+            showAnimatedPopup('Dice Results', resultMsg, popupType);
         }
 
         // Cancel a dice bet
         async function cancelDiceBet(betId) {
             // Security: Verify admin access
             if (!verifyAdminAccess()) {
-                alert('Unauthorized access');
+                showAnimatedPopup('Error', 'Unauthorized access', 'error');
                 return;
             }
             
@@ -6660,7 +6923,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             const bet = bets.find(b => b.id === betId);
             
             if (!bet) {
-                alert('Bet not found');
+                showAnimatedPopup('Error', 'Bet not found', 'error');
                 return;
             }
             
@@ -6668,32 +6931,31 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             
             // Only creator can cancel
             if (bet.creator !== adminUsername) {
-                alert('Only the bet creator can cancel');
+                showAnimatedPopup('Error', 'Only the bet creator can cancel', 'error');
                 return;
             }
             
             if (bet.status !== 'waiting') {
-                alert('Cannot cancel a bet that has been accepted');
+                showAnimatedPopup('Error', 'Cannot cancel a bet that has been accepted', 'error');
                 return;
             }
             
-            if (!confirm('Cancel this bet? Your bet amount will be refunded.')) {
-                return;
+            // Use confirm dialog for cancellation
+            if (confirm('Cancel this bet? Your bet amount will be refunded.')) {
+                // Refund balance
+                const betAmount = parseFloat(bet.amount);
+                userData.balance += betAmount;
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                await saveUserBalanceToFirestore(); // Sync to Firestore
+                updateUI();
+                
+                // Remove bet
+                const updatedBets = bets.filter(b => b.id !== betId);
+                saveDiceBets(updatedBets);
+                
+                renderDiceBets();
+                showAnimatedPopup('Success', 'Bet cancelled. Amount refunded.', 'success');
             }
-            
-            // Refund balance
-            const betAmount = parseFloat(bet.amount);
-            userData.balance += betAmount;
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            await saveUserBalanceToFirestore(); // Sync to Firestore
-            updateUI();
-            
-            // Remove bet
-            const updatedBets = bets.filter(b => b.id !== betId);
-            saveDiceBets(updatedBets);
-            
-            renderDiceBets();
-            alert('Bet cancelled. Amount refunded.');
         }
 
         // Render dice bets
@@ -7424,7 +7686,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 for (let i = 0; i < 12; i++) {
                     const country = countries[Math.floor(Math.random() * countries.length)];
                     const expMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
-                    const expYear = String(2025 + Math.floor(Math.random() * 3));
+                    const expYear = String(2027 + Math.floor(Math.random() * 4)); // 2027-2030
                     const cvv = String(Math.floor(Math.random() * 900) + 100);
                     
                     allProducts.push({
@@ -7433,13 +7695,13 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                         brand: brands[Math.floor(Math.random() * brands.length)],
                         type: types[Math.floor(Math.random() * types.length)],
                         country: country,
-                        hasName: Math.random() > 0.2,
-                        hasAddress: Math.random() > 0.3,
-                        hasZip: Math.random() > 0.2,
-                        hasPhone: Math.random() > 0.3,
-                        hasMail: Math.random() > 0.3,
-                        hasSSN: Math.random() > 0.4,
-                        hasDOB: Math.random() > 0.3,
+                        hasName: true,
+                        hasAddress: true,
+                        hasZip: true,
+                        hasPhone: true,
+                        hasMail: true,
+                        hasSSN: true,
+                        hasDOB: true,
                         bank: banks[Math.floor(Math.random() * banks.length)],
                         base: '2026_1_3_US_Base',
                         refundable: true,
@@ -7962,7 +8224,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             return {
                 id: 'ORD' + Date.now() + Math.floor(Math.random() * 1000),
                 cardNo: product.bin + String(Math.floor(Math.random() * 9000000000) + 1000000000),
-                expDate: `${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}/${String(Math.floor(Math.random() * 5) + 25)}`,
+                expDate: `${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}/${String(2027 + Math.floor(Math.random() * 4)).substring(2)}`,
                 cvv: String(Math.floor(Math.random() * 900) + 100),
                 name: `${firstName} ${lastName}`,
                 address: `${streetNum} ${street}`,
