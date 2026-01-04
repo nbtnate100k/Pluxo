@@ -4355,7 +4355,6 @@
                                     <option>VISA</option>
                                     <option>MASTERCARD</option>
                                     <option>AMEX</option>
-                                    <option>DISCOVER</option>
                                 </select>
                             </div>
                             <div class="filter-group">
@@ -4611,6 +4610,18 @@
                         <div class="section-title">Current Admins</div>
                         <div class="admin-list" id="adminListDisplay">
                             <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">All User Balances</div>
+                        <div style="margin-bottom: 16px;">
+                            <button class="btn btn-admin" onclick="loadAllUserBalances()" style="background: #3b82f6; width: 100%;">
+                                🔄 Refresh All Balances
+                            </button>
+                        </div>
+                        <div class="users-list" id="allBalancesDisplay">
+                            <p style="color: var(--gray); text-align: center; padding: 20px;">Click "Refresh All Balances" to load user balances</p>
                         </div>
                     </div>
 
@@ -5118,10 +5129,19 @@
         window.showDashboard = showDashboard;
 
         if (userData) {
+            // Update UI immediately with localStorage data for instant display
+            updateUI();
+            
             // Load orders and balance from Firestore if Firebase UID exists
             if (userData.firebaseUID) {
-                loadOrdersFromFirestore().then(() => {
-                    loadUserBalanceFromFirestore().then(() => {
+                // Load balance first (most important), then orders
+                loadUserBalanceFromFirestore().then(() => {
+                    loadOrdersFromFirestore().then(() => {
+                        showDashboard();
+                    });
+                }).catch(() => {
+                    // If balance load fails, still show dashboard
+                    loadOrdersFromFirestore().then(() => {
                         showDashboard();
                     });
                 });
@@ -5694,7 +5714,7 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
             // Load and update user balance
             if (window.db && window.firestoreFunctions) {
                 try {
-                    const { collection, doc, getDoc, setDoc, updateDoc } = window.firestoreFunctions;
+                    const { collection, doc, getDoc, setDoc, updateDoc, query, where, getDocs } = window.firestoreFunctions;
                     const usersRef = collection(window.db, 'users');
                     const userDocRef = doc(usersRef, normalized);
                     const userDoc = await getDoc(userDocRef);
@@ -5713,37 +5733,47 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
                             totalRecharge: newTotalRecharge
                         });
                         
-                        // Also update userBalances collection (by UID) if UID exists
+                        // Also try to update userBalances collection (by UID) if UID exists
+                        // Wrap in try-catch in case of permission issues
                         if (firebaseUID) {
-                            const userBalanceRef = doc(window.db, 'userBalances', firebaseUID);
-                            const userBalanceDoc = await getDoc(userBalanceRef);
-                            
-                            if (userBalanceDoc.exists()) {
-                                await updateDoc(userBalanceRef, {
-                                    balance: newBalance,
-                                    totalRecharge: newTotalRecharge,
-                                    updatedAt: new Date().toISOString()
-                                });
-                            } else {
-                                await setDoc(userBalanceRef, {
-                                    balance: newBalance,
-                                    totalRecharge: newTotalRecharge,
-                                    username: normalized,
-                                    createdAt: new Date().toISOString(),
-                                    updatedAt: new Date().toISOString()
-                                });
+                            try {
+                                const userBalanceRef = doc(window.db, 'userBalances', firebaseUID);
+                                const userBalanceDoc = await getDoc(userBalanceRef);
+                                
+                                if (userBalanceDoc.exists()) {
+                                    await updateDoc(userBalanceRef, {
+                                        balance: newBalance,
+                                        totalRecharge: newTotalRecharge,
+                                        updatedAt: new Date().toISOString()
+                                    });
+                                } else {
+                                    await setDoc(userBalanceRef, {
+                                        balance: newBalance,
+                                        totalRecharge: newTotalRecharge,
+                                        username: normalized,
+                                        createdAt: new Date().toISOString(),
+                                        updatedAt: new Date().toISOString()
+                                    });
+                                }
+                            } catch (uidError) {
+                                // If we can't access userBalances, that's okay - users collection is the primary source
+                                console.log('Could not update userBalances collection (permission issue):', uidError);
                             }
                         }
                         
                         showAnimatedPopup('Success', `Loaded $${amount.toFixed(2)} to ${normalized}. New balance: $${newBalance.toFixed(2)}`, 'success');
                         
-                        // If this is the current user, update local data
+                        // If this is the current user, update local data immediately
                         if (userData && userData.username.toLowerCase() === normalized) {
                             userData.balance = newBalance;
                             userData.totalRecharge = newTotalRecharge;
                             localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                            await saveUserBalanceToFirestore(); // Sync to Firestore
+                            
+                            // Update UI instantly
                             updateUI();
+                            
+                            // Sync to Firestore in background (already updated above, but ensure sync)
+                            await saveUserBalanceToFirestore();
                         }
                     } else {
                         // Create new user with balance
@@ -5838,6 +5868,109 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
             }
         }
 
+        // Load all user balances for admin - Query users collection instead
+        async function loadAllUserBalances() {
+            if (!isAdmin(userData?.username)) {
+                showAnimatedPopup('Error', 'Only admins can view all balances', 'error');
+                return;
+            }
+            
+            const balancesDisplay = document.getElementById('allBalancesDisplay');
+            if (!balancesDisplay) return;
+            
+            balancesDisplay.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 20px;">Loading balances...</p>';
+            
+            try {
+                if (!window.db || !window.firestoreFunctions) {
+                    throw new Error('Firestore not initialized');
+                }
+                
+                const { collection, getDocs, doc, getDoc } = window.firestoreFunctions;
+                const usersRef = collection(window.db, 'users');
+                
+                // Get all users from users collection
+                const querySnapshot = await getDocs(usersRef);
+                
+                if (querySnapshot.empty) {
+                    balancesDisplay.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 20px;">No users found</p>';
+                    return;
+                }
+                
+                const balances = [];
+                
+                // Process each user and get their balance from userBalances if they have a UID
+                for (const userDoc of querySnapshot.docs) {
+                    const userData = userDoc.data();
+                    const username = userDoc.id;
+                    const firebaseUID = userData.firebaseUID;
+                    
+                    let balance = parseFloat(userData.balance || 0);
+                    let totalRecharge = parseFloat(userData.totalRecharge || 0);
+                    let updatedAt = 'Never';
+                    
+                    // If user has a UID, try to get balance from userBalances collection
+                    if (firebaseUID) {
+                        try {
+                            const userBalanceRef = doc(window.db, 'userBalances', firebaseUID);
+                            const userBalanceDoc = await getDoc(userBalanceRef);
+                            if (userBalanceDoc.exists()) {
+                                const balanceData = userBalanceDoc.data();
+                                balance = parseFloat(balanceData.balance || balance);
+                                totalRecharge = parseFloat(balanceData.totalRecharge || totalRecharge);
+                                updatedAt = balanceData.updatedAt || 'Never';
+                            }
+                        } catch (err) {
+                            // If we can't access userBalances, use users collection data
+                            console.log(`Could not access userBalances for ${username}, using users collection data`);
+                        }
+                    }
+                    
+                    balances.push({
+                        username: username,
+                        balance: balance,
+                        totalRecharge: totalRecharge,
+                        uid: firebaseUID || null,
+                        updatedAt: updatedAt
+                    });
+                }
+                
+                // Sort by balance descending
+                balances.sort((a, b) => b.balance - a.balance);
+                
+                let html = '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; margin-top: 12px;">';
+                html += '<thead><tr style="background: rgba(59, 130, 246, 0.1); border-bottom: 2px solid var(--blue);">';
+                html += '<th style="padding: 12px; text-align: left; color: var(--blue); font-weight: 600;">Username</th>';
+                html += '<th style="padding: 12px; text-align: right; color: var(--blue); font-weight: 600;">Balance</th>';
+                html += '<th style="padding: 12px; text-align: right; color: var(--blue); font-weight: 600;">Total Recharged</th>';
+                html += '<th style="padding: 12px; text-align: left; color: var(--blue); font-weight: 600;">Last Updated</th>';
+                html += '</tr></thead><tbody>';
+                
+                balances.forEach((user, index) => {
+                    const rowColor = index % 2 === 0 ? 'rgba(255, 255, 255, 0.02)' : 'transparent';
+                    html += `<tr style="background: ${rowColor}; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">`;
+                    html += `<td style="padding: 12px; color: var(--text); font-weight: 500;">${sanitizeInput(user.username)}</td>`;
+                    html += `<td style="padding: 12px; text-align: right; color: #10b981; font-weight: 600; font-size: 16px;">$${user.balance.toFixed(2)}</td>`;
+                    html += `<td style="padding: 12px; text-align: right; color: var(--text);">$${user.totalRecharge.toFixed(2)}</td>`;
+                    html += `<td style="padding: 12px; color: var(--gray); font-size: 13px;">${user.updatedAt !== 'Never' ? new Date(user.updatedAt).toLocaleString() : 'Never'}</td>`;
+                    html += '</tr>';
+                });
+                
+                html += '</tbody></table></div>';
+                html += `<div style="margin-top: 16px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; text-align: center;">`;
+                html += `<strong style="color: var(--blue);">Total Users: ${balances.length}</strong> | `;
+                html += `<strong style="color: #10b981;">Total Balance: $${balances.reduce((sum, u) => sum + u.balance, 0).toFixed(2)}</strong> | `;
+                html += `<strong style="color: var(--text);">Total Recharged: $${balances.reduce((sum, u) => sum + u.totalRecharge, 0).toFixed(2)}</strong>`;
+                html += '</div>';
+                
+                balancesDisplay.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading all balances:', error);
+                balancesDisplay.innerHTML = `<p style="color: #ef4444; text-align: center; padding: 20px;">Error loading balances: ${error.message}</p>`;
+                showAnimatedPopup('Error', 'Failed to load balances: ' + error.message, 'error');
+            }
+        }
+
         // Make functions globally accessible
         window.approveBalanceRequest = approveBalanceRequest;
         window.rejectBalanceRequest = rejectBalanceRequest;
@@ -5845,6 +5978,7 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
         window.revokeSeller = revokeSeller;
         window.loadAnyUsername = loadAnyUsername;
         window.loadUserBalance = loadUserBalance;
+        window.loadAllUserBalances = loadAllUserBalances;
         
         // Seller product listing system
         let sellerProducts = JSON.parse(localStorage.getItem('pluxoSellerProducts')) || {};
@@ -5871,8 +6005,8 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
                 return;
             }
             
-            if (!brand || !['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER'].includes(brand)) {
-                showAnimatedPopup('Error', 'Enter a valid brand (VISA, MASTERCARD, AMEX, DISCOVER)', 'error');
+            if (!brand || !['VISA', 'MASTERCARD', 'AMEX'].includes(brand)) {
+                showAnimatedPopup('Error', 'Enter a valid brand (VISA, MASTERCARD, AMEX)', 'error');
                 shakeElement(brandInput);
                 return;
             }
@@ -6254,7 +6388,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             }
             
             // Validate brand (alphanumeric and common card brands)
-            const validBrands = ['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER', 'DINERS', 'JCB', 'UNIONPAY'];
+            const validBrands = ['VISA', 'MASTERCARD', 'AMEX'];
             const brandUpper = brand.trim().toUpperCase();
             if (!brand || !validBrands.includes(brandUpper)) {
                 return { valid: false, error: 'Invalid brand. Must be: ' + validBrands.join(', ') };
@@ -7083,52 +7217,152 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         window.acceptDiceBet = acceptDiceBet;
         window.cancelDiceBet = cancelDiceBet;
         
-        // Load user balance from Firestore
+        // Load user balance from Firestore - Check both collections
         async function loadUserBalanceFromFirestore() {
-            if (!userData || !userData.firebaseUID) return;
+            if (!userData || !userData.username) {
+                // Still update UI with current localStorage data
+                updateUI();
+                return;
+            }
             
             try {
-                const userBalanceRef = doc(db, 'userBalances', userData.firebaseUID);
-                const userBalanceDoc = await getDoc(userBalanceRef);
+                const normalized = userData.username.toLowerCase().trim();
+                let firestoreBalance = 0;
+                let firestoreTotalRecharge = 0;
+                let foundBalance = false;
                 
-                if (userBalanceDoc.exists()) {
-                    const balanceData = userBalanceDoc.data();
-                    userData.balance = balanceData.balance || 0;
-                    userData.totalRecharge = balanceData.totalRecharge || 0;
+                // First, try to get balance from users collection (by username) - THIS IS WHERE ADMIN LOADS BALANCE
+                if (window.db && window.firestoreFunctions) {
+                    try {
+                        const { collection, doc, getDoc } = window.firestoreFunctions;
+                        const usersRef = collection(window.db, 'users');
+                        const userDocRef = doc(usersRef, normalized);
+                        const userDoc = await getDoc(userDocRef);
+                        
+                        if (userDoc.exists()) {
+                            const userDataFromFirebase = userDoc.data();
+                            firestoreBalance = parseFloat(userDataFromFirebase.balance || 0);
+                            firestoreTotalRecharge = parseFloat(userDataFromFirebase.totalRecharge || 0);
+                            foundBalance = true;
+                            
+                            // Update firebaseUID if it exists
+                            if (userDataFromFirebase.firebaseUID && !userData.firebaseUID) {
+                                userData.firebaseUID = userDataFromFirebase.firebaseUID;
+                            }
+                            
+                            console.log(`Loaded balance from users collection: $${firestoreBalance}`);
+                        }
+                    } catch (usersError) {
+                        console.log('Could not access users collection:', usersError);
+                    }
+                }
+                
+                // Also check userBalances collection (by UID) if UID exists - use whichever is higher
+                if (userData.firebaseUID) {
+                    try {
+                        const userBalanceRef = doc(db, 'userBalances', userData.firebaseUID);
+                        const userBalanceDoc = await getDoc(userBalanceRef);
+                        
+                        if (userBalanceDoc.exists()) {
+                            const balanceData = userBalanceDoc.data();
+                            const uidBalance = parseFloat(balanceData.balance || 0);
+                            const uidTotalRecharge = parseFloat(balanceData.totalRecharge || 0);
+                            
+                            // Use the higher balance (in case they're out of sync)
+                            if (uidBalance > firestoreBalance) {
+                                firestoreBalance = uidBalance;
+                                firestoreTotalRecharge = uidTotalRecharge;
+                                console.log(`Using higher balance from userBalances: $${firestoreBalance}`);
+                            }
+                            foundBalance = true;
+                        }
+                    } catch (uidError) {
+                        console.log('Could not access userBalances collection:', uidError);
+                        // Continue with users collection balance
+                    }
+                }
+                
+                if (foundBalance) {
+                    // Update userData with Firestore values
+                    userData.balance = firestoreBalance;
+                    userData.totalRecharge = firestoreTotalRecharge;
+                    
+                    // Update localStorage with latest Firestore data
                     localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    
+                    // Sync to userBalances if UID exists (to keep both in sync)
+                    if (userData.firebaseUID) {
+                        await saveUserBalanceToFirestore();
+                    }
+                    
+                    // Also sync back to users collection to keep them in sync
+                    if (window.db && window.firestoreFunctions) {
+                        try {
+                            const { collection, doc, updateDoc } = window.firestoreFunctions;
+                            const usersRef = collection(window.db, 'users');
+                            const userDocRef = doc(usersRef, normalized);
+                            await updateDoc(userDocRef, {
+                                balance: firestoreBalance,
+                                totalRecharge: firestoreTotalRecharge
+                            });
+                        } catch (syncError) {
+                            console.log('Could not sync to users collection:', syncError);
+                        }
+                    }
+                    
+                    // Update UI immediately
                     updateUI();
                 } else {
-                    // Create balance document if it doesn't exist
-                    await saveUserBalanceToFirestore();
+                    // No balance found, create it if UID exists
+                    if (userData.firebaseUID) {
+                        await saveUserBalanceToFirestore();
+                    }
+                    updateUI();
                 }
             } catch (error) {
                 console.error('Error loading user balance:', error);
+                // On error, still update UI with localStorage data
+                updateUI();
             }
         }
 
         // Save user balance to Firestore
         async function saveUserBalanceToFirestore() {
-            if (!userData || !userData.firebaseUID) return;
+            if (!userData || !userData.firebaseUID) {
+                console.warn('Cannot save balance: missing userData or firebaseUID');
+                return;
+            }
             
             try {
                 const userBalanceRef = doc(db, 'userBalances', userData.firebaseUID);
                 const userBalanceDoc = await getDoc(userBalanceRef);
                 
+                // Ensure balance values are numbers, not strings
+                const balanceValue = parseFloat(userData.balance || 0);
+                const totalRechargeValue = parseFloat(userData.totalRecharge || 0);
+                
                 const balanceData = {
-                    balance: parseFloat(userData.balance || 0),
-                    totalRecharge: parseFloat(userData.totalRecharge || 0),
-                    username: userData.username.toLowerCase(),
+                    balance: balanceValue,
+                    totalRecharge: totalRechargeValue,
+                    username: userData.username ? userData.username.toLowerCase() : 'user',
                     updatedAt: new Date().toISOString()
                 };
                 
                 if (userBalanceDoc.exists()) {
+                    // Update existing document
                     await updateDoc(userBalanceRef, balanceData);
                 } else {
+                    // Create new document
                     balanceData.createdAt = new Date().toISOString();
                     await setDoc(userBalanceRef, balanceData);
                 }
+                
+                // Also update localStorage to ensure consistency
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
             } catch (error) {
                 console.error('Error saving user balance:', error);
+                // Even if Firestore save fails, keep localStorage updated
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
             }
         }
 
@@ -7661,7 +7895,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' }
         ];
 
-        const brands = ['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER'];
+        const brands = ['VISA', 'MASTERCARD', 'AMEX'];
         const types = ['DEBIT', 'CREDIT'];
         const bases = ['World_Mix', 'US_Base', 'UK_Mix', 'EU_Mix', 'CA_Base', 'AU_Mix', 'Asia_Mix'];
         const banks = [
@@ -7671,18 +7905,34 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             'CHASE BANK USA', 'WELLS FARGO BANK', 'BARCLAYS BANK', 'HSBC BANK'
         ];
 
+        // Function to determine brand from BIN prefix
+        function getBrandFromBin(bin) {
+            const binStr = String(bin);
+            if (binStr.startsWith('4')) {
+                return 'VISA';
+            } else if (binStr.startsWith('5')) {
+                return 'MASTERCARD';
+            } else if (binStr.startsWith('34') || binStr.startsWith('37')) {
+                return 'AMEX';
+            }
+            // Default fallback (shouldn't happen with valid BINs)
+            return 'VISA';
+        }
+
         function generateProducts() {
             // Only use specified BINs - no other cards
             const specifiedBins = ['400022', '473703', '473702', '512230', '517805', '400344', '410039', '414720', '377935', '377936', '379363', '379364', '379656', '400046'];
             
             // Generate 12 cards for each BIN
             allProducts = [];
-            const brands = ['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER'];
             const types = ['CREDIT', 'DEBIT'];
             const banks = ['CHASE BANK USA', 'BANK OF NOVA SCOTIA', 'CAPITAL ONE BANK', 'WELLS FARGO BANK', 'REVOLUT, LTD.'];
             const bases = ['US_Base', 'UK_Base', 'CA_Base', 'AU_Base'];
             
             specifiedBins.forEach((bin, binIndex) => {
+                // Get correct brand based on BIN prefix
+                const correctBrand = getBrandFromBin(bin);
+                
                 for (let i = 0; i < 12; i++) {
                     const country = countries[Math.floor(Math.random() * countries.length)];
                     const expMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
@@ -7695,7 +7945,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     allProducts.push({
                         id: binIndex * 12 + i + 1,
                         bin: bin,
-                        brand: brands[Math.floor(Math.random() * brands.length)],
+                        brand: correctBrand, // Use correct brand based on BIN
                         type: types[Math.floor(Math.random() * types.length)],
                         country: country,
                         hasName: true,
@@ -9256,36 +9506,90 @@ const app = initializeApp(firebaseConfig);
                 window.userData.firebaseUID = user.uid;
             }
 
-            const userRef = doc(db, "userBalances", user.uid);
-            const snap = await getDoc(userRef);
-
-            // If user balance doc does not exist, create it
-            if (!snap.exists()) {
-                await setDoc(userRef, {
-                    username: user.email.split('@')[0],
-                    balance: 0,
-                    totalRecharge: 0,
-                    createdAt: new Date().toISOString()
-                });
-
-                // Update local userData
-                if (window.userData) {
-                    window.userData.balance = 0;
-                    window.userData.totalRecharge = 0;
-                    window.userData.firebaseUID = user.uid;
-                    localStorage.setItem('pluxoUser', JSON.stringify(window.userData));
-                    if (typeof updateUI === 'function') updateUI();
+            // Check users collection first (by username) - this is where admin loads balance
+            let balanceFromUsers = null;
+            let balanceFromUserBalances = null;
+            
+            if (window.userData && window.userData.username && window.db && window.firestoreFunctions) {
+                try {
+                    const { collection, doc, getDoc } = window.firestoreFunctions;
+                    const normalized = window.userData.username.toLowerCase().trim();
+                    const usersRef = collection(window.db, 'users');
+                    const userDocRef = doc(usersRef, normalized);
+                    const userDoc = await getDoc(userDocRef);
+                    
+                    if (userDoc.exists()) {
+                        const userDataFromFirebase = userDoc.data();
+                        balanceFromUsers = {
+                            balance: parseFloat(userDataFromFirebase.balance || 0),
+                            totalRecharge: parseFloat(userDataFromFirebase.totalRecharge || 0)
+                        };
+                    }
+                } catch (err) {
+                    console.log('Could not check users collection:', err);
                 }
-                return;
             }
-
-            // User balance exists, load it (this is the source of truth)
-            const balanceData = snap.data();
+            
+            // Also check userBalances collection (by UID)
+            try {
+                const userRef = doc(db, "userBalances", user.uid);
+                const snap = await getDoc(userRef);
+                
+                if (snap.exists()) {
+                    const balanceData = snap.data();
+                    balanceFromUserBalances = {
+                        balance: parseFloat(balanceData.balance || 0),
+                        totalRecharge: parseFloat(balanceData.totalRecharge || 0)
+                    };
+                }
+            } catch (err) {
+                console.log('Could not check userBalances collection:', err);
+            }
+            
+            // Use the higher balance (in case they're out of sync)
+            let finalBalance = 0;
+            let finalTotalRecharge = 0;
+            
+            if (balanceFromUsers && balanceFromUserBalances) {
+                // Both exist, use the higher balance
+                finalBalance = Math.max(balanceFromUsers.balance, balanceFromUserBalances.balance);
+                finalTotalRecharge = Math.max(balanceFromUsers.totalRecharge, balanceFromUserBalances.totalRecharge);
+            } else if (balanceFromUsers) {
+                finalBalance = balanceFromUsers.balance;
+                finalTotalRecharge = balanceFromUsers.totalRecharge;
+            } else if (balanceFromUserBalances) {
+                finalBalance = balanceFromUserBalances.balance;
+                finalTotalRecharge = balanceFromUserBalances.totalRecharge;
+            } else {
+                // Neither exists, use localStorage or 0
+                finalBalance = window.userData ? parseFloat(window.userData.balance || 0) : 0;
+                finalTotalRecharge = window.userData ? parseFloat(window.userData.totalRecharge || 0) : 0;
+            }
+            
+            // Update userBalances collection to ensure it exists and is synced
+            try {
+                const userRef = doc(db, "userBalances", user.uid);
+                await setDoc(userRef, {
+                    username: window.userData ? window.userData.username.toLowerCase() : (user.email ? user.email.split('@')[0] : 'user'),
+                    balance: finalBalance,
+                    totalRecharge: finalTotalRecharge,
+                    updatedAt: new Date().toISOString(),
+                    createdAt: new Date().toISOString()
+                }, { merge: true });
+            } catch (err) {
+                console.log('Could not update userBalances:', err);
+            }
+            
+            // Update local userData
             if (window.userData) {
-                window.userData.balance = balanceData.balance || 0;
-                window.userData.totalRecharge = balanceData.totalRecharge || 0;
+                window.userData.balance = finalBalance;
+                window.userData.totalRecharge = finalTotalRecharge;
                 window.userData.firebaseUID = user.uid;
+                
+                // Update localStorage with Firestore data
                 localStorage.setItem('pluxoUser', JSON.stringify(window.userData));
+                
+                // Update UI immediately
                 if (typeof updateUI === 'function') updateUI();
             }
         });
