@@ -294,6 +294,225 @@
             max-width: 380px;
         }
 
+        /* Countdown Timer Styles */
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            min-width: 80px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        .countdown-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--blue-light);
+            font-family: 'Syne', sans-serif;
+            line-height: 1;
+            margin-bottom: 8px;
+            animation: countdownFlip 1s ease-in-out;
+        }
+
+        @keyframes countdownFlip {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0deg); }
+        }
+
+        .countdown-label {
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Blackjack Card Animations */
+        @keyframes dealCard {
+            0% {
+                transform: translateX(-200px) translateY(-100px) rotate(-90deg) scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes flipCard {
+            0% {
+                transform: rotateY(0deg);
+            }
+            50% {
+                transform: rotateY(90deg);
+            }
+            100% {
+                transform: rotateY(0deg);
+            }
+        }
+
+        @keyframes cardShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(5deg); }
+        }
+
+        @keyframes winCelebration {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(500px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes loseShake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        @keyframes loseFade {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulseWin {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 20px rgba(16, 185, 129, 0);
+            }
+        }
+
+        .blackjack-card {
+            animation: dealCard 0.5s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        .blackjack-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+
+        .blackjack-card.flip {
+            animation: flipCard 0.6s ease-in-out;
+        }
+
+        .blackjack-card.shake {
+            animation: cardShake 0.5s ease-in-out;
+        }
+
+        .blackjack-win-animation {
+            animation: winCelebration 0.8s ease-out;
+        }
+
+        .blackjack-lose-animation {
+            animation: loseShake 0.6s ease-in-out, loseFade 0.6s ease-in-out;
+        }
+
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            animation: confetti 3s ease-out forwards;
+        }
+
+        /* Button hover effects for blackjack */
+        #blackjackActions .btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #blackjackActions .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        #blackjackActions .btn:active {
+            transform: translateY(0);
+        }
+
+        #blackjackActions .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Win celebration overlay */
+        .win-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(16, 185, 129, 0.1);
+            z-index: 9998;
+            pointer-events: none;
+            animation: winCelebration 1s ease-out;
+        }
+
+        /* Card value pulse animation */
+        @keyframes valuePulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+                color: #10b981;
+            }
+        }
+
         .btn {
             flex: 1;
             padding: 16px 28px;
@@ -304,6 +523,47 @@
             font-family: 'DM Sans', sans-serif;
             cursor: pointer;
             transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Pop animation for waitlist button */
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .btn-pop {
+            animation: pop 0.3s ease-out;
+        }
+
+        .btn-ripple {
+            position: relative;
+        }
+
+        .btn-ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            animation: ripple 0.6s ease-out;
         }
 
         .btn-primary {
@@ -4085,8 +4345,88 @@
     </style>
 </head>
 <body>
-    <!-- ==================== LOGIN PAGE ==================== -->
-    <div class="login-page" id="loginPage">
+    <!-- ==================== WAITLIST PAGE ==================== -->
+    <div class="login-page" id="waitlistPage" style="display: flex;">
+        <div class="login-left">
+            <div class="brand">
+                <h1>PLUXO</h1>
+            </div>
+            
+            <h2 class="login-title">Join the Waitlist</h2>
+            <p class="login-subtitle">We're launching soon! Reserve your spot and create your account.</p>
+
+            <!-- 24 Hour Countdown Timer -->
+            <div id="countdownContainer" style="margin: 30px 0; padding: 24px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">
+                <div style="text-align: center; margin-bottom: 16px;">
+                    <div style="font-size: 14px; color: var(--gray); margin-bottom: 8px;">⏰ Launch Countdown</div>
+                    <div id="countdownTimer" style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+                        <div class="countdown-item">
+                            <div class="countdown-number" id="countdownHours">24</div>
+                            <div class="countdown-label">Hours</div>
+                        </div>
+                        <div class="countdown-item">
+                            <div class="countdown-number" id="countdownMinutes">00</div>
+                            <div class="countdown-label">Minutes</div>
+                        </div>
+                        <div class="countdown-item">
+                            <div class="countdown-number" id="countdownSeconds">00</div>
+                            <div class="countdown-label">Seconds</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Waitlist Registration Form -->
+            <form id="waitlistForm">
+                <div class="form-group">
+                    <label>Choose Your Username</label>
+                    <input type="text" class="input-field" id="waitlistUsername" placeholder="Enter desired username" maxlength="20" required pattern="[a-zA-Z0-9_]{3,20}">
+                    <small style="color: var(--gray); font-size: 12px; margin-top: 4px; display: block;">3-20 characters, letters, numbers, and underscores only</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Create Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" class="input-field" id="waitlistPassword" placeholder="Enter password (min 6 characters)" minlength="6" required>
+                        <button type="button" class="toggle-pass" onclick="toggleWaitlistPassword()">Show</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" class="input-field" id="waitlistPasswordConfirm" placeholder="Confirm password" minlength="6" required>
+                </div>
+
+                <div class="captcha-row">
+                    <span class="captcha-q" id="waitlistCaptchaQ">7 + 5 = ?</span>
+                    <input type="text" class="captcha-input" id="waitlistCaptchaAnswer" placeholder="Answer">
+                </div>
+
+                <div class="btn-row">
+                    <button type="submit" class="btn btn-primary" id="waitlistSubmitBtn">Join Waitlist</button>
+                </div>
+                
+                <div id="waitlistStatus" style="margin-top: 16px; padding: 12px; border-radius: 8px; display: none;"></div>
+            </form>
+
+            <!-- Admin Login Link -->
+            <div id="adminLoginLink" style="margin-top: 24px; text-align: center; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <a href="#" onclick="event.preventDefault(); showAdminLogin();" style="color: var(--gray); font-size: 13px; text-decoration: none;">Admin Login</a>
+            </div>
+        </div>
+
+        <div class="login-right">
+            <div class="graphic">
+                <div class="graphic-ring"></div>
+                <div class="graphic-ring"></div>
+                <div class="graphic-ring"></div>
+                <div class="graphic-center">P</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LOGIN PAGE (Hidden, shown for admin) ==================== -->
+    <div class="login-page" id="loginPage" style="display: none;">
         <div class="login-left">
             <div class="brand">
                 <h1>PLUXO</h1>
@@ -4125,7 +4465,7 @@
 
                 <div class="btn-row">
                     <button type="submit" class="btn btn-primary">Sign In</button>
-                    <button type="button" class="btn btn-secondary" onclick="openRegister()">Register</button>
+                    <button type="button" class="btn btn-secondary" onclick="showWaitlist()">Back to Waitlist</button>
                 </div>
             </form>
         </div>
@@ -4222,6 +4562,7 @@
             <a class="nav-item admin-nav" id="sellerNavItem" onclick="showPage('seller-management', this)" style="display:none;">Seller Management</a>
             <a class="nav-item seller-nav" id="sellerListingNavItem" onclick="showPage('seller-listing', this)" style="display:none;">My Listings</a>
             <a class="nav-item admin-nav" id="adminDiceNavItem" onclick="showPage('admin-dice', this)" style="display:none;">Dice</a>
+            <a class="nav-item admin-nav" id="adminBlackjackNavItem" onclick="showPage('admin-blackjack', this)" style="display:none;">Blackjack</a>
             <a class="nav-item settings-nav" onclick="openSettings()">⚙</a>
         </nav>
 
@@ -4776,6 +5117,102 @@
                             <!-- Populated by JS -->
                         </div>
                     </div>
+
+                    <div class="admin-section" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%); border-color: #8b5cf6;">
+                        <div class="section-title" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                            <span style="font-size: 28px;">🏆</span>
+                            <span>Dice Leaderboard</span>
+                            <button class="btn btn-admin" onclick="loadDiceLeaderboard()" style="background: #8b5cf6; padding: 6px 16px; font-size: 12px; margin-left: auto;">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                        <p style="margin-bottom: 16px; color: var(--gray); font-size: 14px;">
+                            Top players by total winnings. Play dice to compete for the top spot!
+                        </p>
+                        <div id="diceLeaderboard" style="min-height: 200px;">
+                            <p style="color: var(--gray); text-align: center; padding: 20px;">Click "Refresh" to load leaderboard</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLACKJACK GAME PAGE -->
+            <div class="page-content" id="page-admin-blackjack" style="display:none;">
+                <div class="page-header">
+                    <h1>Blackjack</h1>
+                    <div class="line" style="background: #10b981;"></div>
+                </div>
+                
+                <div class="content-card" style="border-color: #10b981;">
+                    <h2 style="color: #10b981;">🃏 Blackjack vs Bot</h2>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Play classic blackjack against the bot. Get as close to 21 as possible without going over!</p>
+                    
+                    <div class="admin-section">
+                        <div class="section-title">Place Your Bet</div>
+                        <div class="admin-form" style="flex-direction: column; gap: 16px;">
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $10)</label>
+                                <input type="number" class="input-field" id="blackjackBetAmount" placeholder="Enter amount (1-10)" min="1" max="10" step="0.01" value="5">
+                            </div>
+                            <button class="btn btn-admin" id="startBlackjackBtn" onclick="startBlackjackGame()" style="background: #10b981; width: 100%;">
+                                🎮 Start Game
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" id="blackjackGameArea" style="display: none;">
+                        <div class="section-title">Game in Progress</div>
+                        
+                        <!-- Dealer's Hand -->
+                        <div style="margin-bottom: 30px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h3 style="color: var(--text); font-size: 18px;">Dealer's Hand</h3>
+                                <span id="dealerValue" style="color: var(--gray); font-weight: 600;">Value: ?</span>
+                            </div>
+                            <div id="dealerCards" style="display: flex; gap: 12px; flex-wrap: wrap; min-height: 120px; padding: 16px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+                                <!-- Cards will be added here -->
+                            </div>
+                        </div>
+
+                        <!-- Player's Hand -->
+                        <div style="margin-bottom: 30px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h3 style="color: var(--text); font-size: 18px;">Your Hand</h3>
+                                <span id="playerValue" style="color: #10b981; font-weight: 600;">Value: 0</span>
+                            </div>
+                            <div id="playerCards" style="display: flex; gap: 12px; flex-wrap: wrap; min-height: 120px; padding: 16px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                <!-- Cards will be added here -->
+                            </div>
+                        </div>
+
+                        <!-- Game Actions -->
+                        <div id="blackjackActions" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                            <button class="btn btn-admin" onclick="blackjackHit()" style="background: #10b981; flex: 1; min-width: 120px;">
+                                Hit
+                            </button>
+                            <button class="btn btn-admin" onclick="blackjackStand()" style="background: #3b82f6; flex: 1; min-width: 120px;">
+                                Stand
+                            </button>
+                            <button class="btn btn-admin" onclick="blackjackDoubleDown()" id="doubleDownBtn" style="background: #f59e0b; flex: 1; min-width: 120px;">
+                                Double Down
+                            </button>
+                        </div>
+
+                        <!-- Game Result -->
+                        <div id="blackjackResult" style="margin-top: 20px; padding: 16px; border-radius: 8px; display: none;"></div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">Game Rules</div>
+                        <div style="color: var(--gray); font-size: 14px; line-height: 1.8;">
+                            <p>• Get as close to 21 as possible without going over</p>
+                            <p>• Face cards (J, Q, K) are worth 10</p>
+                            <p>• Aces can be worth 1 or 11 (automatically chosen)</p>
+                            <p>• If you go over 21, you lose (bust)</p>
+                            <p>• Blackjack (21 with first 2 cards) pays 2.5x</p>
+                            <p>• Double down doubles your bet and gives you one more card</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -5112,13 +5549,316 @@
             };
         }
 
+        // Waitlist countdown timer (24 hours from now)
+        let waitlistEndTime = null;
+        
+        // Initialize waitlist end time (24 hours from first visit or stored time)
+        function initWaitlistTimer() {
+            // Check if elements exist
+            const hoursEl = document.getElementById('countdownHours');
+            if (!hoursEl) {
+                // Elements not loaded yet, try again in a moment
+                setTimeout(initWaitlistTimer, 100);
+                return;
+            }
+            
+            const storedEndTime = localStorage.getItem('pluxoWaitlistEndTime');
+            if (storedEndTime) {
+                waitlistEndTime = new Date(storedEndTime).getTime();
+            } else {
+                // Set 24 hours from now
+                waitlistEndTime = Date.now() + (24 * 60 * 60 * 1000);
+                localStorage.setItem('pluxoWaitlistEndTime', new Date(waitlistEndTime).toISOString());
+            }
+            
+            // Update immediately
+            updateCountdown();
+            
+            // Set up interval if not already set
+            if (!window.waitlistTimerInterval) {
+                window.waitlistTimerInterval = setInterval(updateCountdown, 1000);
+            }
+        }
+        
+        function updateCountdown() {
+            if (!waitlistEndTime) {
+                // Initialize if not set
+                initWaitlistTimer();
+                return;
+            }
+            
+            const hoursEl = document.getElementById('countdownHours');
+            const minutesEl = document.getElementById('countdownMinutes');
+            const secondsEl = document.getElementById('countdownSeconds');
+            
+            // Check if elements exist
+            if (!hoursEl || !minutesEl || !secondsEl) {
+                return; // Elements not loaded yet
+            }
+            
+            const now = Date.now();
+            const distance = waitlistEndTime - now;
+            
+            if (distance < 0) {
+                // Timer expired - allow access
+                hoursEl.textContent = '00';
+                minutesEl.textContent = '00';
+                secondsEl.textContent = '00';
+                return;
+            }
+            
+            // Calculate time remaining
+            const totalHours = Math.floor(distance / (1000 * 60 * 60));
+            const hours = totalHours;
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Update display
+            hoursEl.textContent = String(hours).padStart(2, '0');
+            minutesEl.textContent = String(minutes).padStart(2, '0');
+            secondsEl.textContent = String(seconds).padStart(2, '0');
+            
+            // Add animation on change
+            if (seconds === 59) {
+                minutesEl.style.animation = 'none';
+                setTimeout(() => {
+                    minutesEl.style.animation = 'countdownFlip 1s ease-in-out';
+                }, 10);
+            }
+            if (minutes === 59 && seconds === 59) {
+                hoursEl.style.animation = 'none';
+                setTimeout(() => {
+                    hoursEl.style.animation = 'countdownFlip 1s ease-in-out';
+                }, 10);
+            }
+        }
+        
+        // Waitlist functions
+        function showWaitlist() {
+            document.getElementById('waitlistPage').style.display = 'flex';
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'none';
+        }
+        
+        function showAdminLogin() {
+            document.getElementById('waitlistPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboardPage').style.display = 'none';
+        }
+        
+        function toggleWaitlistPassword() {
+            const p = document.getElementById('waitlistPassword');
+            const btn = document.querySelector('#waitlistForm .toggle-pass');
+            if (p.type === 'password') {
+                p.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                p.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+        
+        // Generate captcha for waitlist
+        function genWaitlistCaptcha() {
+            const a = Math.floor(Math.random() * 10) + 1;
+            const b = Math.floor(Math.random() * 10) + 1;
+            window.waitlistCaptchaAnswer = a + b;
+            document.getElementById('waitlistCaptchaQ').textContent = `${a} + ${b} = ?`;
+        }
+        
+        // Submit waitlist form
+        async function submitWaitlist(event) {
+            event.preventDefault();
+            
+            const usernameInput = document.getElementById('waitlistUsername');
+            const passwordInput = document.getElementById('waitlistPassword');
+            const passwordConfirmInput = document.getElementById('waitlistPasswordConfirm');
+            const captchaInput = document.getElementById('waitlistCaptchaAnswer');
+            const statusDiv = document.getElementById('waitlistStatus');
+            const submitBtn = document.getElementById('waitlistSubmitBtn');
+            
+            const username = usernameInput.value.trim().toLowerCase();
+            const password = passwordInput.value;
+            const passwordConfirm = passwordConfirmInput.value;
+            const captchaAns = parseInt(captchaInput.value.trim());
+            
+            // Validation
+            if (!username || username.length < 3 || username.length > 20) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                statusDiv.style.color = '#ef4444';
+                statusDiv.style.border = '1px solid #ef4444';
+                statusDiv.innerHTML = 'Username must be 3-20 characters';
+                return;
+            }
+            
+            if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                statusDiv.style.color = '#ef4444';
+                statusDiv.style.border = '1px solid #ef4444';
+                statusDiv.innerHTML = 'Username can only contain letters, numbers, and underscores';
+                return;
+            }
+            
+            if (!password || password.length < 6) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                statusDiv.style.color = '#ef4444';
+                statusDiv.style.border = '1px solid #ef4444';
+                statusDiv.innerHTML = 'Password must be at least 6 characters';
+                return;
+            }
+            
+            if (password !== passwordConfirm) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                statusDiv.style.color = '#ef4444';
+                statusDiv.style.border = '1px solid #ef4444';
+                statusDiv.innerHTML = 'Passwords do not match';
+                return;
+            }
+            
+            if (captchaAns !== window.waitlistCaptchaAnswer) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                statusDiv.style.color = '#ef4444';
+                statusDiv.style.border = '1px solid #ef4444';
+                statusDiv.innerHTML = 'Wrong captcha answer';
+                genWaitlistCaptcha();
+                captchaInput.value = '';
+                return;
+            }
+            
+            // Add pop animation
+            submitBtn.classList.add('btn-pop');
+            submitBtn.classList.add('btn-ripple');
+            setTimeout(() => {
+                submitBtn.classList.remove('btn-pop');
+                submitBtn.classList.remove('btn-ripple');
+            }, 600);
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Joining...';
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+            statusDiv.style.color = '#10b981';
+            statusDiv.style.border = '1px solid #10b981';
+            statusDiv.innerHTML = 'Creating your account...';
+            
+            try {
+                // First check localStorage for existing username
+                const waitlist = JSON.parse(localStorage.getItem('pluxoWaitlist') || '[]');
+                if (waitlist.some(u => u.username === username)) {
+                    throw new Error('Username already taken');
+                }
+                
+                // Try to save to Firestore, but don't fail if permissions are missing
+                let savedToFirestore = false;
+                if (window.db && window.firestoreFunctions) {
+                    try {
+                        const { collection, doc, setDoc, getDoc } = window.firestoreFunctions;
+                        const waitlistRef = collection(window.db, 'waitlist');
+                        const userDocRef = doc(waitlistRef, username);
+                        
+                        // Check if username already exists in Firestore
+                        try {
+                            const existingDoc = await getDoc(userDocRef);
+                            if (existingDoc.exists()) {
+                                throw new Error('Username already taken');
+                            }
+                        } catch (checkError) {
+                            // If we can't check, continue anyway
+                            console.log('Could not check Firestore for existing username:', checkError);
+                        }
+                        
+                        // Create account in Firebase Auth (if auth is available)
+                        const waitlistEmail = `${username}@pluxo.waitlist`;
+                        if (window.auth && window.createUserWithEmailAndPassword) {
+                            try {
+                                await window.createUserWithEmailAndPassword(window.auth, waitlistEmail, password);
+                            } catch (authError) {
+                                // If auth creation fails, still save to waitlist
+                                console.log('Auth creation failed, saving to waitlist only:', authError);
+                            }
+                        }
+                        
+                        // Save to waitlist collection
+                        try {
+                            await setDoc(userDocRef, {
+                                username: username,
+                                email: waitlistEmail,
+                                createdAt: new Date().toISOString(),
+                                status: 'pending',
+                                waitlistEndTime: new Date(waitlistEndTime).toISOString()
+                            });
+                            savedToFirestore = true;
+                        } catch (firestoreError) {
+                            // If Firestore save fails (permissions), use localStorage
+                            console.log('Firestore save failed, using localStorage:', firestoreError);
+                            savedToFirestore = false;
+                        }
+                    } catch (firestoreError) {
+                        // If any Firestore operation fails, use localStorage
+                        console.log('Firestore operation failed, using localStorage:', firestoreError);
+                        savedToFirestore = false;
+                    }
+                }
+                
+                // Always save to localStorage as backup/primary
+                if (!savedToFirestore) {
+                    waitlist.push({
+                        username: username,
+                        password: password, // Store encrypted or hash in production
+                        createdAt: new Date().toISOString(),
+                        status: 'pending',
+                        waitlistEndTime: new Date(waitlistEndTime).toISOString()
+                    });
+                    localStorage.setItem('pluxoWaitlist', JSON.stringify(waitlist));
+                }
+                
+                statusDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+                statusDiv.style.color = '#10b981';
+                statusDiv.style.border = '1px solid #10b981';
+                statusDiv.innerHTML = '✅ Successfully joined waitlist! You will be registered when we launch.';
+                
+                // Clear form
+                usernameInput.value = '';
+                passwordInput.value = '';
+                passwordConfirmInput.value = '';
+                captchaInput.value = '';
+                genWaitlistCaptcha();
+                
+            } catch (error) {
+                console.error('Waitlist error:', error);
+                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                statusDiv.style.color = '#ef4444';
+                statusDiv.style.border = '1px solid #ef4444';
+                statusDiv.innerHTML = `Error: ${error.message || 'Failed to join waitlist'}`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Join Waitlist';
+            }
+        }
+        
         // Page control
         function showLogin() {
+            document.getElementById('waitlistPage').style.display = 'none';
             document.getElementById('loginPage').style.display = 'flex';
             document.getElementById('dashboardPage').style.display = 'none';
         }
 
         function showDashboard() {
+            // Check if user is admin - only admins can access during waitlist period
+            if (!isAdmin(userData?.username)) {
+                showWaitlist();
+                if (typeof showAnimatedPopup === 'function') {
+                    showAnimatedPopup('Access Restricted', 'The site is currently in waitlist mode. Only admins can access. Please wait for the launch.', 'info');
+                }
+                return;
+            }
+            
+            document.getElementById('waitlistPage').style.display = 'none';
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('dashboardPage').style.display = 'block';
             updateUI();
@@ -5127,8 +5867,42 @@
         
         // Make showDashboard globally accessible for Firebase module
         window.showDashboard = showDashboard;
+        window.showWaitlist = showWaitlist;
+        window.showAdminLogin = showAdminLogin;
+        window.toggleWaitlistPassword = toggleWaitlistPassword;
 
-        if (userData) {
+        // Initialize waitlist on page load
+        if (!userData || !isAdmin(userData?.username)) {
+            showWaitlist();
+            
+            // Initialize timer after DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    initWaitlistTimer();
+                    genWaitlistCaptcha();
+                });
+            } else {
+                // DOM already loaded
+                setTimeout(() => {
+                    initWaitlistTimer();
+                    genWaitlistCaptcha();
+                }, 100);
+            }
+            
+            // Attach waitlist form handler
+            const waitlistForm = document.getElementById('waitlistForm');
+            if (waitlistForm) {
+                waitlistForm.addEventListener('submit', submitWaitlist);
+            } else {
+                // Try again if form not loaded yet
+                setTimeout(() => {
+                    const waitlistFormRetry = document.getElementById('waitlistForm');
+                    if (waitlistFormRetry) {
+                        waitlistFormRetry.addEventListener('submit', submitWaitlist);
+                    }
+                }, 500);
+            }
+        } else if (userData) {
             // Update UI immediately with localStorage data for instant display
             updateUI();
             
@@ -5249,15 +6023,18 @@
             const sellerNav = document.getElementById('sellerNavItem');
             const sellerListingNav = document.getElementById('sellerListingNavItem');
             const adminDiceNav = document.getElementById('adminDiceNavItem');
+            const adminBlackjackNav = document.getElementById('adminBlackjackNavItem');
             
             if (isAdmin(userData.username)) {
                 if (adminNav) adminNav.style.display = 'block';
                 if (sellerNav) sellerNav.style.display = 'block';
                 if (adminDiceNav) adminDiceNav.style.display = 'block';
+                if (adminBlackjackNav) adminBlackjackNav.style.display = 'block';
             } else {
                 if (adminNav) adminNav.style.display = 'none';
                 if (sellerNav) sellerNav.style.display = 'none';
                 if (adminDiceNav) adminDiceNav.style.display = 'none';
+                if (adminBlackjackNav) adminBlackjackNav.style.display = 'none';
             }
             
             // Show seller listing nav for sellers
@@ -6818,9 +7595,12 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     if (finalCreatorRoll > finalBotRoll) {
                         winner = adminUsername;
                         winnerName = userData.username;
-                        userData.balance += amount * 2; // Win double
-                        resultMessage = `You won! Rolled ${finalCreatorRoll} vs Bot's ${finalBotRoll}. You won $${(amount * 2).toFixed(2)}!`;
+                        const winnings = amount * 2;
+                        userData.balance += winnings; // Win double
+                        resultMessage = `You won! Rolled ${finalCreatorRoll} vs Bot's ${finalBotRoll}. You won $${winnings.toFixed(2)}!`;
                         showAnimatedPopup('Success', resultMessage, 'success');
+                        // Update leaderboard
+                        await updateDiceLeaderboard(userData.username, amount);
                     } else if (finalBotRoll > finalCreatorRoll) {
                         winner = 'bot';
                         winnerName = 'Bot';
@@ -6955,11 +7735,15 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     bet.winnerName = bet.creatorName;
                     // Creator wins - they get their bet back + opponent's bet
                     // Note: Creator's balance will be updated when they view the result
+                    // Update leaderboard for creator
+                    await updateDiceLeaderboard(bet.creatorName, betAmount);
                 } else if (bet.opponentRoll > bet.creatorRoll) {
                     bet.winner = bet.opponent;
                     bet.winnerName = bet.opponentName;
                     // Opponent wins - already deducted, add winnings
                     userData.balance += betAmount * 2;
+                    // Update leaderboard for opponent (current user)
+                    await updateDiceLeaderboard(userData.username, betAmount);
                 } else {
                     // Tie - refund half to both players
                     bet.winner = 'tie';
@@ -7212,10 +7996,702 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             }
         }
 
+        // Update dice leaderboard when user wins
+        async function updateDiceLeaderboard(username, winnings) {
+            if (!username || !winnings || winnings <= 0) return;
+            
+            try {
+                if (!window.db || !window.firestoreFunctions) return;
+                
+                const { collection, doc, getDoc, setDoc, updateDoc } = window.firestoreFunctions;
+                const normalized = username.toLowerCase().trim();
+                const leaderboardRef = collection(window.db, 'diceLeaderboard');
+                const playerDocRef = doc(leaderboardRef, normalized);
+                const playerDoc = await getDoc(playerDocRef);
+                
+                if (playerDoc.exists()) {
+                    const currentData = playerDoc.data();
+                    const newTotalWinnings = parseFloat(currentData.totalWinnings || 0) + parseFloat(winnings);
+                    const newWinCount = parseInt(currentData.winCount || 0) + 1;
+                    
+                    await updateDoc(playerDocRef, {
+                        totalWinnings: newTotalWinnings,
+                        winCount: newWinCount,
+                        lastWinAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    });
+                } else {
+                    await setDoc(playerDocRef, {
+                        username: normalized,
+                        displayName: username,
+                        totalWinnings: parseFloat(winnings),
+                        winCount: 1,
+                        lastWinAt: new Date().toISOString(),
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating dice leaderboard:', error);
+                // Don't show error to user, just log it
+            }
+        }
+        
+        // Load and display dice leaderboard
+        async function loadDiceLeaderboard() {
+            const leaderboardEl = document.getElementById('diceLeaderboard');
+            if (!leaderboardEl) return;
+            
+            leaderboardEl.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 20px;">Loading leaderboard...</p>';
+            
+            let players = [];
+            let useLocalData = false;
+            
+            // Try to load from Firestore first
+            try {
+                if (window.db && window.firestoreFunctions) {
+                    const { collection, getDocs, query, orderBy } = window.firestoreFunctions;
+                    const leaderboardRef = collection(window.db, 'diceLeaderboard');
+                    
+                    let querySnapshot;
+                    try {
+                        const q = query(leaderboardRef, orderBy('totalWinnings', 'desc'));
+                        querySnapshot = await getDocs(q);
+                    } catch (orderByError) {
+                        // If orderBy fails, try without it
+                        console.log('OrderBy failed, trying without:', orderByError);
+                        try {
+                            querySnapshot = await getDocs(leaderboardRef);
+                        } catch (getDocsError) {
+                            throw getDocsError; // Re-throw to fall back to local data
+                        }
+                    }
+                    
+                    if (!querySnapshot.empty) {
+                        querySnapshot.forEach((doc) => {
+                            const data = doc.data();
+                            players.push({
+                                username: data.displayName || data.username || 'Unknown',
+                                totalWinnings: parseFloat(data.totalWinnings || 0),
+                                winCount: parseInt(data.winCount || 0),
+                                lastWinAt: data.lastWinAt || null
+                            });
+                        });
+                    }
+                }
+            } catch (firestoreError) {
+                // If Firestore fails (permissions issue), build from local dice history
+                console.log('Firestore leaderboard unavailable, using local history:', firestoreError);
+                useLocalData = true;
+                
+                // Build leaderboard from local dice history
+                try {
+                    const history = getDiceHistory();
+                    const playerStats = {};
+                    
+                    history.forEach((bet) => {
+                        if (bet.status === 'completed' && bet.winner && bet.winner !== 'tie' && bet.winner !== 'bot') {
+                            const winnerName = bet.winnerName || bet.creatorName || bet.opponentName;
+                            const betAmount = parseFloat(bet.amount || 0);
+                            
+                            if (winnerName && betAmount > 0) {
+                                if (!playerStats[winnerName]) {
+                                    playerStats[winnerName] = {
+                                        username: winnerName,
+                                        totalWinnings: 0,
+                                        winCount: 0
+                                    };
+                                }
+                                playerStats[winnerName].totalWinnings += betAmount;
+                                playerStats[winnerName].winCount += 1;
+                            }
+                        }
+                    });
+                    
+                    players = Object.values(playerStats);
+                } catch (localError) {
+                    console.error('Error building local leaderboard:', localError);
+                }
+            }
+            
+            // Sort by total winnings descending
+            players.sort((a, b) => b.totalWinnings - a.totalWinnings);
+            
+            if (players.length === 0) {
+                leaderboardEl.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 20px;">No players yet. Be the first to win!</p>';
+                return;
+            }
+            
+            // Take top 10
+            const topPlayers = players.slice(0, 10);
+                
+                let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+                
+                topPlayers.forEach((player, index) => {
+                    const rank = index + 1;
+                    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+                    const rankColor = rank === 1 ? '#FFD700' : rank === 2 ? '#C0C0C0' : rank === 3 ? '#CD7F32' : 'var(--gray)';
+                    const bgColor = rank <= 3 ? 'rgba(139, 92, 246, 0.1)' : 'rgba(255, 255, 255, 0.02)';
+                    
+                    html += `
+                        <div style="display: flex; align-items: center; gap: 16px; padding: 16px; background: ${bgColor}; border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.2);">
+                            <div style="font-size: 24px; font-weight: 700; color: ${rankColor}; min-width: 50px; text-align: center;">
+                                ${medal}
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: var(--text); font-size: 16px; margin-bottom: 4px;">
+                                    ${sanitizeInput(player.username)}
+                                </div>
+                                <div style="font-size: 13px; color: var(--gray);">
+                                    ${player.winCount} win${player.winCount !== 1 ? 's' : ''}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 20px; font-weight: 700; color: #10b981;">
+                                    $${player.totalWinnings.toFixed(2)}
+                                </div>
+                                <div style="font-size: 12px; color: var(--gray);">
+                                    Total Winnings
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                
+                // Add stats footer
+                html += `
+                    <div style="margin-top: 20px; padding: 16px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; text-align: center;">
+                        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 16px;">
+                            <div>
+                                <div style="font-size: 24px; font-weight: 700; color: #8b5cf6;">${players.length}</div>
+                                <div style="font-size: 12px; color: var(--gray);">Total Players</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: 700; color: #10b981;">$${players.reduce((sum, p) => sum + p.totalWinnings, 0).toFixed(2)}</div>
+                                <div style="font-size: 12px; color: var(--gray);">Total Winnings</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: 700; color: #ef4444;">${players.reduce((sum, p) => sum + p.winCount, 0)}</div>
+                                <div style="font-size: 12px; color: var(--gray);">Total Wins</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add note if using local data
+                if (useLocalData) {
+                    html += `
+                        <div style="margin-top: 12px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; text-align: center;">
+                            <p style="font-size: 12px; color: var(--blue); margin: 0;">
+                                📊 Showing local leaderboard (based on your game history)
+                            </p>
+                        </div>
+                    `;
+                }
+                
+                leaderboardEl.innerHTML = html;
+        }
+
+        // ==================== BLACKJACK GAME ====================
+        let blackjackGameState = {
+            active: false,
+            playerHand: [],
+            dealerHand: [],
+            playerValue: 0,
+            dealerValue: 0,
+            betAmount: 0,
+            canDoubleDown: false,
+            gameOver: false
+        };
+
+        // Card deck
+        const suits = ['♠', '♥', '♦', '♣'];
+        const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+        function createDeck() {
+            const deck = [];
+            for (let suit of suits) {
+                for (let rank of ranks) {
+                    deck.push({ suit, rank });
+                }
+            }
+            // Shuffle deck
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+            return deck;
+        }
+
+        function getCardValue(card) {
+            if (card.rank === 'A') return 11; // Will be adjusted for aces
+            if (['J', 'Q', 'K'].includes(card.rank)) return 10;
+            return parseInt(card.rank);
+        }
+
+        function calculateHandValue(hand) {
+            let value = 0;
+            let aces = 0;
+            
+            for (let card of hand) {
+                if (card.rank === 'A') {
+                    aces++;
+                    value += 11;
+                } else {
+                    value += getCardValue(card);
+                }
+            }
+            
+            // Adjust for aces
+            while (value > 21 && aces > 0) {
+                value -= 10;
+                aces--;
+            }
+            
+            return value;
+        }
+
+        function renderCard(card, isHidden = false, index = 0, animationDelay = 0) {
+            const cardId = `card-${Date.now()}-${index}`;
+            if (isHidden) {
+                return `
+                    <div id="${cardId}" class="blackjack-card" style="width: 80px; height: 112px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px solid rgba(59, 130, 246, 0.5); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--blue); box-shadow: 0 4px 8px rgba(0,0,0,0.3); animation-delay: ${animationDelay}s;">
+                        ?
+                    </div>
+                `;
+            }
+            
+            const color = (card.suit === '♥' || card.suit === '♦') ? '#ef4444' : '#ffffff';
+            return `
+                <div id="${cardId}" class="blackjack-card" style="width: 80px; height: 112px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px solid rgba(59, 130, 246, 0.5); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: ${color}; box-shadow: 0 4px 8px rgba(0,0,0,0.3); padding: 8px; animation-delay: ${animationDelay}s;">
+                    <div style="font-size: 20px; font-weight: 700;">${card.rank}</div>
+                    <div style="font-size: 32px;">${card.suit}</div>
+                </div>
+            `;
+        }
+
+        function renderHand(hand, containerId, isDealer = false, hideFirst = false, animate = true) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            if (!animate) {
+                container.innerHTML = '';
+                hand.forEach((card, index) => {
+                    const isHidden = isDealer && hideFirst && index === 0;
+                    container.innerHTML += renderCard(card, isHidden, index, 0);
+                });
+                return;
+            }
+            
+            // Animate each card being dealt
+            container.innerHTML = '';
+            hand.forEach((card, index) => {
+                const isHidden = isDealer && hideFirst && index === 0;
+                const cardHtml = renderCard(card, isHidden, index, index * 0.2);
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        function addCardWithAnimation(containerId, card, isDealer = false) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const cardElement = document.createElement('div');
+            cardElement.className = 'blackjack-card';
+            cardElement.style.cssText = 'width: 80px; height: 112px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px solid rgba(59, 130, 246, 0.5); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateX(-200px) rotate(-90deg); transition: all 0.5s ease-out;';
+            
+            const color = (card.suit === '♥' || card.suit === '♦') ? '#ef4444' : '#ffffff';
+            cardElement.innerHTML = `
+                <div style="font-size: 20px; font-weight: 700; color: ${color};">${card.rank}</div>
+                <div style="font-size: 32px; color: ${color};">${card.suit}</div>
+            `;
+            
+            container.appendChild(cardElement);
+            
+            // Trigger animation
+            setTimeout(() => {
+                cardElement.style.opacity = '1';
+                cardElement.style.transform = 'translateX(0) rotate(0deg)';
+            }, 50);
+        }
+
+        function createConfetti() {
+            const confettiContainer = document.createElement('div');
+            confettiContainer.className = 'confetti-container';
+            document.body.appendChild(confettiContainer);
+            
+            const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#ffffff'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '-10px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confettiContainer.appendChild(confetti);
+            }
+            
+            setTimeout(() => {
+                confettiContainer.remove();
+            }, 3000);
+        }
+
+        async function startBlackjackGame() {
+            if (!userData) {
+                showAnimatedPopup('Error', 'You must be logged in to play', 'error');
+                return;
+            }
+
+            const betInput = document.getElementById('blackjackBetAmount');
+            const betAmount = parseFloat(betInput.value);
+
+            if (!betAmount || betAmount < 1 || betAmount > 10) {
+                showAnimatedPopup('Error', 'Enter a valid bet amount ($1-$10)', 'error');
+                return;
+            }
+
+            if (userData.balance < betAmount) {
+                showAnimatedPopup('Error', 'Insufficient balance', 'error');
+                return;
+            }
+
+            // Deduct bet
+            userData.balance -= betAmount;
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            await saveUserBalanceToFirestore();
+            updateUI();
+
+            // Initialize game
+            const deck = createDeck();
+            blackjackGameState = {
+                active: true,
+                playerHand: [deck.pop(), deck.pop()],
+                dealerHand: [deck.pop(), deck.pop()],
+                betAmount: betAmount,
+                canDoubleDown: true,
+                gameOver: false,
+                deck: deck
+            };
+
+            blackjackGameState.playerValue = calculateHandValue(blackjackGameState.playerHand);
+            blackjackGameState.dealerValue = calculateHandValue([blackjackGameState.dealerHand[0]]); // Only show first card
+
+            // Check for blackjack
+            if (blackjackGameState.playerValue === 21) {
+                endBlackjackGame('blackjack');
+                return;
+            }
+
+            // Show game area
+            document.getElementById('blackjackGameArea').style.display = 'block';
+            document.getElementById('startBlackjackBtn').style.display = 'none';
+            betInput.disabled = true;
+
+            // Render hands with animation
+            renderHand(blackjackGameState.playerHand, 'playerCards', false, false, true);
+            
+            // Deal dealer cards with delay
+            setTimeout(() => {
+                renderHand(blackjackGameState.dealerHand, 'dealerCards', true, true, true);
+            }, 400);
+            
+            document.getElementById('playerValue').textContent = `Value: ${blackjackGameState.playerValue}`;
+            document.getElementById('dealerValue').textContent = 'Value: ?';
+            
+            // Animate value display
+            const playerValueEl = document.getElementById('playerValue');
+            playerValueEl.style.animation = 'winCelebration 0.5s ease-out';
+            setTimeout(() => {
+                playerValueEl.style.animation = '';
+            }, 500);
+        }
+
+        async function blackjackHit() {
+            if (!blackjackGameState.active || blackjackGameState.gameOver) return;
+
+            // Disable buttons during animation
+            const hitBtn = document.querySelector('#blackjackActions button[onclick="blackjackHit()"]');
+            const standBtn = document.querySelector('#blackjackActions button[onclick="blackjackStand()"]');
+            if (hitBtn) hitBtn.disabled = true;
+            if (standBtn) standBtn.disabled = true;
+
+            // Draw card with animation
+            const card = blackjackGameState.deck.pop();
+            addCardWithAnimation('playerCards', card, false);
+            
+            // Wait for animation
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            blackjackGameState.playerHand.push(card);
+            blackjackGameState.playerValue = calculateHandValue(blackjackGameState.playerHand);
+            blackjackGameState.canDoubleDown = false;
+
+            // Update display with animation
+            const playerValueEl = document.getElementById('playerValue');
+            playerValueEl.textContent = `Value: ${blackjackGameState.playerValue}`;
+            playerValueEl.style.animation = 'winCelebration 0.3s ease-out';
+            setTimeout(() => {
+                playerValueEl.style.animation = '';
+            }, 300);
+            
+            document.getElementById('doubleDownBtn').style.display = 'none';
+
+            // Re-enable buttons
+            if (hitBtn) hitBtn.disabled = false;
+            if (standBtn) standBtn.disabled = false;
+
+            // Check for bust
+            if (blackjackGameState.playerValue > 21) {
+                // Shake animation for bust
+                const playerCardsEl = document.getElementById('playerCards');
+                playerCardsEl.style.animation = 'cardShake 0.5s ease-in-out';
+                setTimeout(() => {
+                    playerCardsEl.style.animation = '';
+                }, 500);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                endBlackjackGame('bust');
+            }
+        }
+
+        async function blackjackStand() {
+            if (!blackjackGameState.active || blackjackGameState.gameOver) return;
+
+            blackjackGameState.gameOver = true;
+            document.getElementById('blackjackActions').style.display = 'none';
+
+            // Flip dealer's hidden card
+            const dealerCardsEl = document.getElementById('dealerCards');
+            if (dealerCardsEl && dealerCardsEl.children[0]) {
+                dealerCardsEl.children[0].classList.add('flip');
+                await new Promise(resolve => setTimeout(resolve, 300));
+                renderHand(blackjackGameState.dealerHand, 'dealerCards', false, false, false);
+                dealerCardsEl.style.animation = 'winCelebration 0.5s ease-out';
+                setTimeout(() => {
+                    dealerCardsEl.style.animation = '';
+                }, 500);
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Dealer plays
+            while (calculateHandValue(blackjackGameState.dealerHand) < 17) {
+                const card = blackjackGameState.deck.pop();
+                addCardWithAnimation('dealerCards', card, true);
+                await new Promise(resolve => setTimeout(resolve, 600)); // Delay for animation
+                blackjackGameState.dealerHand.push(card);
+            }
+
+            blackjackGameState.dealerValue = calculateHandValue(blackjackGameState.dealerHand);
+            const dealerValueEl = document.getElementById('dealerValue');
+            dealerValueEl.textContent = `Value: ${blackjackGameState.dealerValue}`;
+            dealerValueEl.style.animation = 'winCelebration 0.5s ease-out';
+            setTimeout(() => {
+                dealerValueEl.style.animation = '';
+            }, 500);
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Determine winner
+            if (blackjackGameState.dealerValue > 21) {
+                endBlackjackGame('dealer_bust');
+            } else if (blackjackGameState.dealerValue > blackjackGameState.playerValue) {
+                endBlackjackGame('lose');
+            } else if (blackjackGameState.dealerValue < blackjackGameState.playerValue) {
+                endBlackjackGame('win');
+            } else {
+                endBlackjackGame('push');
+            }
+        }
+
+        async function blackjackDoubleDown() {
+            if (!blackjackGameState.active || !blackjackGameState.canDoubleDown || blackjackGameState.gameOver) return;
+
+            if (userData.balance < blackjackGameState.betAmount) {
+                showAnimatedPopup('Error', 'Insufficient balance to double down', 'error');
+                return;
+            }
+
+            // Double the bet
+            userData.balance -= blackjackGameState.betAmount;
+            blackjackGameState.betAmount *= 2;
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            await saveUserBalanceToFirestore();
+            updateUI();
+
+            // Hit once and stand
+            await blackjackHit();
+            if (!blackjackGameState.gameOver) {
+                await blackjackStand();
+            }
+        }
+
+        async function endBlackjackGame(result) {
+            blackjackGameState.gameOver = true;
+            blackjackGameState.active = false;
+            document.getElementById('blackjackActions').style.display = 'none';
+
+            const resultDiv = document.getElementById('blackjackResult');
+            const playerCardsEl = document.getElementById('playerCards');
+            const dealerCardsEl = document.getElementById('dealerCards');
+            let message = '';
+            let winnings = 0;
+            let isWin = false;
+
+            // Add animations based on result
+            switch (result) {
+                case 'blackjack':
+                    winnings = blackjackGameState.betAmount * 2.5;
+                    userData.balance += blackjackGameState.betAmount + winnings;
+                    message = `🎉🎉🎉 BLACKJACK! 🎉🎉🎉<br><div style="font-size: 24px; margin-top: 8px;">You won $${winnings.toFixed(2)}!</div>`;
+                    resultDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+                    resultDiv.style.color = '#10b981';
+                    resultDiv.style.border = '2px solid #10b981';
+                    isWin = true;
+                    // Win animation
+                    if (playerCardsEl) {
+                        playerCardsEl.style.animation = 'pulseWin 1s ease-in-out infinite';
+                        setTimeout(() => {
+                            playerCardsEl.style.animation = '';
+                        }, 2000);
+                    }
+                    createConfetti();
+                    break;
+                case 'bust':
+                    message = `💥 BUST! 💥<br><div style="font-size: 18px; margin-top: 8px;">You went over 21. You lost $${blackjackGameState.betAmount.toFixed(2)}.</div>`;
+                    resultDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                    resultDiv.style.color = '#ef4444';
+                    resultDiv.style.border = '2px solid #ef4444';
+                    // Loss animation
+                    if (playerCardsEl) {
+                        playerCardsEl.style.animation = 'loseShake 0.6s ease-in-out';
+                        setTimeout(() => {
+                            playerCardsEl.style.animation = '';
+                        }, 600);
+                    }
+                    break;
+                case 'dealer_bust':
+                    winnings = blackjackGameState.betAmount * 2;
+                    userData.balance += blackjackGameState.betAmount + winnings;
+                    message = `🎉 DEALER BUST! 🎉<br><div style="font-size: 24px; margin-top: 8px;">You won $${winnings.toFixed(2)}!</div>`;
+                    resultDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+                    resultDiv.style.color = '#10b981';
+                    resultDiv.style.border = '2px solid #10b981';
+                    isWin = true;
+                    // Win animation
+                    if (playerCardsEl) {
+                        playerCardsEl.style.animation = 'pulseWin 1s ease-in-out infinite';
+                        setTimeout(() => {
+                            playerCardsEl.style.animation = '';
+                        }, 2000);
+                    }
+                    createConfetti();
+                    break;
+                case 'win':
+                    winnings = blackjackGameState.betAmount * 2;
+                    userData.balance += blackjackGameState.betAmount + winnings;
+                    message = `🎉 YOU WIN! 🎉<br><div style="font-size: 24px; margin-top: 8px;">You won $${winnings.toFixed(2)}!</div>`;
+                    resultDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+                    resultDiv.style.color = '#10b981';
+                    resultDiv.style.border = '2px solid #10b981';
+                    isWin = true;
+                    // Win animation
+                    if (playerCardsEl) {
+                        playerCardsEl.style.animation = 'pulseWin 1s ease-in-out infinite';
+                        setTimeout(() => {
+                            playerCardsEl.style.animation = '';
+                        }, 2000);
+                    }
+                    createConfetti();
+                    break;
+                case 'lose':
+                    message = `😔 YOU LOST 😔<br><div style="font-size: 18px; margin-top: 8px;">Dealer: ${blackjackGameState.dealerValue} | You: ${blackjackGameState.playerValue}<br>You lost $${blackjackGameState.betAmount.toFixed(2)}.</div>`;
+                    resultDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                    resultDiv.style.color = '#ef4444';
+                    resultDiv.style.border = '2px solid #ef4444';
+                    // Loss animation
+                    if (playerCardsEl) {
+                        playerCardsEl.style.animation = 'loseShake 0.6s ease-in-out, loseFade 0.6s ease-in-out';
+                        setTimeout(() => {
+                            playerCardsEl.style.animation = '';
+                        }, 600);
+                    }
+                    break;
+                case 'push':
+                    userData.balance += blackjackGameState.betAmount;
+                    message = `🤝 PUSH! 🤝<br><div style="font-size: 18px; margin-top: 8px;">It's a tie. Your bet was returned.</div>`;
+                    resultDiv.style.background = 'rgba(59, 130, 246, 0.1)';
+                    resultDiv.style.color = '#3b82f6';
+                    resultDiv.style.border = '2px solid #3b82f6';
+                    break;
+            }
+
+            // Show result with animation
+            resultDiv.innerHTML = `<div style="text-align: center; font-size: 20px; font-weight: 700; animation: ${isWin ? 'winCelebration' : 'loseFade'} 0.8s ease-out;">${message}</div>`;
+            resultDiv.style.display = 'block';
+            resultDiv.style.animation = isWin ? 'winCelebration 0.8s ease-out' : 'loseFade 0.6s ease-out';
+
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            await saveUserBalanceToFirestore();
+            updateUI();
+
+            // Show animated popup
+            if (isWin) {
+                showAnimatedPopup('🎉 Winner!', `You won $${winnings.toFixed(2)}!`, 'success');
+            } else if (result === 'bust' || result === 'lose') {
+                showAnimatedPopup('💥 Game Over', `You lost $${blackjackGameState.betAmount.toFixed(2)}.`, 'error');
+            }
+
+            // Show new game button with animation
+            setTimeout(() => {
+                const newGameBtn = document.createElement('button');
+                newGameBtn.className = 'btn btn-admin';
+                newGameBtn.style.cssText = 'background: #10b981; width: 100%; margin-top: 16px; animation: winCelebration 0.5s ease-out;';
+                newGameBtn.textContent = '🎮 New Game';
+                newGameBtn.onclick = resetBlackjackGame;
+                resultDiv.appendChild(newGameBtn);
+            }, 1500);
+        }
+
+        function resetBlackjackGame() {
+            blackjackGameState = {
+                active: false,
+                playerHand: [],
+                dealerHand: [],
+                playerValue: 0,
+                dealerValue: 0,
+                betAmount: 0,
+                canDoubleDown: false,
+                gameOver: false
+            };
+
+            document.getElementById('blackjackGameArea').style.display = 'none';
+            document.getElementById('startBlackjackBtn').style.display = 'block';
+            document.getElementById('blackjackBetAmount').disabled = false;
+            document.getElementById('blackjackResult').style.display = 'none';
+            document.getElementById('blackjackActions').style.display = 'flex';
+            document.getElementById('doubleDownBtn').style.display = 'block';
+            document.getElementById('playerCards').innerHTML = '';
+            document.getElementById('dealerCards').innerHTML = '';
+            document.getElementById('playerValue').textContent = 'Value: 0';
+            document.getElementById('dealerValue').textContent = 'Value: ?';
+        }
+
         // Make functions globally accessible
         window.createDiceBet = createDiceBet;
         window.acceptDiceBet = acceptDiceBet;
         window.cancelDiceBet = cancelDiceBet;
+        window.loadDiceLeaderboard = loadDiceLeaderboard;
+        window.startBlackjackGame = startBlackjackGame;
+        window.blackjackHit = blackjackHit;
+        window.blackjackStand = blackjackStand;
+        window.blackjackDoubleDown = blackjackDoubleDown;
+        window.resetBlackjackGame = resetBlackjackGame;
         
         // Load user balance from Firestore - Check both collections
         async function loadUserBalanceFromFirestore() {
@@ -7401,6 +8877,12 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             // Render dice bets if showing admin-dice page
             if (name === 'admin-dice') {
                 renderDiceBets();
+                loadDiceLeaderboard(); // Load leaderboard when dice page is shown
+            }
+            
+            // Reset blackjack game if showing blackjack page
+            if (name === 'admin-blackjack') {
+                resetBlackjackGame();
             }
             
             // Render products if showing products page
@@ -8995,11 +10477,16 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             measurementId: "G-FLP8S5VLWE"
         };
 
-const app = initializeApp(firebaseConfig);
+        const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const storage = getStorage(app);
+        
+        // Make auth globally accessible
+        window.auth = auth;
+        window.db = db;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
 
         // Make db globally accessible
         window.db = db;
