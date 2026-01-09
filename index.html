@@ -4090,7 +4090,545 @@
             100% {
                 outline-width: 2px;
             }
-}
+        }
+
+        /* ==================== COMPREHENSIVE ANIMATIONS ==================== */
+        
+        /* Button Click Animations */
+        .btn:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Card Animations */
+        .product-card, .admin-section, .ticket-card, .order-card {
+            animation: fadeInUp 0.5s ease-out;
+            animation-fill-mode: both;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:nth-child(1) { animation-delay: 0.05s; }
+        .product-card:nth-child(2) { animation-delay: 0.1s; }
+        .product-card:nth-child(3) { animation-delay: 0.15s; }
+        .product-card:nth-child(4) { animation-delay: 0.2s; }
+        .product-card:nth-child(5) { animation-delay: 0.25s; }
+        .product-card:nth-child(6) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-card:hover, .admin-section:hover, .ticket-card:hover, .order-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Modal Animations */
+        .modal-bg {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-bg.active {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-box {
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-box.active {
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        /* Input Field Animations */
+        .input-field {
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .input-field:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        /* Form Animations */
+        .form-group {
+            animation: slideInRight 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Navigation Animations */
+        .nav-item {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--blue);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .nav-item:hover {
+            transform: translateX(5px);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-item.active {
+            animation: navItemActive 0.3s ease-out;
+        }
+
+        @keyframes navItemActive {
+            from {
+                background: transparent;
+            }
+            to {
+                background: rgba(59, 130, 246, 0.15);
+            }
+        }
+
+        /* Table Row Animations */
+        .tickets-table tbody tr, .orders-table tbody tr, .admin-table tbody tr {
+            animation: fadeInRow 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .tickets-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+        .tickets-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+        .tickets-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+        .tickets-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+        .tickets-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+        .tickets-table tbody tr:nth-child(6) { animation-delay: 0.3s; }
+
+        /* Loading Spinner Animation */
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Success/Error Message Animations */
+        .popup-content {
+            animation: popupSlideIn 0.4s ease-out;
+        }
+
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Badge Animations */
+        .badge, .owner-badge, .admin-badge-sm, .status-badge {
+            animation: badgePulse 0.5s ease-out;
+        }
+
+        @keyframes badgePulse {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Cart Item Animations */
+        .cart-item {
+            animation: slideInLeft 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .cart-item:nth-child(1) { animation-delay: 0.05s; }
+        .cart-item:nth-child(2) { animation-delay: 0.1s; }
+        .cart-item:nth-child(3) { animation-delay: 0.15s; }
+        .cart-item:nth-child(4) { animation-delay: 0.2s; }
+
+        /* Stats Card Animations */
+        .stat-card {
+            animation: scaleIn 0.5s ease-out;
+            animation-fill-mode: both;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Icon Animations */
+        .icon-btn, .cart-btn, .logout-btn {
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:hover, .cart-btn:hover, .logout-btn:hover {
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        /* Dropdown Animations */
+        .dropdown-content {
+            animation: dropdownSlide 0.3s ease-out;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Checkbox/Radio Animations */
+        input[type="checkbox"], input[type="radio"] {
+            transition: all 0.3s ease;
+        }
+
+        input[type="checkbox"]:checked, input[type="radio"]:checked {
+            transform: scale(1.1);
+        }
+
+        /* Select Dropdown Animations */
+        select {
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            border-color: var(--blue);
+            transform: translateY(-1px);
+        }
+
+        select:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Textarea Animations */
+        textarea {
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            transform: scale(1.01);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Admin Section Animations */
+        .admin-section {
+            animation: fadeInScale 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Balance Display Number Animation */
+        .balance-amount, .value {
+            transition: all 0.3s ease;
+        }
+
+        .balance-amount:hover .value {
+            transform: scale(1.1);
+            color: var(--blue);
+        }
+
+        /* Top Bar Elements Animation */
+        .top-bar > * {
+            animation: fadeInDown 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .top-bar > *:nth-child(1) { animation-delay: 0.1s; }
+        .top-bar > *:nth-child(2) { animation-delay: 0.2s; }
+        .top-bar > *:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Smooth Scroll Animations */
+        * {
+            scroll-behavior: smooth;
+        }
+
+        /* Page Content Fade In */
+        .page-content {
+            animation: pageFadeIn 0.6s ease-out;
+        }
+
+        @keyframes pageFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Image Animations */
+        img {
+            transition: all 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Link Animations */
+        a {
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        a:hover {
+            color: var(--blue);
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--blue);
+            transition: width 0.3s ease;
+        }
+
+        a:hover::after {
+            width: 100%;
+        }
+
+        /* List Item Animations */
+        li {
+            animation: listItemFadeIn 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        @keyframes listItemFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Tooltip Animations */
+        .tooltip {
+            animation: tooltipFadeIn 0.3s ease-out;
+        }
+
+        @keyframes tooltipFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Progress Bar Animation */
+        .progress-bar {
+            animation: progressFill 1s ease-out;
+        }
+
+        @keyframes progressFill {
+            from {
+                width: 0;
+            }
+        }
+
+        /* Notification Animations */
+        .notification {
+            animation: notificationSlide 0.4s ease-out;
+        }
+
+        @keyframes notificationSlide {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Search Input Animation */
+        .search-input:focus {
+            width: 100%;
+            transform: scale(1.02);
+        }
+
+        /* Toggle Switch Animation */
+        .toggle-switch {
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch:checked {
+            transform: scale(1.1);
+        }
+
+        /* Accordion Animation */
+        .accordion-content {
+            animation: accordionExpand 0.3s ease-out;
+        }
+
+        @keyframes accordionExpand {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 1000px;
+            }
+        }
+
+        /* Tag/Label Animations */
+        .tag, .label {
+            animation: tagBounce 0.5s ease-out;
+        }
+
+        @keyframes tagBounce {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Enhanced Ripple Effect */
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ripple-effect:active::after {
+            width: 300px;
+            height: 300px;
+            opacity: 0;
+        }
 
         /* Payment Proof Upload Styles */
         .payment-proof-upload {
@@ -4345,88 +4883,8 @@
     </style>
 </head>
 <body>
-    <!-- ==================== WAITLIST PAGE ==================== -->
-    <div class="login-page" id="waitlistPage" style="display: flex;">
-        <div class="login-left">
-            <div class="brand">
-                <h1>PLUXO</h1>
-            </div>
-            
-            <h2 class="login-title">Join the Waitlist</h2>
-            <p class="login-subtitle">We're launching soon! Reserve your spot and create your account.</p>
-
-            <!-- 24 Hour Countdown Timer -->
-            <div id="countdownContainer" style="margin: 30px 0; padding: 24px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">
-                <div style="text-align: center; margin-bottom: 16px;">
-                    <div style="font-size: 14px; color: var(--gray); margin-bottom: 8px;">⏰ Launch Countdown</div>
-                    <div id="countdownTimer" style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-                        <div class="countdown-item">
-                            <div class="countdown-number" id="countdownHours">24</div>
-                            <div class="countdown-label">Hours</div>
-                        </div>
-                        <div class="countdown-item">
-                            <div class="countdown-number" id="countdownMinutes">00</div>
-                            <div class="countdown-label">Minutes</div>
-                        </div>
-                        <div class="countdown-item">
-                            <div class="countdown-number" id="countdownSeconds">00</div>
-                            <div class="countdown-label">Seconds</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Waitlist Registration Form -->
-            <form id="waitlistForm">
-                <div class="form-group">
-                    <label>Choose Your Username</label>
-                    <input type="text" class="input-field" id="waitlistUsername" placeholder="Enter desired username" maxlength="20" required pattern="[a-zA-Z0-9_]{3,20}">
-                    <small style="color: var(--gray); font-size: 12px; margin-top: 4px; display: block;">3-20 characters, letters, numbers, and underscores only</small>
-                </div>
-
-                <div class="form-group">
-                    <label>Create Password</label>
-                    <div class="input-wrapper">
-                        <input type="password" class="input-field" id="waitlistPassword" placeholder="Enter password (min 6 characters)" minlength="6" required>
-                        <button type="button" class="toggle-pass" onclick="toggleWaitlistPassword()">Show</button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Confirm Password</label>
-                    <input type="password" class="input-field" id="waitlistPasswordConfirm" placeholder="Confirm password" minlength="6" required>
-                </div>
-
-                <div class="captcha-row">
-                    <span class="captcha-q" id="waitlistCaptchaQ">7 + 5 = ?</span>
-                    <input type="text" class="captcha-input" id="waitlistCaptchaAnswer" placeholder="Answer">
-                </div>
-
-                <div class="btn-row">
-                    <button type="submit" class="btn btn-primary" id="waitlistSubmitBtn">Join Waitlist</button>
-                </div>
-                
-                <div id="waitlistStatus" style="margin-top: 16px; padding: 12px; border-radius: 8px; display: none;"></div>
-            </form>
-
-            <!-- Admin Login Link -->
-            <div id="adminLoginLink" style="margin-top: 24px; text-align: center; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                <a href="#" onclick="event.preventDefault(); showAdminLogin();" style="color: var(--gray); font-size: 13px; text-decoration: none;">Admin Login</a>
-            </div>
-        </div>
-
-        <div class="login-right">
-            <div class="graphic">
-                <div class="graphic-ring"></div>
-                <div class="graphic-ring"></div>
-                <div class="graphic-ring"></div>
-                <div class="graphic-center">P</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== LOGIN PAGE (Hidden, shown for admin) ==================== -->
-    <div class="login-page" id="loginPage" style="display: none;">
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <div class="login-page" id="loginPage" style="display: flex;">
         <div class="login-left">
             <div class="brand">
                 <h1>PLUXO</h1>
@@ -4465,7 +4923,6 @@
 
                 <div class="btn-row">
                     <button type="submit" class="btn btn-primary">Sign In</button>
-                    <button type="button" class="btn btn-secondary" onclick="showWaitlist()">Back to Waitlist</button>
                 </div>
             </form>
         </div>
@@ -4931,11 +5388,21 @@
                     </div>
 
                     <div class="admin-section">
-                        <div class="section-title">Load Balance for User</div>
+                        <div class="section-title">Load Balance for User (by Username)</div>
                         <div class="admin-form" style="flex-direction: column; gap: 12px;">
                             <input type="text" class="input-field" id="loadBalanceUsername" placeholder="Enter username">
                             <input type="number" class="input-field" id="loadBalanceAmount" placeholder="Enter amount to load" step="0.01" min="0">
                             <button class="btn btn-admin" onclick="loadUserBalance()" style="background: #22c55e; width: 100%;">Load Balance</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">Load Balance by UID (Alternative Method)</div>
+                        <div class="admin-form" style="flex-direction: column; gap: 12px;">
+                            <input type="text" class="input-field" id="loadBalanceUID" placeholder="Enter Firebase UID (e.g., OwspBlmNctZqbjgJ1AKdg2hUx3a2)">
+                            <input type="number" class="input-field" id="loadBalanceAmountUID" placeholder="Enter amount to load" step="0.01" min="0">
+                            <button class="btn btn-admin" onclick="loadUserBalanceByUID()" style="background: #3b82f6; width: 100%;">Load Balance by UID</button>
+                            <small style="color: var(--gray); font-size: 12px; margin-top: -8px;">Use this if username method doesn't work</small>
                         </div>
                     </div>
                     
@@ -5549,316 +6016,13 @@
             };
         }
 
-        // Waitlist countdown timer (24 hours from now)
-        let waitlistEndTime = null;
-        
-        // Initialize waitlist end time (24 hours from first visit or stored time)
-        function initWaitlistTimer() {
-            // Check if elements exist
-            const hoursEl = document.getElementById('countdownHours');
-            if (!hoursEl) {
-                // Elements not loaded yet, try again in a moment
-                setTimeout(initWaitlistTimer, 100);
-                return;
-            }
-            
-            const storedEndTime = localStorage.getItem('pluxoWaitlistEndTime');
-            if (storedEndTime) {
-                waitlistEndTime = new Date(storedEndTime).getTime();
-            } else {
-                // Set 24 hours from now
-                waitlistEndTime = Date.now() + (24 * 60 * 60 * 1000);
-                localStorage.setItem('pluxoWaitlistEndTime', new Date(waitlistEndTime).toISOString());
-            }
-            
-            // Update immediately
-            updateCountdown();
-            
-            // Set up interval if not already set
-            if (!window.waitlistTimerInterval) {
-                window.waitlistTimerInterval = setInterval(updateCountdown, 1000);
-            }
-        }
-        
-        function updateCountdown() {
-            if (!waitlistEndTime) {
-                // Initialize if not set
-                initWaitlistTimer();
-                return;
-            }
-            
-            const hoursEl = document.getElementById('countdownHours');
-            const minutesEl = document.getElementById('countdownMinutes');
-            const secondsEl = document.getElementById('countdownSeconds');
-            
-            // Check if elements exist
-            if (!hoursEl || !minutesEl || !secondsEl) {
-                return; // Elements not loaded yet
-            }
-            
-            const now = Date.now();
-            const distance = waitlistEndTime - now;
-            
-            if (distance < 0) {
-                // Timer expired - allow access
-                hoursEl.textContent = '00';
-                minutesEl.textContent = '00';
-                secondsEl.textContent = '00';
-                return;
-            }
-            
-            // Calculate time remaining
-            const totalHours = Math.floor(distance / (1000 * 60 * 60));
-            const hours = totalHours;
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            // Update display
-            hoursEl.textContent = String(hours).padStart(2, '0');
-            minutesEl.textContent = String(minutes).padStart(2, '0');
-            secondsEl.textContent = String(seconds).padStart(2, '0');
-            
-            // Add animation on change
-            if (seconds === 59) {
-                minutesEl.style.animation = 'none';
-                setTimeout(() => {
-                    minutesEl.style.animation = 'countdownFlip 1s ease-in-out';
-                }, 10);
-            }
-            if (minutes === 59 && seconds === 59) {
-                hoursEl.style.animation = 'none';
-                setTimeout(() => {
-                    hoursEl.style.animation = 'countdownFlip 1s ease-in-out';
-                }, 10);
-            }
-        }
-        
-        // Waitlist functions
-        function showWaitlist() {
-            document.getElementById('waitlistPage').style.display = 'flex';
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('dashboardPage').style.display = 'none';
-        }
-        
-        function showAdminLogin() {
-            document.getElementById('waitlistPage').style.display = 'none';
-            document.getElementById('loginPage').style.display = 'flex';
-            document.getElementById('dashboardPage').style.display = 'none';
-        }
-        
-        function toggleWaitlistPassword() {
-            const p = document.getElementById('waitlistPassword');
-            const btn = document.querySelector('#waitlistForm .toggle-pass');
-            if (p.type === 'password') {
-                p.type = 'text';
-                btn.textContent = 'Hide';
-            } else {
-                p.type = 'password';
-                btn.textContent = 'Show';
-            }
-        }
-        
-        // Generate captcha for waitlist
-        function genWaitlistCaptcha() {
-            const a = Math.floor(Math.random() * 10) + 1;
-            const b = Math.floor(Math.random() * 10) + 1;
-            window.waitlistCaptchaAnswer = a + b;
-            document.getElementById('waitlistCaptchaQ').textContent = `${a} + ${b} = ?`;
-        }
-        
-        // Submit waitlist form
-        async function submitWaitlist(event) {
-            event.preventDefault();
-            
-            const usernameInput = document.getElementById('waitlistUsername');
-            const passwordInput = document.getElementById('waitlistPassword');
-            const passwordConfirmInput = document.getElementById('waitlistPasswordConfirm');
-            const captchaInput = document.getElementById('waitlistCaptchaAnswer');
-            const statusDiv = document.getElementById('waitlistStatus');
-            const submitBtn = document.getElementById('waitlistSubmitBtn');
-            
-            const username = usernameInput.value.trim().toLowerCase();
-            const password = passwordInput.value;
-            const passwordConfirm = passwordConfirmInput.value;
-            const captchaAns = parseInt(captchaInput.value.trim());
-            
-            // Validation
-            if (!username || username.length < 3 || username.length > 20) {
-                statusDiv.style.display = 'block';
-                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
-                statusDiv.style.color = '#ef4444';
-                statusDiv.style.border = '1px solid #ef4444';
-                statusDiv.innerHTML = 'Username must be 3-20 characters';
-                return;
-            }
-            
-            if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-                statusDiv.style.display = 'block';
-                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
-                statusDiv.style.color = '#ef4444';
-                statusDiv.style.border = '1px solid #ef4444';
-                statusDiv.innerHTML = 'Username can only contain letters, numbers, and underscores';
-                return;
-            }
-            
-            if (!password || password.length < 6) {
-                statusDiv.style.display = 'block';
-                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
-                statusDiv.style.color = '#ef4444';
-                statusDiv.style.border = '1px solid #ef4444';
-                statusDiv.innerHTML = 'Password must be at least 6 characters';
-                return;
-            }
-            
-            if (password !== passwordConfirm) {
-                statusDiv.style.display = 'block';
-                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
-                statusDiv.style.color = '#ef4444';
-                statusDiv.style.border = '1px solid #ef4444';
-                statusDiv.innerHTML = 'Passwords do not match';
-                return;
-            }
-            
-            if (captchaAns !== window.waitlistCaptchaAnswer) {
-                statusDiv.style.display = 'block';
-                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
-                statusDiv.style.color = '#ef4444';
-                statusDiv.style.border = '1px solid #ef4444';
-                statusDiv.innerHTML = 'Wrong captcha answer';
-                genWaitlistCaptcha();
-                captchaInput.value = '';
-                return;
-            }
-            
-            // Add pop animation
-            submitBtn.classList.add('btn-pop');
-            submitBtn.classList.add('btn-ripple');
-            setTimeout(() => {
-                submitBtn.classList.remove('btn-pop');
-                submitBtn.classList.remove('btn-ripple');
-            }, 600);
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Joining...';
-            statusDiv.style.display = 'block';
-            statusDiv.style.background = 'rgba(16, 185, 129, 0.1)';
-            statusDiv.style.color = '#10b981';
-            statusDiv.style.border = '1px solid #10b981';
-            statusDiv.innerHTML = 'Creating your account...';
-            
-            try {
-                // First check localStorage for existing username
-                const waitlist = JSON.parse(localStorage.getItem('pluxoWaitlist') || '[]');
-                if (waitlist.some(u => u.username === username)) {
-                    throw new Error('Username already taken');
-                }
-                
-                // Try to save to Firestore, but don't fail if permissions are missing
-                let savedToFirestore = false;
-                if (window.db && window.firestoreFunctions) {
-                    try {
-                        const { collection, doc, setDoc, getDoc } = window.firestoreFunctions;
-                        const waitlistRef = collection(window.db, 'waitlist');
-                        const userDocRef = doc(waitlistRef, username);
-                        
-                        // Check if username already exists in Firestore
-                        try {
-                            const existingDoc = await getDoc(userDocRef);
-                            if (existingDoc.exists()) {
-                                throw new Error('Username already taken');
-                            }
-                        } catch (checkError) {
-                            // If we can't check, continue anyway
-                            console.log('Could not check Firestore for existing username:', checkError);
-                        }
-                        
-                        // Create account in Firebase Auth (if auth is available)
-                        const waitlistEmail = `${username}@pluxo.waitlist`;
-                        if (window.auth && window.createUserWithEmailAndPassword) {
-                            try {
-                                await window.createUserWithEmailAndPassword(window.auth, waitlistEmail, password);
-                            } catch (authError) {
-                                // If auth creation fails, still save to waitlist
-                                console.log('Auth creation failed, saving to waitlist only:', authError);
-                            }
-                        }
-                        
-                        // Save to waitlist collection
-                        try {
-                            await setDoc(userDocRef, {
-                                username: username,
-                                email: waitlistEmail,
-                                createdAt: new Date().toISOString(),
-                                status: 'pending',
-                                waitlistEndTime: new Date(waitlistEndTime).toISOString()
-                            });
-                            savedToFirestore = true;
-                        } catch (firestoreError) {
-                            // If Firestore save fails (permissions), use localStorage
-                            console.log('Firestore save failed, using localStorage:', firestoreError);
-                            savedToFirestore = false;
-                        }
-                    } catch (firestoreError) {
-                        // If any Firestore operation fails, use localStorage
-                        console.log('Firestore operation failed, using localStorage:', firestoreError);
-                        savedToFirestore = false;
-                    }
-                }
-                
-                // Always save to localStorage as backup/primary
-                if (!savedToFirestore) {
-                    waitlist.push({
-                        username: username,
-                        password: password, // Store encrypted or hash in production
-                        createdAt: new Date().toISOString(),
-                        status: 'pending',
-                        waitlistEndTime: new Date(waitlistEndTime).toISOString()
-                    });
-                    localStorage.setItem('pluxoWaitlist', JSON.stringify(waitlist));
-                }
-                
-                statusDiv.style.background = 'rgba(16, 185, 129, 0.1)';
-                statusDiv.style.color = '#10b981';
-                statusDiv.style.border = '1px solid #10b981';
-                statusDiv.innerHTML = '✅ Successfully joined waitlist! You will be registered when we launch.';
-                
-                // Clear form
-                usernameInput.value = '';
-                passwordInput.value = '';
-                passwordConfirmInput.value = '';
-                captchaInput.value = '';
-                genWaitlistCaptcha();
-                
-            } catch (error) {
-                console.error('Waitlist error:', error);
-                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
-                statusDiv.style.color = '#ef4444';
-                statusDiv.style.border = '1px solid #ef4444';
-                statusDiv.innerHTML = `Error: ${error.message || 'Failed to join waitlist'}`;
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Join Waitlist';
-            }
-        }
-        
-        // Page control
+        // Page navigation functions
         function showLogin() {
-            document.getElementById('waitlistPage').style.display = 'none';
             document.getElementById('loginPage').style.display = 'flex';
             document.getElementById('dashboardPage').style.display = 'none';
         }
 
         function showDashboard() {
-            // Check if user is admin - only admins can access during waitlist period
-            if (!isAdmin(userData?.username)) {
-                showWaitlist();
-                if (typeof showAnimatedPopup === 'function') {
-                    showAnimatedPopup('Access Restricted', 'The site is currently in waitlist mode. Only admins can access. Please wait for the launch.', 'info');
-                }
-                return;
-            }
-            
-            document.getElementById('waitlistPage').style.display = 'none';
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('dashboardPage').style.display = 'block';
             updateUI();
@@ -5867,61 +6031,38 @@
         
         // Make showDashboard globally accessible for Firebase module
         window.showDashboard = showDashboard;
-        window.showWaitlist = showWaitlist;
-        window.showAdminLogin = showAdminLogin;
-        window.toggleWaitlistPassword = toggleWaitlistPassword;
+        window.showLogin = showLogin;
 
-        // Initialize waitlist on page load
-        if (!userData || !isAdmin(userData?.username)) {
-            showWaitlist();
-            
-            // Initialize timer after DOM is ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    initWaitlistTimer();
-                    genWaitlistCaptcha();
-                });
-            } else {
-                // DOM already loaded
-                setTimeout(() => {
-                    initWaitlistTimer();
-                    genWaitlistCaptcha();
-                }, 100);
-            }
-            
-            // Attach waitlist form handler
-            const waitlistForm = document.getElementById('waitlistForm');
-            if (waitlistForm) {
-                waitlistForm.addEventListener('submit', submitWaitlist);
-            } else {
-                // Try again if form not loaded yet
-                setTimeout(() => {
-                    const waitlistFormRetry = document.getElementById('waitlistForm');
-                    if (waitlistFormRetry) {
-                        waitlistFormRetry.addEventListener('submit', submitWaitlist);
-                    }
-                }, 500);
-            }
-        } else if (userData) {
+        // Initialize page on load
+        if (userData) {
             // Update UI immediately with localStorage data for instant display
             updateUI();
             
-            // Load orders and balance from Firestore if Firebase UID exists
-            if (userData.firebaseUID) {
-                // Load balance first (most important), then orders
-                loadUserBalanceFromFirestore().then(() => {
+            // Always try to load balance from Firestore (works even without firebaseUID by using username)
+            // Load balance first (most important), then orders
+            loadUserBalanceFromFirestore().then(() => {
+                // Load orders if Firebase UID exists
+                if (userData.firebaseUID) {
                     loadOrdersFromFirestore().then(() => {
                         showDashboard();
-                    });
-                }).catch(() => {
-                    // If balance load fails, still show dashboard
-                    loadOrdersFromFirestore().then(() => {
+                    }).catch(() => {
                         showDashboard();
                     });
-                });
-            } else {
-                showDashboard();
-            }
+                } else {
+                    showDashboard();
+                }
+            }).catch(() => {
+                // If balance load fails, still show dashboard
+                if (userData.firebaseUID) {
+                    loadOrdersFromFirestore().then(() => {
+                        showDashboard();
+                    }).catch(() => {
+                        showDashboard();
+                    });
+                } else {
+                    showDashboard();
+                }
+            });
         } else {
             showLogin();
         }
@@ -6550,7 +6691,13 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
                             updateUI();
                             
                             // Sync to Firestore in background (already updated above, but ensure sync)
-                            await saveUserBalanceToFirestore();
+                            // Wrap in try-catch to prevent permission errors from breaking the flow
+                            try {
+                                await saveUserBalanceToFirestore();
+                            } catch (saveError) {
+                                console.log('Could not sync balance to Firestore (non-critical):', saveError);
+                                // This is non-critical since we already updated the users collection above
+                            }
                         }
                     } else {
                         // Create new user with balance
@@ -6568,7 +6715,160 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
                     amountInput.value = '';
                 } catch (error) {
                     console.error('Error loading balance:', error);
-                    showAnimatedPopup('Error', 'Error loading balance: ' + error.message, 'error');
+                    // Provide more helpful error messages
+                    let errorMessage = 'Error loading balance: ' + error.message;
+                    
+                    // Check for specific Firestore permission errors
+                    const isPermissionError = error.code === 'permission-denied' || 
+                                            error.code === 'PERMISSION_DENIED' ||
+                                            (error.message && (
+                                                error.message.toLowerCase().includes('permission') ||
+                                                error.message.toLowerCase().includes('permission-denied') ||
+                                                error.message.toLowerCase().includes('insufficient permissions')
+                                            ));
+                    
+                    if (isPermissionError) {
+                        // Only show permission error if it's actually a permission issue
+                        // The users collection update should work for admins, so this might be a Firestore rules issue
+                        errorMessage = 'Permission denied: Unable to update user balance. This may be due to Firestore security rules. The operation may have partially succeeded.';
+                    } else {
+                        // For other errors, show the actual error message
+                        errorMessage = 'Error loading balance: ' + (error.message || 'Unknown error occurred');
+                    }
+                    
+                    showAnimatedPopup('Error', errorMessage, 'error');
+                }
+            } else {
+                showAnimatedPopup('Error', 'Database not available', 'error');
+            }
+        }
+
+        // Admin balance loading function by UID
+        async function loadUserBalanceByUID() {
+            if (!isAdmin(userData?.username)) {
+                showAnimatedPopup('Error', 'Only admins can load balances', 'error');
+                return;
+            }
+            
+            const uidInput = document.getElementById('loadBalanceUID');
+            const amountInput = document.getElementById('loadBalanceAmountUID');
+            
+            const uid = uidInput.value.trim();
+            const amount = parseFloat(amountInput.value);
+            
+            if (!uid) {
+                showAnimatedPopup('Error', 'Enter a Firebase UID', 'error');
+                shakeElement(uidInput);
+                return;
+            }
+            
+            if (!amount || amount <= 0) {
+                showAnimatedPopup('Error', 'Enter a valid amount', 'error');
+                shakeElement(amountInput);
+                return;
+            }
+            
+            // Load and update user balance by UID
+            if (window.db && window.firestoreFunctions) {
+                try {
+                    const { doc, getDoc, setDoc, updateDoc } = window.firestoreFunctions;
+                    
+                    // First, try to get user from userBalances collection
+                    const userBalanceRef = doc(window.db, 'userBalances', uid);
+                    const userBalanceDoc = await getDoc(userBalanceRef);
+                    
+                    let username = null;
+                    let currentBalance = 0;
+                    let currentTotalRecharge = 0;
+                    
+                    if (userBalanceDoc.exists()) {
+                        const balanceData = userBalanceDoc.data();
+                        username = balanceData.username || null;
+                        currentBalance = parseFloat(balanceData.balance || 0);
+                        currentTotalRecharge = parseFloat(balanceData.totalRecharge || 0);
+                    }
+                    
+                    const newBalance = currentBalance + amount;
+                    const newTotalRecharge = currentTotalRecharge + amount;
+                    
+                    // Update userBalances collection (by UID)
+                    if (userBalanceDoc.exists()) {
+                        await updateDoc(userBalanceRef, {
+                            balance: newBalance,
+                            totalRecharge: newTotalRecharge,
+                            updatedAt: new Date().toISOString()
+                        });
+                    } else {
+                        await setDoc(userBalanceRef, {
+                            balance: newBalance,
+                            totalRecharge: newTotalRecharge,
+                            username: username || 'unknown',
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        });
+                    }
+                    
+                    // Also try to update users collection if we have a username
+                    if (username) {
+                        try {
+                            const usersRef = doc(window.db, 'users', username.toLowerCase());
+                            const userDoc = await getDoc(usersRef);
+                            
+                            if (userDoc.exists()) {
+                                await updateDoc(usersRef, {
+                                    balance: newBalance,
+                                    totalRecharge: newTotalRecharge
+                                });
+                            } else {
+                                await setDoc(usersRef, {
+                                    username: username.toLowerCase(),
+                                    balance: newBalance,
+                                    totalRecharge: newTotalRecharge,
+                                    cart: [],
+                                    firebaseUID: uid
+                                });
+                            }
+                        } catch (usersError) {
+                            console.log('Could not update users collection (non-critical):', usersError);
+                            // This is okay, userBalances is updated
+                        }
+                    }
+                    
+                    const displayName = username || `UID: ${uid.substring(0, 8)}...`;
+                    showAnimatedPopup('Success', `Loaded $${amount.toFixed(2)} to ${displayName}. New balance: $${newBalance.toFixed(2)}`, 'success');
+                    
+                    // If this is the current user, update local data immediately
+                    if (userData && userData.firebaseUID === uid) {
+                        userData.balance = newBalance;
+                        userData.totalRecharge = newTotalRecharge;
+                        localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                        
+                        // Update UI instantly
+                        updateUI();
+                    }
+                    
+                    // Clear inputs
+                    uidInput.value = '';
+                    amountInput.value = '';
+                    
+                } catch (error) {
+                    console.error('Error loading balance by UID:', error);
+                    let errorMessage = 'Error loading balance: ' + error.message;
+                    
+                    // Check for specific Firestore permission errors
+                    const isPermissionError = error.code === 'permission-denied' || 
+                                            error.code === 'PERMISSION_DENIED' ||
+                                            (error.message && (
+                                                error.message.toLowerCase().includes('permission') ||
+                                                error.message.toLowerCase().includes('permission-denied') ||
+                                                error.message.toLowerCase().includes('insufficient permissions')
+                                            ));
+                    
+                    if (isPermissionError) {
+                        errorMessage = 'Permission denied: Unable to update user balance. This may be due to Firestore security rules.';
+                    }
+                    
+                    showAnimatedPopup('Error', errorMessage, 'error');
                 }
             } else {
                 showAnimatedPopup('Error', 'Database not available', 'error');
@@ -6755,7 +7055,21 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
         window.revokeSeller = revokeSeller;
         window.loadAnyUsername = loadAnyUsername;
         window.loadUserBalance = loadUserBalance;
+        window.loadUserBalanceByUID = loadUserBalanceByUID;
         window.loadAllUserBalances = loadAllUserBalances;
+        window.loadUserBalanceFromFirestore = loadUserBalanceFromFirestore;
+        
+        // Manual refresh balance function (for debugging/fixing balance issues)
+        window.refreshBalance = async function() {
+            if (!userData || !userData.username) {
+                showAnimatedPopup('Error', 'No user logged in', 'error');
+                return;
+            }
+            
+            showAnimatedPopup('Info', 'Refreshing balance from Firestore...', 'info');
+            await loadUserBalanceFromFirestore();
+            showAnimatedPopup('Success', `Balance refreshed! Current balance: $${(userData.balance || 0).toFixed(2)}`, 'success');
+        };
         
         // Seller product listing system
         let sellerProducts = JSON.parse(localStorage.getItem('pluxoSellerProducts')) || {};
@@ -8285,11 +8599,11 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 return;
             }
             
-            // Animate each card being dealt
+            // Animate each card being dealt (reduced delay for faster gameplay)
             container.innerHTML = '';
             hand.forEach((card, index) => {
                 const isHidden = isDealer && hideFirst && index === 0;
-                const cardHtml = renderCard(card, isHidden, index, index * 0.2);
+                const cardHtml = renderCard(card, isHidden, index, index * 0.1);
                 container.innerHTML += cardHtml;
             });
         }
@@ -8300,7 +8614,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             
             const cardElement = document.createElement('div');
             cardElement.className = 'blackjack-card';
-            cardElement.style.cssText = 'width: 80px; height: 112px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px solid rgba(59, 130, 246, 0.5); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateX(-200px) rotate(-90deg); transition: all 0.5s ease-out;';
+            cardElement.style.cssText = 'width: 80px; height: 112px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px solid rgba(59, 130, 246, 0.5); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateX(-200px) rotate(-90deg); transition: all 0.3s ease-out;';
             
             const color = (card.suit === '♥' || card.suit === '♦') ? '#ef4444' : '#ffffff';
             cardElement.innerHTML = `
@@ -8398,17 +8712,17 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             // Deal dealer cards with delay
             setTimeout(() => {
                 renderHand(blackjackGameState.dealerHand, 'dealerCards', true, true, true);
-            }, 400);
+            }, 200);
             
             document.getElementById('playerValue').textContent = `Value: ${blackjackGameState.playerValue}`;
             document.getElementById('dealerValue').textContent = 'Value: ?';
             
             // Animate value display
             const playerValueEl = document.getElementById('playerValue');
-            playerValueEl.style.animation = 'winCelebration 0.5s ease-out';
+            playerValueEl.style.animation = 'winCelebration 0.3s ease-out';
             setTimeout(() => {
                 playerValueEl.style.animation = '';
-            }, 500);
+            }, 300);
         }
 
         async function blackjackHit() {
@@ -8424,8 +8738,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             const card = blackjackGameState.deck.pop();
             addCardWithAnimation('playerCards', card, false);
             
-            // Wait for animation
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // Wait for animation (reduced for faster gameplay)
+            await new Promise(resolve => setTimeout(resolve, 300));
             
             blackjackGameState.playerHand.push(card);
             blackjackGameState.playerValue = calculateHandValue(blackjackGameState.playerHand);
@@ -8434,10 +8748,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             // Update display with animation
             const playerValueEl = document.getElementById('playerValue');
             playerValueEl.textContent = `Value: ${blackjackGameState.playerValue}`;
-            playerValueEl.style.animation = 'winCelebration 0.3s ease-out';
+            playerValueEl.style.animation = 'winCelebration 0.2s ease-out';
             setTimeout(() => {
                 playerValueEl.style.animation = '';
-            }, 300);
+            }, 200);
             
             document.getElementById('doubleDownBtn').style.display = 'none';
 
@@ -8449,12 +8763,12 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             if (blackjackGameState.playerValue > 21) {
                 // Shake animation for bust
                 const playerCardsEl = document.getElementById('playerCards');
-                playerCardsEl.style.animation = 'cardShake 0.5s ease-in-out';
+                playerCardsEl.style.animation = 'cardShake 0.3s ease-in-out';
                 setTimeout(() => {
                     playerCardsEl.style.animation = '';
-                }, 500);
+                }, 300);
                 
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await new Promise(resolve => setTimeout(resolve, 300));
                 endBlackjackGame('bust');
             }
         }
@@ -8462,40 +8776,49 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         async function blackjackStand() {
             if (!blackjackGameState.active || blackjackGameState.gameOver) return;
 
+            // Immediately disable all buttons to prevent multiple clicks
+            const hitBtn = document.querySelector('#blackjackActions button[onclick="blackjackHit()"]');
+            const standBtn = document.querySelector('#blackjackActions button[onclick="blackjackStand()"]');
+            const doubleDownBtn = document.getElementById('doubleDownBtn');
+            if (hitBtn) hitBtn.disabled = true;
+            if (standBtn) standBtn.disabled = true;
+            if (doubleDownBtn) doubleDownBtn.disabled = true;
+
             blackjackGameState.gameOver = true;
+            blackjackGameState.active = false;
             document.getElementById('blackjackActions').style.display = 'none';
 
             // Flip dealer's hidden card
             const dealerCardsEl = document.getElementById('dealerCards');
             if (dealerCardsEl && dealerCardsEl.children[0]) {
                 dealerCardsEl.children[0].classList.add('flip');
-                await new Promise(resolve => setTimeout(resolve, 300));
+                await new Promise(resolve => setTimeout(resolve, 150));
                 renderHand(blackjackGameState.dealerHand, 'dealerCards', false, false, false);
-                dealerCardsEl.style.animation = 'winCelebration 0.5s ease-out';
+                dealerCardsEl.style.animation = 'winCelebration 0.2s ease-out';
                 setTimeout(() => {
                     dealerCardsEl.style.animation = '';
-                }, 500);
+                }, 200);
             }
 
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 200));
 
-            // Dealer plays
+            // Dealer plays (faster for better UX)
             while (calculateHandValue(blackjackGameState.dealerHand) < 17) {
                 const card = blackjackGameState.deck.pop();
                 addCardWithAnimation('dealerCards', card, true);
-                await new Promise(resolve => setTimeout(resolve, 600)); // Delay for animation
+                await new Promise(resolve => setTimeout(resolve, 250)); // Faster dealer play
                 blackjackGameState.dealerHand.push(card);
             }
 
             blackjackGameState.dealerValue = calculateHandValue(blackjackGameState.dealerHand);
             const dealerValueEl = document.getElementById('dealerValue');
             dealerValueEl.textContent = `Value: ${blackjackGameState.dealerValue}`;
-            dealerValueEl.style.animation = 'winCelebration 0.5s ease-out';
+            dealerValueEl.style.animation = 'winCelebration 0.2s ease-out';
             setTimeout(() => {
                 dealerValueEl.style.animation = '';
-            }, 500);
+            }, 200);
 
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 200));
 
             // Determine winner
             if (blackjackGameState.dealerValue > 21) {
@@ -8734,9 +9057,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 }
                 
                 // Also check userBalances collection (by UID) if UID exists - use whichever is higher
-                if (userData.firebaseUID) {
+                if (userData.firebaseUID && window.db && window.firestoreFunctions) {
                     try {
-                        const userBalanceRef = doc(db, 'userBalances', userData.firebaseUID);
+                        const { doc, getDoc } = window.firestoreFunctions;
+                        const userBalanceRef = doc(window.db, 'userBalances', userData.firebaseUID);
                         const userBalanceDoc = await getDoc(userBalanceRef);
                         
                         if (userBalanceDoc.exists()) {
@@ -8809,8 +9133,14 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 return;
             }
             
+            if (!window.db || !window.firestoreFunctions) {
+                console.warn('Cannot save balance: Firestore not initialized');
+                return;
+            }
+            
             try {
-                const userBalanceRef = doc(db, 'userBalances', userData.firebaseUID);
+                const { doc, getDoc, setDoc, updateDoc } = window.firestoreFunctions;
+                const userBalanceRef = doc(window.db, 'userBalances', userData.firebaseUID);
                 const userBalanceDoc = await getDoc(userBalanceRef);
                 
                 // Ensure balance values are numbers, not strings
@@ -9995,9 +10325,15 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             }
             
             // Save to Firestore
+            if (!window.db || !window.firestoreFunctions) {
+                console.warn('Cannot save order: Firestore not initialized');
+                return;
+            }
+            
             try {
+                const { doc, getDoc, setDoc, updateDoc, arrayUnion } = window.firestoreFunctions;
                 const orderDetails = generateOrderDetails(product);
-                const userDocRef = doc(db, 'userOrders', userData.firebaseUID);
+                const userDocRef = doc(window.db, 'userOrders', userData.firebaseUID);
                 
                 // Get existing orders or create new document
                 const userDoc = await getDoc(userDocRef);
@@ -10041,8 +10377,14 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         async function loadOrdersFromFirestore() {
             if (!userData || !userData.firebaseUID) return;
             
+            if (!window.db || !window.firestoreFunctions) {
+                console.warn('Cannot load orders: Firestore not initialized');
+                return;
+            }
+            
             try {
-                const userDocRef = doc(db, 'userOrders', userData.firebaseUID);
+                const { doc, getDoc } = window.firestoreFunctions;
+                const userDocRef = doc(window.db, 'userOrders', userData.firebaseUID);
                 const userDoc = await getDoc(userDocRef);
                 
                 if (userDoc.exists()) {
@@ -10155,9 +10497,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 userOrders[username] = (userOrders[username] || []).filter(o => !selected.includes(o.id));
                 
                 // Remove from Firestore if Firebase UID is available
-                if (userData.firebaseUID) {
+                if (userData.firebaseUID && window.db && window.firestoreFunctions) {
                     try {
-                        const userDocRef = doc(db, 'userOrders', userData.firebaseUID);
+                        const { doc, getDoc, updateDoc, arrayRemove } = window.firestoreFunctions;
+                        const userDocRef = doc(window.db, 'userOrders', userData.firebaseUID);
                         // Remove orders from Firestore array
                         for (const order of ordersToRemove) {
                             await updateDoc(userDocRef, {
@@ -10448,8 +10791,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, arrayUnion, updateDoc, arrayRemove, query, where, getDocs, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
 
         // Make Firestore functions globally accessible
@@ -10464,7 +10807,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             query,
             where,
             getDocs,
-            orderBy
+            orderBy,
+            onSnapshot
         };
 
         const firebaseConfig = {
@@ -10492,6 +10836,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         window.db = db;
         window.auth = auth;
         window.firebaseStorage = storage;
+        window.onSnapshot = onSnapshot;
 
         console.log("🔥 Firebase fully ready");
 
@@ -11018,19 +11363,22 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             }
             
             // Also check userBalances collection (by UID)
-            try {
-                const userRef = doc(db, "userBalances", user.uid);
-                const snap = await getDoc(userRef);
-                
-                if (snap.exists()) {
-                    const balanceData = snap.data();
-                    balanceFromUserBalances = {
-                        balance: parseFloat(balanceData.balance || 0),
-                        totalRecharge: parseFloat(balanceData.totalRecharge || 0)
-                    };
+            if (window.db && window.firestoreFunctions) {
+                try {
+                    const { doc, getDoc, setDoc } = window.firestoreFunctions;
+                    const userRef = doc(window.db, "userBalances", user.uid);
+                    const snap = await getDoc(userRef);
+                    
+                    if (snap.exists()) {
+                        const balanceData = snap.data();
+                        balanceFromUserBalances = {
+                            balance: parseFloat(balanceData.balance || 0),
+                            totalRecharge: parseFloat(balanceData.totalRecharge || 0)
+                        };
+                    }
+                } catch (err) {
+                    console.log('Could not check userBalances collection:', err);
                 }
-            } catch (err) {
-                console.log('Could not check userBalances collection:', err);
             }
             
             // Use the higher balance (in case they're out of sync)
@@ -11054,17 +11402,20 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             }
             
             // Update userBalances collection to ensure it exists and is synced
-            try {
-                const userRef = doc(db, "userBalances", user.uid);
-                await setDoc(userRef, {
-                    username: window.userData ? window.userData.username.toLowerCase() : (user.email ? user.email.split('@')[0] : 'user'),
-                    balance: finalBalance,
-                    totalRecharge: finalTotalRecharge,
-                    updatedAt: new Date().toISOString(),
-                    createdAt: new Date().toISOString()
-                }, { merge: true });
-            } catch (err) {
-                console.log('Could not update userBalances:', err);
+            if (window.db && window.firestoreFunctions) {
+                try {
+                    const { doc, setDoc } = window.firestoreFunctions;
+                    const userRef = doc(window.db, "userBalances", user.uid);
+                    await setDoc(userRef, {
+                        username: window.userData ? window.userData.username.toLowerCase() : (user.email ? user.email.split('@')[0] : 'user'),
+                        balance: finalBalance,
+                        totalRecharge: finalTotalRecharge,
+                        updatedAt: new Date().toISOString(),
+                        createdAt: new Date().toISOString()
+                    }, { merge: true });
+                } catch (err) {
+                    console.log('Could not update userBalances:', err);
+                }
             }
             
             // Update local userData
@@ -11078,6 +11429,110 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 
                 // Update UI immediately
                 if (typeof updateUI === 'function') updateUI();
+            }
+            
+            // Set up real-time listener for balance updates (so user sees changes when admin updates balance)
+            if (window.userData && window.userData.username && window.db) {
+                const normalized = window.userData.username.toLowerCase().trim();
+                
+                // Listen to users collection (by username) - this is where admin loads balance
+                if (window.firestoreFunctions) {
+                    try {
+                        const { doc, onSnapshot } = window.firestoreFunctions;
+                        const usersRef = doc(window.db, 'users', normalized);
+                        const unsubscribeUsers = onSnapshot(usersRef, (docSnapshot) => {
+                            if (docSnapshot.exists()) {
+                            const userDataFromFirebase = docSnapshot.data();
+                            const newBalance = parseFloat(userDataFromFirebase.balance || 0);
+                            const newTotalRecharge = parseFloat(userDataFromFirebase.totalRecharge || 0);
+                            
+                            // Only update if balance actually changed (to avoid unnecessary updates)
+                            if (window.userData && (
+                                Math.abs((window.userData.balance || 0) - newBalance) > 0.01 ||
+                                Math.abs((window.userData.totalRecharge || 0) - newTotalRecharge) > 0.01
+                            )) {
+                                const oldBalance = window.userData.balance || 0;
+                                window.userData.balance = newBalance;
+                                window.userData.totalRecharge = newTotalRecharge;
+                                
+                                // Update localStorage
+                                localStorage.setItem('pluxoUser', JSON.stringify(window.userData));
+                                
+                                // Update UI with animation
+                                if (typeof updateUI === 'function') {
+                                    updateUI();
+                                    
+                                    // Show notification if balance increased
+                                    if (newBalance > oldBalance && typeof showAnimatedPopup === 'function') {
+                                        const increase = (newBalance - oldBalance).toFixed(2);
+                                        showAnimatedPopup('Balance Updated', `Your balance has been updated! +$${increase}`, 'success');
+                                    }
+                                }
+                            }
+                            }
+                        }, (error) => {
+                            console.log('Error listening to users collection:', error);
+                        });
+                        
+                        // Store unsubscribe function to clean up later if needed
+                        window.balanceListenerUnsubscribe = unsubscribeUsers;
+                    } catch (err) {
+                        console.log('Could not set up balance listener:', err);
+                    }
+                    
+                    // Also listen to userBalances collection (by UID) as backup
+                    try {
+                        const { doc: docFn, onSnapshot: onSnapshotFn } = window.firestoreFunctions;
+                        const userBalanceRef = docFn(window.db, 'userBalances', user.uid);
+                        const unsubscribeUserBalances = onSnapshotFn(userBalanceRef, (docSnapshot) => {
+                            if (docSnapshot.exists()) {
+                            const balanceData = docSnapshot.data();
+                            const newBalance = parseFloat(balanceData.balance || 0);
+                            const newTotalRecharge = parseFloat(balanceData.totalRecharge || 0);
+                            
+                            // Only update if balance actually changed
+                            if (window.userData && (
+                                Math.abs((window.userData.balance || 0) - newBalance) > 0.01 ||
+                                Math.abs((window.userData.totalRecharge || 0) - newTotalRecharge) > 0.01
+                            )) {
+                                const oldBalance = window.userData.balance || 0;
+                                window.userData.balance = newBalance;
+                                window.userData.totalRecharge = newTotalRecharge;
+                                
+                                // Update localStorage
+                                localStorage.setItem('pluxoUser', JSON.stringify(window.userData));
+                                
+                                // Update UI
+                                if (typeof updateUI === 'function') {
+                                    updateUI();
+                                    
+                                    // Show notification if balance increased
+                                    if (newBalance > oldBalance && typeof showAnimatedPopup === 'function') {
+                                        const increase = (newBalance - oldBalance).toFixed(2);
+                                        showAnimatedPopup('Balance Updated', `Your balance has been updated! +$${increase}`, 'success');
+                                    }
+                                }
+                            }
+                            }
+                        }, (error) => {
+                            console.log('Error listening to userBalances collection:', error);
+                        });
+                        
+                        // Store unsubscribe function
+                        if (window.balanceListenerUnsubscribe) {
+                            // If we already have one, combine them
+                            const oldUnsubscribe = window.balanceListenerUnsubscribe;
+                            window.balanceListenerUnsubscribe = () => {
+                                oldUnsubscribe();
+                                unsubscribeUserBalances();
+                            };
+                        } else {
+                            window.balanceListenerUnsubscribe = unsubscribeUserBalances;
+                        }
+                    } catch (err) {
+                        console.log('Could not set up userBalances listener:', err);
+                    }
+                }
             }
         });
     </script>
