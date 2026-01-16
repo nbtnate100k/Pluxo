@@ -9030,8 +9030,25 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 let firestoreTotalRecharge = 0;
                 let foundBalance = false;
                 
-                // First, try to get balance from users collection (by username) - THIS IS WHERE ADMIN LOADS BALANCE
-                if (window.db && window.firestoreFunctions) {
+                // FIRST: Check shop_balances.json (synced from Telegram bot)
+                try {
+                    const response = await fetch('shop_balances.json');
+                    if (response.ok) {
+                        const balances = await response.json();
+                        if (balances && balances[normalized]) {
+                            const botBalance = balances[normalized];
+                            firestoreBalance = parseFloat(botBalance.balance || 0);
+                            firestoreTotalRecharge = parseFloat(botBalance.totalRecharge || 0);
+                            foundBalance = true;
+                            console.log(`Loaded balance from bot: $${firestoreBalance}`);
+                        }
+                    }
+                } catch (e) {
+                    console.log('No shop_balances.json found');
+                }
+                
+                // Then check Firestore if no bot balance found
+                if (!foundBalance && window.db && window.firestoreFunctions) {
                     try {
                         const { collection, doc, getDoc } = window.firestoreFunctions;
                         const usersRef = collection(window.db, 'users');
@@ -9731,56 +9748,48 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             return 'VISA';
         }
 
-        function generateProducts() {
-            // Only use specified BINs - no other cards
-            const specifiedBins = ['400022', '473703', '473702', '512230', '517805', '400344', '410039', '414720', '377935', '377936', '379363', '379364', '379656', '400046'];
-            
-            // Generate 12 cards for each BIN
-            allProducts = [];
-            const types = ['CREDIT', 'DEBIT'];
-            const banks = ['CHASE BANK USA', 'BANK OF NOVA SCOTIA', 'CAPITAL ONE BANK', 'WELLS FARGO BANK', 'REVOLUT, LTD.'];
-            const bases = ['US_Base', 'UK_Base', 'CA_Base', 'AU_Base'];
-            
-            specifiedBins.forEach((bin, binIndex) => {
-                // Get correct brand based on BIN prefix
-                const correctBrand = getBrandFromBin(bin);
-                
-                for (let i = 0; i < 12; i++) {
-                    const country = countries[Math.floor(Math.random() * countries.length)];
-                    const expMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
-                    const expYear = String(2027 + Math.floor(Math.random() * 4)); // 2027-2030
-                    const cvv = String(Math.floor(Math.random() * 900) + 100);
-                    
-                    // Mix of $12 and $15 products (about 30% are $15)
-                    const productPrice = Math.random() < 0.3 ? '15.00' : '12.00';
-                    
-                    allProducts.push({
-                        id: binIndex * 12 + i + 1,
-                        bin: bin,
-                        brand: correctBrand, // Use correct brand based on BIN
-                        type: types[Math.floor(Math.random() * types.length)],
-                        country: country,
-                        hasName: true,
-                        hasAddress: true,
-                        hasZip: true,
-                        hasPhone: true,
-                        hasMail: true,
-                        hasSSN: true,
-                        hasDOB: true,
-                        bank: banks[Math.floor(Math.random() * banks.length)],
-                        base: '2026_1_3_US_Base',
-                        refundable: true,
-                        price: productPrice,
-                        expMonth: expMonth,
-                        expYear: expYear,
-                        cvv: cvv
-                    });
+        async function generateProducts() {
+            // Load products from shop_products.json (synced from bot)
+            try {
+                const response = await fetch('shop_products.json');
+                if (response.ok) {
+                    const shopProducts = await response.json();
+                    if (shopProducts && shopProducts.length > 0) {
+                        allProducts = shopProducts.map((p, index) => ({
+                            id: p.id || (index + 1),
+                            bin: p.bin,
+                            brand: p.brand || getBrandFromBin(p.bin),
+                            type: p.type || 'CREDIT',
+                            country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
+                            hasName: p.hasName !== undefined ? p.hasName : true,
+                            hasAddress: p.hasAddress !== undefined ? p.hasAddress : true,
+                            hasZip: p.hasZip !== undefined ? p.hasZip : true,
+                            hasPhone: p.hasPhone !== undefined ? p.hasPhone : false,
+                            hasMail: p.hasMail !== undefined ? p.hasMail : false,
+                            hasSSN: p.hasSSN !== undefined ? p.hasSSN : false,
+                            hasDOB: p.hasDOB !== undefined ? p.hasDOB : false,
+                            bank: p.bank || 'BANK',
+                            base: p.base || '2026_US_Base',
+                            refundable: p.refundable !== undefined ? p.refundable : true,
+                            price: p.price || '10.00',
+                            key: p.key || '',
+                            seller_id: p.seller_id || '',
+                            full_info: p.full_info || ''
+                        }));
+                        originalProducts = [...allProducts];
+                        filteredProducts = [...allProducts];
+                        console.log('Loaded ' + allProducts.length + ' products from shop_products.json');
+                        return;
+                    }
                 }
-            });
+            } catch (e) {
+                console.log('No shop_products.json found, shop is empty');
+            }
             
-            // Store original products and set filtered products to all products initially
-            originalProducts = [...allProducts];
-            filteredProducts = [...allProducts];
+            // No products - shop is empty
+            allProducts = [];
+            originalProducts = [];
+            filteredProducts = [];
         }
 
         function renderProducts() {
@@ -9976,16 +9985,12 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         // Make globally accessible
         window.addToCartById = addToCartById;
 
-        // Initialize products on load - check for admin stock first
-        generateProducts();
-        
-        // Also load admin products when page loads (in case admin is logged in)
-        if (userData && isAdmin(userData.username)) {
-            loadAdminProductsToShop();
-        }
-        
-        // Load seller products when page loads
-        loadSellerProductsToShop();
+        // Initialize products on load - load from shop_products.json
+        (async function() {
+            await generateProducts();
+            renderProducts();
+            renderPagination();
+        })();
 
         // Product Functions
         function resetFilters() {
