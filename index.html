@@ -75,11 +75,21 @@
             z-index: 1;
         }
 
-        /* ==================== LOGIN PAGE ==================== */
+        /* ==================== LOGIN PAGE - NIGHT SKY ==================== */
         .login-page {
             min-height: 100vh;
             display: flex;
-            background: var(--black);
+            background: #000000;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 60px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 50px 50px, #fff, transparent),
+                radial-gradient(1px 1px at 20px 40px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(2px 2px at 90px 20px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.5), transparent),
+                radial-gradient(1px 1px at 160px 30px, rgba(255,255,255,0.6), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
             position: relative;
             overflow: hidden;
         }
@@ -87,13 +97,57 @@
         .login-page::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 80%;
-            height: 150%;
-            background: radial-gradient(ellipse, var(--blue-glow) 0%, transparent 60%);
-            opacity: 0.3;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(2px 2px at 40px 60px, #fff, transparent),
+                radial-gradient(1px 1px at 100px 120px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 150px 40px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 200px 100px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 250px 60px, rgba(255,255,255,0.5), transparent);
+            background-repeat: repeat;
+            background-size: 300px 150px;
+            animation: twinkle 8s ease-in-out infinite alternate;
             pointer-events: none;
+        }
+
+        /* Falling stars */
+        .login-stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .falling-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px 2px rgba(255,255,255,0.6);
+            animation: fallingStar linear infinite;
+        }
+
+        .falling-star::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.8), transparent);
+            transform: rotate(-45deg) translateX(-100%);
+            transform-origin: right;
+        }
+
+        @keyframes fallingStar {
+            0% { transform: translateY(-100px) translateX(0); opacity: 1; }
+            70% { opacity: 1; }
+            100% { transform: translateY(100vh) translateX(300px); opacity: 0; }
         }
 
 
@@ -2815,12 +2869,14 @@
             background: var(--black-lighter);
             border: 1px solid var(--gray-border);
             border-radius: 8px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideInRight 0.4s ease-out;
         }
 
         .dice-bet-item:hover {
             border-color: #8b5cf6;
-            transform: translateX(3px);
+            transform: translateX(5px) scale(1.02);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2);
         }
 
         .dice-bet-info {
@@ -2868,18 +2924,25 @@
 
         .btn-accept-bet {
             padding: 8px 16px;
-            background: #22c55e;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             color: white;
             border: none;
             border-radius: 6px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 10px rgba(34, 197, 94, 0.3);
         }
 
         .btn-accept-bet:hover {
-            background: #16a34a;
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+        }
+        
+        .btn-accept-bet:active {
+            transform: scale(0.95);
         }
 
         .btn-cancel-bet {
@@ -2891,11 +2954,13 @@
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .btn-cancel-bet:hover {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
         }
 
         /* Dice Animation Styles */
@@ -4885,24 +4950,34 @@
 <body>
     <!-- ==================== LOGIN PAGE ==================== -->
     <div class="login-page" id="loginPage" style="display: flex;">
+        <!-- Falling Stars -->
+        <div class="login-stars">
+            <div class="falling-star" style="left: 10%; animation-duration: 3s; animation-delay: 0s;"></div>
+            <div class="falling-star" style="left: 25%; animation-duration: 4s; animation-delay: 1s;"></div>
+            <div class="falling-star" style="left: 40%; animation-duration: 3.5s; animation-delay: 2s;"></div>
+            <div class="falling-star" style="left: 55%; animation-duration: 4.5s; animation-delay: 0.5s;"></div>
+            <div class="falling-star" style="left: 70%; animation-duration: 3s; animation-delay: 3s;"></div>
+            <div class="falling-star" style="left: 85%; animation-duration: 5s; animation-delay: 1.5s;"></div>
+        </div>
+        
         <div class="login-left">
-            <div class="brand">
-                <h1>PLUXO</h1>
+            <div class="brand" style="animation: fadeInDown 0.8s ease-out;">
+                <h1 style="font-size: 52px; letter-spacing: 4px;">PLUXO</h1>
             </div>
             
-            <h2 class="login-title">Welcome back</h2>
-            <p class="login-subtitle">Enter your credentials to access your account</p>
+            <h2 class="login-title" style="animation: fadeInUp 0.8s ease-out 0.2s both;">Welcome back</h2>
+            <p class="login-subtitle" style="animation: fadeInUp 0.8s ease-out 0.3s both;">Sign in to access your account</p>
 
-            <form id="loginForm">
+            <form id="loginForm" style="animation: fadeInUp 0.8s ease-out 0.4s both;">
                 <div class="form-group">
                     <label>Username</label>
-                    <input type="text" class="input-field" id="username" placeholder="Enter your username">
+                    <input type="text" class="input-field" id="username" placeholder="Enter your username" autocomplete="username">
                 </div>
 
                 <div class="form-group">
                     <label>Password</label>
                     <div class="input-wrapper">
-                        <input type="password" class="input-field" id="password" placeholder="Enter your password">
+                        <input type="password" class="input-field" id="password" placeholder="Enter your password" autocomplete="current-password">
                         <button type="button" class="toggle-pass" onclick="togglePassword()">Show</button>
                     </div>
                 </div>
@@ -4918,12 +4993,18 @@
 
                 <div class="captcha-row">
                     <span class="captcha-q" id="captchaQ">7 + 5 = ?</span>
-                    <input type="text" class="captcha-input" id="captchaAnswer" placeholder="Answer">
+                    <input type="text" class="captcha-input" id="captchaAnswer" placeholder="Answer" autocomplete="off">
                 </div>
 
                 <div class="btn-row">
-                    <button type="submit" class="btn btn-primary">Sign In</button>
+                    <button type="submit" class="btn btn-primary" style="font-size: 16px; padding: 16px 32px; background: linear-gradient(135deg, var(--blue) 0%, #8b5cf6 100%); border: none; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);">
+                        Sign In
+                    </button>
                 </div>
+                
+                <p style="text-align: center; margin-top: 24px; color: var(--gray); font-size: 14px;">
+                    Don't have an account? <a href="#" onclick="event.preventDefault(); openRegister();" style="color: var(--blue-light); font-weight: 600;">Create one</a>
+                </p>
             </form>
         </div>
 
@@ -5606,29 +5687,82 @@
             <!-- BLACKJACK GAME PAGE -->
             <div class="page-content" id="page-admin-blackjack" style="display:none;">
                 <div class="page-header">
-                    <h1>Blackjack</h1>
+                    <h1>🃏 Blackjack</h1>
                     <div class="line" style="background: #10b981;"></div>
                 </div>
                 
                 <div class="content-card" style="border-color: #10b981;">
-                    <h2 style="color: #10b981;">🃏 Blackjack vs Bot</h2>
-                    <p style="margin-bottom: 20px; color: var(--gray);">Play classic blackjack against the bot. Get as close to 21 as possible without going over!</p>
+                    <!-- Tab Navigation -->
+                    <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+                        <button class="btn btn-admin" id="bjTabBot" onclick="showBlackjackTab('bot')" style="background: #10b981; flex: 1;">🤖 vs Bot</button>
+                        <button class="btn btn-admin" id="bjTabMultiplayer" onclick="showBlackjackTab('multiplayer')" style="background: #3b82f6; flex: 1; opacity: 0.7;">👥 Multiplayer</button>
+                    </div>
                     
-                    <div class="admin-section">
-                        <div class="section-title">Place Your Bet</div>
-                        <div class="admin-form" style="flex-direction: column; gap: 16px;">
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $10)</label>
-                                <input type="number" class="input-field" id="blackjackBetAmount" placeholder="Enter amount (1-10)" min="1" max="10" step="0.01" value="5">
+                    <!-- VS BOT TAB -->
+                    <div id="blackjackBotTab">
+                        <h2 style="color: #10b981;">🎮 Play vs Bot</h2>
+                        <p style="margin-bottom: 20px; color: var(--gray);">Get as close to 21 as possible without going over!</p>
+                        
+                        <div class="admin-section">
+                            <div class="section-title">Place Your Bet</div>
+                            <div class="admin-form" style="flex-direction: column; gap: 16px;">
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $10)</label>
+                                    <input type="number" class="input-field" id="blackjackBetAmount" placeholder="Enter amount (1-10)" min="1" max="10" step="0.01" value="5">
+                                </div>
+                                <button class="btn btn-admin" id="startBlackjackBtn" onclick="startBlackjackGame()" style="background: #10b981; width: 100%;">
+                                    🎮 Start Game
+                                </button>
                             </div>
-                            <button class="btn btn-admin" id="startBlackjackBtn" onclick="startBlackjackGame()" style="background: #10b981; width: 100%;">
-                                🎮 Start Game
-                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- MULTIPLAYER TAB -->
+                    <div id="blackjackMultiplayerTab" style="display: none;">
+                        <h2 style="color: #3b82f6;">👥 Multiplayer Blackjack</h2>
+                        <p style="margin-bottom: 20px; color: var(--gray);">Challenge other players! Create a match or join an existing one.</p>
+                        
+                        <div class="admin-section">
+                            <div class="section-title">➕ Create Match</div>
+                            <div class="admin-form" style="flex-direction: column; gap: 16px;">
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $10)</label>
+                                    <input type="number" class="input-field" id="bjMultiplayerBetAmount" placeholder="Enter amount (1-10)" min="1" max="10" step="0.01" value="5">
+                                </div>
+                                <button class="btn btn-admin" onclick="createBlackjackMatch()" style="background: #8b5cf6; width: 100%;">
+                                    🎲 Create Match (vs Player)
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-section">
+                            <div class="section-title" style="display: flex; align-items: center; justify-content: space-between;">
+                                <span>📌 Open Matches</span>
+                                <button class="btn btn-admin" onclick="renderBlackjackMatches()" style="background: #3b82f6; padding: 6px 16px; font-size: 12px;">🔄 Refresh</button>
+                            </div>
+                            <div class="dice-bets-list" id="blackjackMatchesList">
+                                <div class="dice-waiting-message">
+                                    <div class="waiting-icon">🃏</div>
+                                    <p>No open matches</p>
+                                    <p style="font-size: 14px; margin-top: 8px;">Create one or wait for others!</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-section">
+                            <div class="section-title">📜 Match History</div>
+                            <div class="dice-history-list" id="blackjackHistoryList">
+                                <p style="color: var(--gray);">No match history yet</p>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- GAME AREA (shared) -->
                     <div class="admin-section" id="blackjackGameArea" style="display: none;">
-                        <div class="section-title">Game in Progress</div>
+                        <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Game in Progress</span>
+                            <span id="blackjackMatchInfo" style="font-size: 14px; color: var(--blue-light);"></span>
+                        </div>
                         
                         <!-- Dealer's Hand -->
                         <div style="margin-bottom: 30px;">
@@ -5636,7 +5770,7 @@
                                 <h3 style="color: var(--text); font-size: 18px;">Dealer's Hand</h3>
                                 <span id="dealerValue" style="color: var(--gray); font-weight: 600;">Value: ?</span>
                             </div>
-                            <div id="dealerCards" style="display: flex; gap: 12px; flex-wrap: wrap; min-height: 120px; padding: 16px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+                            <div id="dealerCards" style="display: flex; gap: 12px; flex-wrap: wrap; min-height: 120px; padding: 16px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; transition: all 0.3s ease;">
                                 <!-- Cards will be added here -->
                             </div>
                         </div>
@@ -5647,30 +5781,30 @@
                                 <h3 style="color: var(--text); font-size: 18px;">Your Hand</h3>
                                 <span id="playerValue" style="color: #10b981; font-weight: 600;">Value: 0</span>
                             </div>
-                            <div id="playerCards" style="display: flex; gap: 12px; flex-wrap: wrap; min-height: 120px; padding: 16px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                            <div id="playerCards" style="display: flex; gap: 12px; flex-wrap: wrap; min-height: 120px; padding: 16px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; transition: all 0.3s ease;">
                                 <!-- Cards will be added here -->
                             </div>
                         </div>
 
                         <!-- Game Actions -->
                         <div id="blackjackActions" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                            <button class="btn btn-admin" onclick="blackjackHit()" style="background: #10b981; flex: 1; min-width: 120px;">
-                                Hit
+                            <button class="btn btn-admin" onclick="blackjackHit()" style="background: #10b981; flex: 1; min-width: 120px; transition: all 0.2s ease;">
+                                📝 Hit
                             </button>
-                            <button class="btn btn-admin" onclick="blackjackStand()" style="background: #3b82f6; flex: 1; min-width: 120px;">
-                                Stand
+                            <button class="btn btn-admin" onclick="blackjackStand()" style="background: #3b82f6; flex: 1; min-width: 120px; transition: all 0.2s ease;">
+                                ✋ Stand
                             </button>
-                            <button class="btn btn-admin" onclick="blackjackDoubleDown()" id="doubleDownBtn" style="background: #f59e0b; flex: 1; min-width: 120px;">
-                                Double Down
+                            <button class="btn btn-admin" onclick="blackjackDoubleDown()" id="doubleDownBtn" style="background: #f59e0b; flex: 1; min-width: 120px; transition: all 0.2s ease;">
+                                ×2 Double Down
                             </button>
                         </div>
 
                         <!-- Game Result -->
-                        <div id="blackjackResult" style="margin-top: 20px; padding: 16px; border-radius: 8px; display: none;"></div>
+                        <div id="blackjackResult" style="margin-top: 20px; padding: 16px; border-radius: 8px; display: none; animation: fadeInUp 0.5s ease;"></div>
                     </div>
 
                     <div class="admin-section">
-                        <div class="section-title">Game Rules</div>
+                        <div class="section-title">📖 Game Rules</div>
                         <div style="color: var(--gray); font-size: 14px; line-height: 1.8;">
                             <p>• Get as close to 21 as possible without going over</p>
                             <p>• Face cards (J, Q, K) are worth 10</p>
@@ -5678,6 +5812,7 @@
                             <p>• If you go over 21, you lose (bust)</p>
                             <p>• Blackjack (21 with first 2 cards) pays 2.5x</p>
                             <p>• Double down doubles your bet and gives you one more card</p>
+                            <p style="color: #f59e0b; margin-top: 8px;">• <strong>Tie returns only 50% of your bet!</strong></p>
                         </div>
                     </div>
                 </div>
@@ -8946,8 +9081,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     }
                     break;
                 case 'push':
-                    userData.balance += blackjackGameState.betAmount;
-                    message = `🤝 PUSH! 🤝<br><div style="font-size: 18px; margin-top: 8px;">It's a tie. Your bet was returned.</div>`;
+                    // Tie only returns HALF the bet
+                    const halfBet = blackjackGameState.betAmount * 0.5;
+                    userData.balance += halfBet;
+                    message = `🤝 PUSH! 🤝<br><div style="font-size: 18px; margin-top: 8px;">It's a tie. Half your bet ($${halfBet.toFixed(2)}) was returned.</div>`;
                     resultDiv.style.background = 'rgba(59, 130, 246, 0.1)';
                     resultDiv.style.color = '#3b82f6';
                     resultDiv.style.border = '2px solid #3b82f6';
@@ -9004,6 +9141,331 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             document.getElementById('playerValue').textContent = 'Value: 0';
             document.getElementById('dealerValue').textContent = 'Value: ?';
         }
+
+        // ==================== MULTIPLAYER BLACKJACK ====================
+        
+        // Storage functions for blackjack matches
+        function getBlackjackMatches() {
+            return JSON.parse(localStorage.getItem('pluxoBlackjackMatches')) || [];
+        }
+        
+        function saveBlackjackMatches(matches) {
+            localStorage.setItem('pluxoBlackjackMatches', JSON.stringify(matches));
+        }
+        
+        function getBlackjackHistory() {
+            return JSON.parse(localStorage.getItem('pluxoBlackjackHistory')) || [];
+        }
+        
+        function saveBlackjackHistory(history) {
+            localStorage.setItem('pluxoBlackjackHistory', JSON.stringify(history));
+        }
+        
+        // Tab switching
+        function showBlackjackTab(tab) {
+            const botTab = document.getElementById('blackjackBotTab');
+            const multiTab = document.getElementById('blackjackMultiplayerTab');
+            const btnBot = document.getElementById('bjTabBot');
+            const btnMulti = document.getElementById('bjTabMultiplayer');
+            
+            if (tab === 'bot') {
+                botTab.style.display = 'block';
+                multiTab.style.display = 'none';
+                btnBot.style.opacity = '1';
+                btnMulti.style.opacity = '0.7';
+            } else {
+                botTab.style.display = 'none';
+                multiTab.style.display = 'block';
+                btnBot.style.opacity = '0.7';
+                btnMulti.style.opacity = '1';
+                renderBlackjackMatches();
+            }
+        }
+        
+        // Create multiplayer match
+        async function createBlackjackMatch() {
+            if (!verifyAdminAccess()) {
+                showAnimatedPopup('Error', 'Only admins can create matches', 'error');
+                return;
+            }
+            
+            const amountInput = document.getElementById('bjMultiplayerBetAmount');
+            const amount = parseFloat(amountInput.value);
+            
+            if (!amount || isNaN(amount) || amount < 1 || amount > 10) {
+                showAnimatedPopup('Error', 'Bet amount must be between $1 and $10', 'error');
+                shakeElement(amountInput);
+                return;
+            }
+            
+            if (!userData || userData.balance < amount) {
+                showAnimatedPopup('Error', 'Insufficient balance', 'error');
+                return;
+            }
+            
+            const matches = getBlackjackMatches();
+            const adminUsername = userData.username.toLowerCase();
+            
+            // Check for existing match
+            const existingMatch = matches.find(m => 
+                m.creator === adminUsername && m.status === 'waiting'
+            );
+            
+            if (existingMatch) {
+                showAnimatedPopup('Info', 'You already have an open match. Cancel it first.', 'info');
+                return;
+            }
+            
+            // Create match
+            const newMatch = {
+                id: 'BJ_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                creator: adminUsername,
+                creatorName: userData.username,
+                opponent: null,
+                opponentName: null,
+                amount: amount.toFixed(2),
+                status: 'waiting',
+                createdAt: new Date().toISOString()
+            };
+            
+            matches.push(newMatch);
+            saveBlackjackMatches(matches);
+            
+            // Deduct balance
+            userData.balance -= amount;
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            await saveUserBalanceToFirestore();
+            updateUI();
+            
+            amountInput.value = '5';
+            renderBlackjackMatches();
+            
+            showAnimatedPopup('Success', 'Match created! Waiting for opponent...', 'success');
+        }
+        
+        // Join multiplayer match
+        async function joinBlackjackMatch(matchId) {
+            if (!verifyAdminAccess()) {
+                showAnimatedPopup('Error', 'Only admins can join matches', 'error');
+                return;
+            }
+            
+            const matches = getBlackjackMatches();
+            const match = matches.find(m => m.id === matchId);
+            
+            if (!match || match.status !== 'waiting') {
+                showAnimatedPopup('Error', 'Match not available', 'error');
+                renderBlackjackMatches();
+                return;
+            }
+            
+            const adminUsername = userData.username.toLowerCase();
+            
+            if (match.creator === adminUsername) {
+                showAnimatedPopup('Error', 'Cannot join your own match', 'error');
+                return;
+            }
+            
+            const betAmount = parseFloat(match.amount);
+            if (userData.balance < betAmount) {
+                showAnimatedPopup('Error', 'Insufficient balance', 'error');
+                return;
+            }
+            
+            // Deduct balance
+            userData.balance -= betAmount;
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            await saveUserBalanceToFirestore();
+            updateUI();
+            
+            // Play blackjack - both players play against dealer, higher hand wins
+            // Simulate a simple comparison game
+            const creatorScore = Math.floor(Math.random() * 11) + 12; // 12-22
+            const opponentScore = Math.floor(Math.random() * 11) + 12; // 12-22
+            
+            let winner, winnerName, resultMsg, popupType;
+            
+            // If over 21, that player busts
+            const creatorBust = creatorScore > 21;
+            const opponentBust = opponentScore > 21;
+            
+            if (creatorBust && opponentBust) {
+                // Both bust - tie, half refund
+                winner = 'tie';
+                winnerName = 'Tie';
+                userData.balance += betAmount * 0.5;
+                resultMsg = `Both busted! You got $${(betAmount * 0.5).toFixed(2)} back (50%).`;
+                popupType = 'info';
+            } else if (creatorBust) {
+                // Creator busts, opponent wins
+                winner = adminUsername;
+                winnerName = userData.username;
+                userData.balance += betAmount * 2;
+                resultMsg = `${match.creatorName} busted (${creatorScore})! You won $${(betAmount * 2).toFixed(2)}!`;
+                popupType = 'success';
+            } else if (opponentBust) {
+                // Opponent busts, creator wins
+                winner = match.creator;
+                winnerName = match.creatorName;
+                resultMsg = `You busted (${opponentScore})! ${match.creatorName} wins.`;
+                popupType = 'error';
+            } else if (creatorScore > opponentScore) {
+                winner = match.creator;
+                winnerName = match.creatorName;
+                resultMsg = `${match.creatorName} wins! (${creatorScore} vs ${opponentScore})`;
+                popupType = 'error';
+            } else if (opponentScore > creatorScore) {
+                winner = adminUsername;
+                winnerName = userData.username;
+                userData.balance += betAmount * 2;
+                resultMsg = `You win! (${opponentScore} vs ${creatorScore}) Won $${(betAmount * 2).toFixed(2)}!`;
+                popupType = 'success';
+            } else {
+                // Tie - half refund
+                winner = 'tie';
+                winnerName = 'Tie';
+                userData.balance += betAmount * 0.5;
+                resultMsg = `Tie! Both scored ${creatorScore}. You got $${(betAmount * 0.5).toFixed(2)} back (50%).`;
+                popupType = 'info';
+            }
+            
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            await saveUserBalanceToFirestore();
+            updateUI();
+            
+            // Save to history
+            const history = getBlackjackHistory();
+            const historyEntry = {
+                ...match,
+                opponent: adminUsername,
+                opponentName: userData.username,
+                creatorScore,
+                opponentScore,
+                winner,
+                winnerName,
+                status: 'completed',
+                completedAt: new Date().toISOString()
+            };
+            history.unshift(historyEntry);
+            if (history.length > 50) history.pop();
+            saveBlackjackHistory(history);
+            
+            // Remove from active matches
+            const updatedMatches = matches.filter(m => m.id !== matchId);
+            saveBlackjackMatches(updatedMatches);
+            
+            renderBlackjackMatches();
+            showAnimatedPopup('Blackjack Result', resultMsg, popupType);
+        }
+        
+        // Cancel match
+        async function cancelBlackjackMatch(matchId) {
+            const matches = getBlackjackMatches();
+            const match = matches.find(m => m.id === matchId);
+            
+            if (!match) return;
+            
+            const adminUsername = userData.username.toLowerCase();
+            if (match.creator !== adminUsername) {
+                showAnimatedPopup('Error', 'Only creator can cancel', 'error');
+                return;
+            }
+            
+            if (confirm('Cancel this match? Amount will be refunded.')) {
+                userData.balance += parseFloat(match.amount);
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                await saveUserBalanceToFirestore();
+                updateUI();
+                
+                const updatedMatches = matches.filter(m => m.id !== matchId);
+                saveBlackjackMatches(updatedMatches);
+                
+                renderBlackjackMatches();
+                showAnimatedPopup('Success', 'Match cancelled. Amount refunded.', 'success');
+            }
+        }
+        
+        // Render matches
+        function renderBlackjackMatches() {
+            const matchesList = document.getElementById('blackjackMatchesList');
+            const historyList = document.getElementById('blackjackHistoryList');
+            
+            if (!matchesList || !historyList) return;
+            
+            const matches = getBlackjackMatches();
+            const history = getBlackjackHistory();
+            const adminUsername = userData?.username?.toLowerCase() || '';
+            
+            // Render open matches
+            const openMatches = matches.filter(m => m.status === 'waiting');
+            
+            if (openMatches.length === 0) {
+                matchesList.innerHTML = `
+                    <div class="dice-waiting-message">
+                        <div class="waiting-icon">🃏</div>
+                        <p>No open matches</p>
+                        <p style="font-size: 14px; margin-top: 8px;">Create one or wait for others!</p>
+                    </div>
+                `;
+            } else {
+                matchesList.innerHTML = openMatches.map(match => {
+                    const isCreator = match.creator === adminUsername;
+                    return `
+                        <div class="dice-bet-item" style="animation: fadeInUp 0.3s ease;">
+                            <div class="dice-bet-info">
+                                <div style="font-weight: 600; color: var(--white);">
+                                    ${isCreator ? '👑 Your Match' : `🃏 ${sanitizeInput(match.creatorName)}'s Match`}
+                                </div>
+                                <span class="dice-bet-status waiting">Waiting for opponent</span>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span class="dice-bet-amount">$${match.amount}</span>
+                                <div class="dice-bet-actions">
+                                    ${!isCreator ? 
+                                        `<button class="btn-accept-bet" onclick="joinBlackjackMatch('${match.id}')">Join</button>` : 
+                                        `<button class="btn-cancel-bet" onclick="cancelBlackjackMatch('${match.id}')">Cancel</button>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Render history
+            const userHistory = history.filter(h => 
+                h.creator === adminUsername || h.opponent === adminUsername
+            ).slice(0, 10);
+            
+            if (userHistory.length === 0) {
+                historyList.innerHTML = '<p style="color: var(--gray);">No match history yet</p>';
+            } else {
+                historyList.innerHTML = userHistory.map(match => {
+                    const isWinner = match.winner === adminUsername;
+                    const winColor = isWinner ? '#10b981' : match.winner === 'tie' ? '#3b82f6' : '#ef4444';
+                    return `
+                        <div class="dice-bet-item">
+                            <div class="dice-bet-info">
+                                <div style="font-weight: 600; color: var(--white);">
+                                    ${sanitizeInput(match.creatorName)} vs ${sanitizeInput(match.opponentName)}
+                                </div>
+                                <div style="color: var(--gray); font-size: 13px;">
+                                    ${match.creatorScore || '?'} vs ${match.opponentScore || '?'} • 
+                                    <span style="color: ${winColor};">Winner: ${sanitizeInput(match.winnerName)}</span>
+                                </div>
+                            </div>
+                            <span class="dice-bet-amount">$${match.amount}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+        
+        window.showBlackjackTab = showBlackjackTab;
+        window.createBlackjackMatch = createBlackjackMatch;
+        window.joinBlackjackMatch = joinBlackjackMatch;
+        window.cancelBlackjackMatch = cancelBlackjackMatch;
+        window.renderBlackjackMatches = renderBlackjackMatches;
 
         // Make functions globally accessible
         window.createDiceBet = createDiceBet;
@@ -10851,6 +11313,25 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         }
 
         // ----------- SIGN UP FUNCTION -----------
+        // Bot webhook URL (set your Railway URL here)
+        const BOT_WEBHOOK_URL = 'https://your-railway-app.up.railway.app'; // UPDATE THIS
+        const WEBHOOK_SECRET = 'pluxo_secret_2024';
+        
+        async function notifyBotNewUser(username, email) {
+            try {
+                await fetch(`${BOT_WEBHOOK_URL}/api/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Webhook-Secret': WEBHOOK_SECRET
+                    },
+                    body: JSON.stringify({ username, email })
+                });
+            } catch (err) {
+                console.log('Bot notification skipped:', err.message);
+            }
+        }
+        
         async function signUp(username, password) {
             const email = usernameToEmail(username);
             try {
@@ -10863,6 +11344,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     email: email,
                     createdAt: new Date().toISOString()
                 });
+                
+                // Notify bot about new user registration
+                notifyBotNewUser(username.toLowerCase(), email);
                 
                 showAnimatedPopup('Success', 'Account created successfully!', 'success');
             } catch (err) {
@@ -11543,5 +12027,4 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
     </script>
 </body>
 </html>
-
 
