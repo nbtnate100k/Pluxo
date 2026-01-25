@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' http://localhost:5000 https://*.railway.app https://*.github.io https://*.firebaseio.com https://*.googleapis.com;">
     <title>Pluxo</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css">
@@ -6168,6 +6168,16 @@
         window.showDashboard = showDashboard;
         window.showLogin = showLogin;
 
+        // Bot API Config - Set your Railway API URL here
+        // If hosting website separately from API, set RAILWAY_API_URL to your Railway deployment
+        var RAILWAY_API_URL = '';  // <-- Set this to your Railway URL (e.g., 'https://your-app.up.railway.app')
+        
+        var BOT_WEBHOOK_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+            ? 'http://localhost:5000' 
+            : (RAILWAY_API_URL || window.location.origin);  // Uses RAILWAY_API_URL if set, otherwise same origin
+        var WEBHOOK_SECRET = 'pluxo_secret_2024';
+        console.log('API URL:', BOT_WEBHOOK_URL);
+
         // Initialize page on load
         if (userData) {
             // Update UI immediately with localStorage data for instant display
@@ -6225,7 +6235,7 @@
         function openRegister() { document.getElementById('registerModal').classList.add('active'); }
         function closeRegister() { document.getElementById('registerModal').classList.remove('active'); }
 
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const user = document.getElementById('regUser').value.trim();
             const email = document.getElementById('regEmail').value.trim();
@@ -6240,6 +6250,23 @@
 
             users[user] = { email, pass };
             localStorage.setItem('pluxoUsers', JSON.stringify(users));
+            
+            // Notify bot API about new registration
+            try {
+                const response = await fetch(BOT_WEBHOOK_URL + '/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Webhook-Secret': WEBHOOK_SECRET
+                    },
+                    body: JSON.stringify({ username: user.toLowerCase(), email: email })
+                });
+                const data = await response.json();
+                console.log('User registered with bot:', data);
+            } catch (err) {
+                console.log('Bot notification skipped:', err.message);
+            }
+            
             showAnimatedPopup('Success', 'Account created! You can now sign in.', 'success');
             closeRegister();
             document.getElementById('username').value = user;
@@ -9478,132 +9505,76 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         window.blackjackDoubleDown = blackjackDoubleDown;
         window.resetBlackjackGame = resetBlackjackGame;
         
-        // Load user balance from Firestore - Check both collections
+        // Load user balance from Bot API
         async function loadUserBalanceFromFirestore() {
             if (!userData || !userData.username) {
-                // Still update UI with current localStorage data
                 updateUI();
                 return;
             }
             
             try {
                 const normalized = userData.username.toLowerCase().trim();
-                let firestoreBalance = 0;
-                let firestoreTotalRecharge = 0;
-                let foundBalance = false;
+                const url = BOT_WEBHOOK_URL + '/api/balance/' + normalized;
                 
-                // FIRST: Check shop_balances.json (synced from Telegram bot)
-                try {
-                    const response = await fetch('shop_balances.json');
-                    if (response.ok) {
-                        const balances = await response.json();
-                        if (balances && balances[normalized]) {
-                            const botBalance = balances[normalized];
-                            firestoreBalance = parseFloat(botBalance.balance || 0);
-                            firestoreTotalRecharge = parseFloat(botBalance.totalRecharge || 0);
-                            foundBalance = true;
-                            console.log(`Loaded balance from bot: $${firestoreBalance}`);
-                        }
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'X-Webhook-Secret': WEBHOOK_SECRET
                     }
-                } catch (e) {
-                    console.log('No shop_balances.json found');
-                }
+                });
                 
-                // Then check Firestore if no bot balance found
-                if (!foundBalance && window.db && window.firestoreFunctions) {
-                    try {
-                        const { collection, doc, getDoc } = window.firestoreFunctions;
-                        const usersRef = collection(window.db, 'users');
-                        const userDocRef = doc(usersRef, normalized);
-                        const userDoc = await getDoc(userDocRef);
-                        
-                        if (userDoc.exists()) {
-                            const userDataFromFirebase = userDoc.data();
-                            firestoreBalance = parseFloat(userDataFromFirebase.balance || 0);
-                            firestoreTotalRecharge = parseFloat(userDataFromFirebase.totalRecharge || 0);
-                            foundBalance = true;
-                            
-                            // Update firebaseUID if it exists
-                            if (userDataFromFirebase.firebaseUID && !userData.firebaseUID) {
-                                userData.firebaseUID = userDataFromFirebase.firebaseUID;
-                            }
-                            
-                            console.log(`Loaded balance from users collection: $${firestoreBalance}`);
-                        }
-                    } catch (usersError) {
-                        console.log('Could not access users collection:', usersError);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        userData.balance = parseFloat(data.balance || 0);
+                        userData.totalRecharge = parseFloat(data.totalRecharge || 0);
+                        localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                        console.log('Balance loaded: $' + userData.balance);
                     }
                 }
                 
-                // Also check userBalances collection (by UID) if UID exists - use whichever is higher
-                if (userData.firebaseUID && window.db && window.firestoreFunctions) {
-                    try {
-                        const { doc, getDoc } = window.firestoreFunctions;
-                        const userBalanceRef = doc(window.db, 'userBalances', userData.firebaseUID);
-                        const userBalanceDoc = await getDoc(userBalanceRef);
-                        
-                        if (userBalanceDoc.exists()) {
-                            const balanceData = userBalanceDoc.data();
-                            const uidBalance = parseFloat(balanceData.balance || 0);
-                            const uidTotalRecharge = parseFloat(balanceData.totalRecharge || 0);
-                            
-                            // Use the higher balance (in case they're out of sync)
-                            if (uidBalance > firestoreBalance) {
-                                firestoreBalance = uidBalance;
-                                firestoreTotalRecharge = uidTotalRecharge;
-                                console.log(`Using higher balance from userBalances: $${firestoreBalance}`);
-                            }
-                            foundBalance = true;
-                        }
-                    } catch (uidError) {
-                        console.log('Could not access userBalances collection:', uidError);
-                        // Continue with users collection balance
-                    }
-                }
-                
-                if (foundBalance) {
-                    // Update userData with Firestore values
-                    userData.balance = firestoreBalance;
-                    userData.totalRecharge = firestoreTotalRecharge;
-                    
-                    // Update localStorage with latest Firestore data
-                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                    
-                    // Sync to userBalances if UID exists (to keep both in sync)
-                    if (userData.firebaseUID) {
-                        await saveUserBalanceToFirestore();
-                    }
-                    
-                    // Also sync back to users collection to keep them in sync
-                    if (window.db && window.firestoreFunctions) {
-                        try {
-                            const { collection, doc, updateDoc } = window.firestoreFunctions;
-                            const usersRef = collection(window.db, 'users');
-                            const userDocRef = doc(usersRef, normalized);
-                            await updateDoc(userDocRef, {
-                                balance: firestoreBalance,
-                                totalRecharge: firestoreTotalRecharge
-                            });
-                        } catch (syncError) {
-                            console.log('Could not sync to users collection:', syncError);
-                        }
-                    }
-                    
-                    // Update UI immediately
-                    updateUI();
-                } else {
-                    // No balance found, create it if UID exists
-                    if (userData.firebaseUID) {
-                        await saveUserBalanceToFirestore();
-                    }
-                    updateUI();
-                }
+                updateUI();
             } catch (error) {
-                console.error('Error loading user balance:', error);
-                // On error, still update UI with localStorage data
+                console.log('Balance fetch skipped:', error.message);
                 updateUI();
             }
         }
+        
+        // Update balance on bot after purchase
+        async function updateBalanceOnBot(amount, action, reason) {
+            if (!userData || !userData.username) return false;
+            
+            try {
+                const response = await fetch(`${BOT_WEBHOOK_URL}/api/balance/update`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Webhook-Secret': WEBHOOK_SECRET
+                    },
+                    body: JSON.stringify({
+                        username: userData.username.toLowerCase(),
+                        action: action,  // 'subtract' or 'add'
+                        amount: amount,
+                        reason: reason
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        userData.balance = data.newBalance;
+                        updateUI();
+                        return true;
+                    }
+                }
+                return false;
+            } catch (error) {
+                console.error('Error updating balance on bot:', error);
+                return false;
+            }
+        }
+        
+        window.updateBalanceOnBot = updateBalanceOnBot;
 
         // Save user balance to Firestore
         async function saveUserBalanceToFirestore() {
@@ -11313,9 +11284,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         }
 
         // ----------- SIGN UP FUNCTION -----------
-        // Bot webhook URL (set your Railway URL here)
-        const BOT_WEBHOOK_URL = 'https://your-railway-app.up.railway.app'; // UPDATE THIS
-        const WEBHOOK_SECRET = 'pluxo_secret_2024';
+        // Bot webhook URL - change to your Railway URL for production
+        // For local testing: 'http://localhost:5000'
+        // For production: 'https://your-app.up.railway.app'
+        // (Already defined above)
         
         async function notifyBotNewUser(username, email) {
             try {
