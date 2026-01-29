@@ -5372,6 +5372,7 @@
                                 <th>Base</th>
                                 <th>Price</th>
                                 <th>Refundable</th>
+                                <th>Key</th>
                                 <th>Date</th>
                             </tr>
                         </thead>
@@ -5623,6 +5624,55 @@
                         <div class="admin-list" id="sellerProductsList">
                             <!-- Populated by JS -->
                         </div>
+                    </div>
+
+                    <!-- Card Stock Management (from Telegram bot) -->
+                    <div class="admin-section" style="margin-top: 30px; border-top: 2px solid rgba(34, 197, 94, 0.3); padding-top: 20px;">
+                        <div class="section-title">📦 Card Stock Management</div>
+                        <p style="color: var(--gray); font-size: 14px; margin-bottom: 16px;">Add actual card numbers with keys. Cards will be redeemable by key.</p>
+                        
+                        <div class="admin-form" style="flex-direction: column; gap: 12px;">
+                            <input type="number" class="input-field" id="cardStockPrice" placeholder="Price per card (e.g., 15.00)" step="0.01" min="0">
+                            <textarea class="input-field" id="cardStockInput" placeholder="Paste cards here (pipe format: card|mm|yyyy|cvv OR multi-line format)" style="min-height: 150px; font-family: monospace; font-size: 12px;"></textarea>
+                            <small style="color: var(--gray); font-size: 12px;">
+                                <strong>Format 1 (Pipe):</strong> 5355851164846467|02|2026|358<br>
+                                <strong>Format 2 (Multi-line):</strong> 4145670692391812 01/29 651<br>Name<br>Address<br>City, State ZIP<br>Country
+                            </small>
+                            <button class="btn btn-admin" onclick="addCardStock()" style="background: #22c55e; width: 100%;">Add Cards & Generate Keys</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">My Card Stock (<span id="cardStockCount">0</span>)</div>
+                        <div class="admin-list" id="cardStockList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KEY REDEMPTION PAGE -->
+            <div class="page-content" id="page-redeem" style="display:none;">
+                <div class="page-header">
+                    <h1>Redeem Key</h1>
+                    <div class="line" style="background: #8b5cf6;"></div>
+                </div>
+                
+                <div class="content-card" style="border-color: #8b5cf6;">
+                    <h2 style="color: #8b5cf6;">🔑 Redeem Your Card</h2>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Enter your redemption key to receive your card details.</p>
+                    
+                    <div class="admin-section">
+                        <div class="section-title">Enter Redemption Key</div>
+                        <div class="admin-form" style="flex-direction: column; gap: 12px;">
+                            <input type="text" class="input-field" id="redeemKeyInput" placeholder="Enter key (e.g., HM6ABOFE0Z14JRXP)" style="text-transform: uppercase; font-family: monospace; font-size: 16px; letter-spacing: 2px;">
+                            <button class="btn btn-admin" onclick="redeemKey()" style="background: #8b5cf6; width: 100%;">Redeem Key</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" id="redeemedCardDisplay" style="display: none;">
+                        <div class="section-title">Your Card</div>
+                        <div id="redeemedCardContent" style="padding: 20px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; font-family: monospace; white-space: pre-wrap; word-break: break-all;"></div>
                     </div>
                 </div>
             </div>
@@ -10101,7 +10151,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                         bank: item.bank || 'UNKNOWN BANK',
                         base: item.base || '2026_1_3_US_Base',
                         price: parseFloat(item.price) || 0,
-                        refundable: item.refundable !== undefined ? item.refundable : true
+                        refundable: item.refundable !== undefined ? item.refundable : true,
+                        key: item.key || '' // Include the purchase key
                     };
                     await saveOrder(product);
                 }
@@ -10113,6 +10164,25 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 await saveUserBalanceToFirestore(); // Sync to Firestore
                 updateUI();
                 updateCartDisplay();
+                
+                // Notify bot about purchase
+                try {
+                    await fetch(BOT_WEBHOOK_URL + '/api/purchase/notify', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Webhook-Secret': WEBHOOK_SECRET
+                        },
+                        body: JSON.stringify({
+                            username: userData.username.toLowerCase(),
+                            item_count: itemCount,
+                            total_amount: total
+                        })
+                    });
+                } catch (notifyError) {
+                    console.error('Failed to notify bot:', notifyError);
+                    // Don't fail the purchase if notification fails
+                }
                 
                 showAnimatedPopup('Success', `Purchase complete! ${itemCount} item(s) added to your orders.`, 'success');
                 toggleCart();
@@ -10235,10 +10305,13 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             const tbody = document.getElementById('productsTableBody');
             if (!tbody) return;
 
-            tbody.innerHTML = pageProducts.map((p, idx) => `
+            tbody.innerHTML = pageProducts.map((p, idx) => {
+                const maskedBin = (p.bin || '000000') + '**********';
+                const displayKey = p.key ? `<br><small style="color: #8b5cf6; font-family: monospace; font-size: 11px;">Key: ${p.key}</small>` : '';
+                return `
                 <tr>
                     <td><input type="checkbox" class="product-check" data-id="${p.id}"></td>
-                    <td>${p.bin}</td>
+                    <td>${maskedBin}${displayKey}</td>
                     <td>${p.brand}</td>
                     <td>${p.type}</td>
                     <td>
@@ -10260,7 +10333,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     <td><span class="price-cell">$ ${p.price}</span></td>
                     <td><button class="btn-cart" onclick="addToCartById(${p.id})">🛒</button></td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
 
             // Update showing count
             const showingEl = document.getElementById('showingCount');
@@ -10396,7 +10470,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 brand: product.brand,
                 bank: product.bank,
                 base: product.base,
-                refundable: product.refundable
+                refundable: product.refundable,
+                key: product.key || '' // Include the purchase key
             });
 
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
@@ -10742,6 +10817,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 base: product.base,
                 price: product.price,
                 refundable: product.refundable,
+                key: product.key || '', // Include the purchase key
                 purchaseDate: new Date().toISOString()
             };
         }
@@ -10890,6 +10966,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     <td>${o.base}</td>
                     <td><span class="order-price">$${o.price}</span></td>
                     <td><span class="${o.refundable ? 'order-refund-yes' : 'order-refund-no'}">${o.refundable ? 'Yes' : 'No'}</span></td>
+                    <td><span class="order-key" style="font-family: monospace; color: #8b5cf6; font-weight: 500;">${o.key || '-'}</span></td>
                     <td><span class="order-date">${new Date(o.purchaseDate).toLocaleDateString()}</span></td>
                 </tr>
             `).join('');
@@ -10983,9 +11060,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 return;
             }
 
-            let csv = 'Card No,Exp Date,CVV2,Name,Address,State,City,ZIP,Mail,Phone,IP,Email Password,Bank,Base,Price,Refundable,Date\n';
+            let csv = 'Card No,Exp Date,CVV2,Name,Address,State,City,ZIP,Mail,Phone,IP,Email Password,Bank,Base,Price,Refundable,Key,Date\n';
             orders.forEach(o => {
-                csv += `"${o.cardNo}","${o.expDate}","${o.cvv}","${o.name}","${o.address}","${o.state}","${o.city}","${o.zip}","${o.mail}","${o.phone}","${o.ip}","${o.emailPassword}","${o.bank}","${o.base}","$${o.price}","${o.refundable ? 'Yes' : 'No'}","${new Date(o.purchaseDate).toLocaleDateString()}"\n`;
+                csv += `"${o.cardNo}","${o.expDate}","${o.cvv}","${o.name}","${o.address}","${o.state}","${o.city}","${o.zip}","${o.mail}","${o.phone}","${o.ip}","${o.emailPassword}","${o.bank}","${o.base}","$${o.price}","${o.refundable ? 'Yes' : 'No'}","${o.key || ''}","${new Date(o.purchaseDate).toLocaleDateString()}"\n`;
             });
 
             const blob = new Blob([csv], { type: 'text/csv' });
@@ -11998,6 +12075,5 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         });
     </script>
 </body>
-</html> 
-
+</html>
 
