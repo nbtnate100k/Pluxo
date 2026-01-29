@@ -10252,9 +10252,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         }
 
         async function generateProducts() {
-            // Load products from shop_products.json (synced from bot)
+            // Load products from bot API (Railway)
             try {
-                const response = await fetch('shop_products.json');
+                const response = await fetch(BOT_WEBHOOK_URL + '/api/products');
                 if (response.ok) {
                     const shopProducts = await response.json();
                     if (shopProducts && shopProducts.length > 0) {
@@ -10281,12 +10281,46 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                         }));
                         originalProducts = [...allProducts];
                         filteredProducts = [...allProducts];
-                        console.log('Loaded ' + allProducts.length + ' products from shop_products.json');
+                        console.log('Loaded ' + allProducts.length + ' products from API');
+                        return;
+                    }
+                }
+                console.log('No products from API, trying local shop_products.json...');
+                
+                // Fallback to local shop_products.json
+                const localResponse = await fetch('shop_products.json');
+                if (localResponse.ok) {
+                    const shopProducts = await localResponse.json();
+                    if (shopProducts && shopProducts.length > 0) {
+                        allProducts = shopProducts.map((p, index) => ({
+                            id: p.id || (index + 1),
+                            bin: p.bin,
+                            brand: p.brand || getBrandFromBin(p.bin),
+                            type: p.type || 'CREDIT',
+                            country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
+                            hasName: p.hasName !== undefined ? p.hasName : true,
+                            hasAddress: p.hasAddress !== undefined ? p.hasAddress : true,
+                            hasZip: p.hasZip !== undefined ? p.hasZip : true,
+                            hasPhone: p.hasPhone !== undefined ? p.hasPhone : false,
+                            hasMail: p.hasMail !== undefined ? p.hasMail : false,
+                            hasSSN: p.hasSSN !== undefined ? p.hasSSN : false,
+                            hasDOB: p.hasDOB !== undefined ? p.hasDOB : false,
+                            bank: p.bank || 'BANK',
+                            base: p.base || '2026_US_Base',
+                            refundable: p.refundable !== undefined ? p.refundable : true,
+                            price: p.price || '10.00',
+                            key: p.key || '',
+                            seller_id: p.seller_id || '',
+                            full_info: p.full_info || ''
+                        }));
+                        originalProducts = [...allProducts];
+                        filteredProducts = [...allProducts];
+                        console.log('Loaded ' + allProducts.length + ' products from local file');
                         return;
                     }
                 }
             } catch (e) {
-                console.log('No shop_products.json found, shop is empty');
+                console.error('Error loading products:', e);
             }
             
             // No products - shop is empty
