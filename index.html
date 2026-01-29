@@ -10341,11 +10341,11 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
 
             tbody.innerHTML = pageProducts.map((p, idx) => {
                 const maskedBin = (p.bin || '000000') + '**********';
-                const displayKey = p.key ? `<br><small style="color: #8b5cf6; font-family: monospace; font-size: 11px;">Key: ${p.key}</small>` : '';
+                // DON'T display key on products page - keys are revealed after purchase
                 return `
                 <tr>
                     <td><input type="checkbox" class="product-check" data-id="${p.id}"></td>
-                    <td>${maskedBin}${displayKey}</td>
+                    <td>${maskedBin}</td>
                     <td>${p.brand}</td>
                     <td>${p.type}</td>
                     <td>
