@@ -10144,7 +10144,33 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             const cartItems = [...userData.cart]; // Copy cart items
             
             try {
-                // Save orders for each cart item (now async)
+                // CRITICAL: Deduct balance from Railway API FIRST (prevents refresh exploit)
+                const balanceResponse = await fetch(BOT_WEBHOOK_URL + '/api/balance/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Webhook-Secret': WEBHOOK_SECRET
+                    },
+                    body: JSON.stringify({
+                        username: userData.username.toLowerCase(),
+                        action: 'subtract',
+                        amount: total,
+                        reason: 'Purchase'
+                    })
+                });
+                
+                if (!balanceResponse.ok) {
+                    const errorData = await balanceResponse.json();
+                    throw new Error(errorData.error || 'Failed to deduct balance');
+                }
+                
+                const balanceData = await balanceResponse.json();
+                
+                // Update local balance to match server
+                userData.balance = balanceData.newBalance;
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                
+                // Save orders for each cart item
                 for (const item of cartItems) {
                     const product = {
                         bin: item.bin || (item.name ? item.name.split(' - ')[1] : '000000') || '000000',
@@ -10157,8 +10183,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     await saveOrder(product);
                 }
                 
-                // Deduct balance
-                userData.balance = parseFloat((userData.balance - total).toFixed(2));
+                // Clear cart
                 userData.cart = [];
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
                 await saveUserBalanceToFirestore(); // Sync to Firestore
@@ -10184,7 +10209,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     // Don't fail the purchase if notification fails
                 }
                 
-                showAnimatedPopup('Success', `Purchase complete! ${itemCount} item(s) added to your orders.`, 'success');
+                showAnimatedPopup('Success', `Purchase complete! ${itemCount} item(s) added to your orders. Check Orders page for your keys.`, 'success');
                 toggleCart();
                 
                 // Refresh orders page if it's open
@@ -10193,7 +10218,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 }
             } catch (error) {
                 console.error('Checkout error:', error);
-                showAnimatedPopup('Error', 'Error processing checkout. Please try again.', 'error');
+                showAnimatedPopup('Error', `Purchase failed: ${error.message}`, 'error');
             }
         }
         
@@ -10822,37 +10847,29 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         const emailDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'proton.me'];
 
         function generateOrderDetails(product) {
-            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-            const streetNum = Math.floor(Math.random() * 9999) + 1;
-            const street = streets[Math.floor(Math.random() * streets.length)];
-            const city = cities[Math.floor(Math.random() * cities.length)];
-            const state = states[Math.floor(Math.random() * states.length)];
-            const zip = String(Math.floor(Math.random() * 90000) + 10000);
-            const phone = `${Math.floor(Math.random() * 900) + 100}${Math.floor(Math.random() * 900) + 100}${Math.floor(Math.random() * 9000) + 1000}`;
-            const emailDomain = emailDomains[Math.floor(Math.random() * emailDomains.length)];
-            const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${Math.floor(Math.random() * 99)}@${emailDomain}`;
-            
+            // SIMPLIFIED: Only return the key and essential info
             return {
                 id: 'ORD' + Date.now() + Math.floor(Math.random() * 1000),
-                cardNo: product.bin + String(Math.floor(Math.random() * 9000000000) + 1000000000),
-                expDate: `${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}/${String(2027 + Math.floor(Math.random() * 4)).substring(2)}`,
-                cvv: String(Math.floor(Math.random() * 900) + 100),
-                name: `${firstName} ${lastName}`,
-                address: `${streetNum} ${street}`,
-                state: state,
-                city: city,
-                zip: zip,
-                mail: email,
-                phone: phone,
-                ip: `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
-                emailPassword: Math.random() > 0.5 ? `${firstName.toLowerCase()}${Math.floor(Math.random() * 999)}!` : '',
+                key: product.key || 'NO-KEY-PROVIDED',
+                price: product.price,
+                bin: product.bin,
                 bank: product.bank,
                 base: product.base,
-                price: product.price,
                 refundable: product.refundable,
-                key: product.key || '', // Include the purchase key
-                purchaseDate: new Date().toISOString()
+                purchaseDate: new Date().toISOString(),
+                // Hidden fields (not displayed but kept for compatibility)
+                cardNo: '-',
+                expDate: '-',
+                cvv: '-',
+                name: '-',
+                address: '-',
+                state: '-',
+                city: '-',
+                zip: '-',
+                mail: '-',
+                phone: '-',
+                ip: '-',
+                emailPassword: '-'
             };
         }
 
@@ -10981,29 +10998,30 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             noOrders.classList.remove('show');
             document.querySelector('.orders-table').style.display = 'table';
 
-            tbody.innerHTML = orders.map(o => `
+            tbody.innerHTML = orders.map(o => {
+                // Show only key and minimal info (hide fake card details)
+                const displayKey = o.key && o.key !== 'NO-KEY-PROVIDED' ? o.key : '⚠️ NO KEY';
+                return `
                 <tr>
                     <td><input type="checkbox" class="order-check" data-id="${o.id}" onchange="updateSelectedCount()"></td>
-                    <td><span class="order-card-num">${o.cardNo}</span></td>
-                    <td><span class="order-exp">${o.expDate}</span></td>
-                    <td><span class="order-cvv">${o.cvv}</span></td>
-                    <td>${o.name}</td>
-                    <td>${o.address}</td>
-                    <td>${o.state}</td>
-                    <td>${o.city}</td>
-                    <td>${o.zip}</td>
-                    <td>${o.mail}</td>
-                    <td>${o.phone}</td>
-                    <td>${o.ip}</td>
-                    <td>${o.emailPassword || '-'}</td>
-                    <td>${o.bank}</td>
-                    <td>${o.base}</td>
-                    <td><span class="order-price">$${o.price}</span></td>
+                    <td colspan="12" style="text-align: left; padding: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="font-size: 18px; font-weight: 600; color: #8b5cf6; font-family: monospace; letter-spacing: 1px;">
+                                🔑 KEY: ${displayKey}
+                            </div>
+                            <div style="display: flex; gap: 20px; color: var(--gray); font-size: 13px;">
+                                <span>💳 BIN: ${o.bin || '-'}</span>
+                                <span>💰 Price: $${o.price || '0.00'}</span>
+                                <span>🏦 Bank: ${o.bank || '-'}</span>
+                                <span>📅 Date: ${new Date(o.purchaseDate).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${o.base || '-'}</td>
                     <td><span class="${o.refundable ? 'order-refund-yes' : 'order-refund-no'}">${o.refundable ? 'Yes' : 'No'}</span></td>
-                    <td><span class="order-key" style="font-family: monospace; color: #8b5cf6; font-weight: 500;">${o.key || '-'}</span></td>
-                    <td><span class="order-date">${new Date(o.purchaseDate).toLocaleDateString()}</span></td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
 
             updateSelectedCount();
         }
