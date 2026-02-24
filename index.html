@@ -7970,6 +7970,128 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             }, 70);
         }
 
+        function getSeenResults(storageKey) {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(storageKey) || '{}');
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function hasSeenResult(storageKey, resultId) {
+            if (!resultId) return false;
+            const seen = getSeenResults(storageKey);
+            return !!seen[String(resultId)];
+        }
+
+        function markResultSeen(storageKey, resultId) {
+            if (!resultId) return;
+            const seen = getSeenResults(storageKey);
+            seen[String(resultId)] = Date.now();
+            localStorage.setItem(storageKey, JSON.stringify(seen));
+        }
+
+        function showBattleResultScreen(title, subtitle, lines, tone = 'info') {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;';
+            const color = tone === 'success' ? '#10b981' : (tone === 'error' ? '#ef4444' : '#3b82f6');
+            const listHtml = (lines || []).map(line => `<div style="font-size: 15px; color: #d1d5db; margin-top: 8px;">${line}</div>`).join('');
+            overlay.innerHTML = `
+                <div style="max-width: 520px; width: 100%; background: #0f172a; border: 2px solid ${color}; border-radius: 14px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+                    <div style="font-size: 24px; font-weight: 800; color: ${color}; margin-bottom: 6px;">${title}</div>
+                    <div style="font-size: 16px; color: #e5e7eb; margin-bottom: 12px;">${subtitle}</div>
+                    ${listHtml}
+                    <button id="closeBattleResult" style="margin-top: 18px; width: 100%; background: ${color}; color: #fff; border: 0; padding: 10px 12px; border-radius: 10px; font-weight: 700; cursor: pointer;">OK</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            const close = () => overlay.remove();
+            overlay.querySelector('#closeBattleResult')?.addEventListener('click', close);
+            setTimeout(close, 7000);
+        }
+
+        async function showDiceResultScreen(result, currentUsername) {
+            if (!result || !currentUsername) return;
+            const amount = parseFloat(result.amount || 0);
+            const isCreator = (result.creator || '').toLowerCase() === currentUsername;
+            const myRoll = isCreator ? result.creatorRoll : result.opponentRoll;
+            const enemyRoll = isCreator ? result.opponentRoll : result.creatorRoll;
+
+            let subtitle = '';
+            let tone = 'info';
+            if (result.winner === 'tie') {
+                subtitle = `Tie battle • -$${(amount * 0.5).toFixed(2)} net`;
+            } else if ((result.winner || '').toLowerCase() === currentUsername) {
+                subtitle = `You won • +$${amount.toFixed(2)} net`;
+                tone = 'success';
+            } else {
+                subtitle = `You lost • -$${amount.toFixed(2)} net`;
+                tone = 'error';
+            }
+
+            await new Promise(resolve => {
+                showDiceAnimation(() => {
+                    showBattleResultScreen(
+                        '🎲 Dice Battle Result',
+                        subtitle,
+                        [
+                            `Your roll: <strong>${myRoll}</strong>`,
+                            `Opponent roll: <strong>${enemyRoll}</strong>`,
+                            `Bet amount: <strong>$${amount.toFixed(2)}</strong>`
+                        ],
+                        tone
+                    );
+                    resolve();
+                }, parseInt(myRoll, 10) || 1, parseInt(enemyRoll, 10) || 1);
+            });
+        }
+
+        async function showBlackjackResultScreen(result, currentUsername) {
+            if (!result || !currentUsername) return;
+            const amount = parseFloat(result.amount || 0);
+            const isCreator = (result.creator || '').toLowerCase() === currentUsername;
+            const myScore = isCreator ? result.creatorScore : result.opponentScore;
+            const enemyScore = isCreator ? result.opponentScore : result.creatorScore;
+
+            let subtitle = '';
+            let tone = 'info';
+            if (result.winner === 'tie') {
+                subtitle = `Tie battle • -$${(amount * 0.5).toFixed(2)} net`;
+            } else if ((result.winner || '').toLowerCase() === currentUsername) {
+                subtitle = `You won • +$${amount.toFixed(2)} net`;
+                tone = 'success';
+            } else {
+                subtitle = `You lost • -$${amount.toFixed(2)} net`;
+                tone = 'error';
+            }
+
+            showBattleResultScreen(
+                '🃏 Blackjack Battle Result',
+                subtitle,
+                [
+                    `Your score: <strong>${myScore}</strong>`,
+                    `Opponent score: <strong>${enemyScore}</strong>`,
+                    `Bet amount: <strong>$${amount.toFixed(2)}</strong>`
+                ],
+                tone
+            );
+        }
+
+        function findBestBalanceFromHistory(history, username) {
+            if (!Array.isArray(history) || !username) return null;
+            for (const item of history) {
+                if (!item || (item.creator !== username && item.opponent !== username)) continue;
+                if (item.opponent === username && typeof item.opponentBalanceAfter === 'number') {
+                    return parseFloat(item.opponentBalanceAfter);
+                }
+                if (item.creator === username && typeof item.creatorBalanceAfter === 'number') {
+                    return parseFloat(item.creatorBalanceAfter);
+                }
+            }
+            return null;
+        }
+
         // Create a new dice bet
         async function createDiceBet(opponentType = 'player') {
             if (!verifyGameAccess()) {
@@ -8013,8 +8135,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     amount: amount
                 });
                 
-                // Deduct balance locally only after API success.
-                userData.balance -= amount;
+                // Backend is source of truth for stake debit.
+                if (typeof createData.newBalance === 'number') {
+                    userData.balance = parseFloat(createData.newBalance);
+                }
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
                 await saveUserBalanceToFirestore();
                 updateUI();
@@ -8059,11 +8183,6 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     return;
                 }
                 
-                userData.balance -= betAmount;
-                localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                await saveUserBalanceToFirestore();
-                updateUI();
-                
                 let acceptData;
                 try {
                     acceptData = await gamesApi('/api/games/dice/accept', 'POST', {
@@ -8072,11 +8191,6 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                         opponentName: userData.username
                     });
                 } catch (err) {
-                    // Refund if settlement fails so balance stays consistent.
-                    userData.balance += betAmount;
-                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                    await saveUserBalanceToFirestore();
-                    updateUI();
                     showAnimatedPopup('Error', err.message || 'Failed to settle bet', 'error');
                     await renderDiceBets();
                     return;
@@ -8084,44 +8198,27 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
 
                 const result = acceptData.result;
                 if (!result) {
-                    userData.balance += betAmount;
-                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                    await saveUserBalanceToFirestore();
-                    updateUI();
                     showAnimatedPopup('Error', 'Missing game result', 'error');
                     await renderDiceBets();
                     return;
                 }
 
-                const myRoll = parseInt(result.opponentRoll, 10) || 1;
-                const enemyRoll = parseInt(result.creatorRoll, 10) || 1;
-                showDiceAnimation(async () => {
-                    if (result.winner === adminUsername) {
-                        userData.balance += betAmount * 2;
-                        await updateDiceLeaderboard(userData.username, betAmount);
-                    } else if (result.winner === 'tie') {
-                        userData.balance += betAmount * 0.5;
-                    }
+                if (typeof acceptData.viewerBalance === 'number') {
+                    userData.balance = parseFloat(acceptData.viewerBalance);
                     localStorage.setItem('pluxoUser', JSON.stringify(userData));
                     await saveUserBalanceToFirestore();
                     updateUI();
-                    
-                    await renderDiceBets();
-                    
-                    let resultMsg = '';
-                    let popupType = 'info';
-                    if (result.winner === 'tie') {
-                        resultMsg = `Tie! Both rolled ${result.creatorRoll}. You got $${(betAmount * 0.5).toFixed(2)} refunded (50%).`;
-                        popupType = 'info';
-                    } else if (result.winner === adminUsername) {
-                        resultMsg = `You won! Rolled ${result.opponentRoll} vs ${result.creatorName}'s ${result.creatorRoll}. You won $${(betAmount * 2).toFixed(2)}!`;
-                        popupType = 'success';
-                    } else {
-                        resultMsg = `You lost! Rolled ${result.opponentRoll} vs ${result.creatorName}'s ${result.creatorRoll}. You lost $${betAmount.toFixed(2)}.`;
-                        popupType = 'error';
-                    }
-                    showAnimatedPopup('Dice Results', resultMsg, popupType);
-                }, myRoll, enemyRoll);
+                } else {
+                    await loadUserBalanceFromFirestore();
+                }
+
+                if ((result.winner || '').toLowerCase() === adminUsername) {
+                    await updateDiceLeaderboard(userData.username, betAmount);
+                }
+
+                await showDiceResultScreen(result, adminUsername);
+                markResultSeen('pluxoDiceSeenResults', result.id);
+                await renderDiceBets();
             } catch (error) {
                 showAnimatedPopup('Error', error.message || 'Failed to accept bet', 'error');
                 await renderDiceBets();
@@ -8145,18 +8242,37 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     betId: betId,
                     username: adminUsername
                 });
-                const betAmount = parseFloat(cancelData.amount || 0);
-                if (betAmount > 0) {
-                    userData.balance += betAmount;
-                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                    await saveUserBalanceToFirestore();
-                    updateUI();
+                if (typeof cancelData.newBalance === 'number') {
+                    userData.balance = parseFloat(cancelData.newBalance);
+                } else {
+                    const betAmount = parseFloat(cancelData.amount || 0);
+                    if (betAmount > 0) userData.balance += betAmount;
                 }
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                await saveUserBalanceToFirestore();
+                updateUI();
                 await renderDiceBets();
                 showAnimatedPopup('Success', 'Bet cancelled. Amount refunded.', 'success');
             } catch (error) {
                 showAnimatedPopup('Error', error.message || 'Failed to cancel bet', 'error');
             }
+        }
+
+        async function displayLatestDiceResultIfNeeded(history, adminUsername) {
+            if (!Array.isArray(history) || history.length === 0 || !adminUsername) return;
+            const latest = history.find(h => h.creator === adminUsername || h.opponent === adminUsername);
+            if (!latest || !latest.id) return;
+            if (hasSeenResult('pluxoDiceSeenResults', latest.id)) return;
+            const balanceFromHistory = findBestBalanceFromHistory(history, adminUsername);
+            if (typeof balanceFromHistory === 'number') {
+                userData.balance = balanceFromHistory;
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                updateUI();
+            } else {
+                await loadUserBalanceFromFirestore();
+            }
+            await showDiceResultScreen(latest, adminUsername);
+            markResultSeen('pluxoDiceSeenResults', latest.id);
         }
 
         // Render dice bets
@@ -8179,6 +8295,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 bets = [];
                 history = [];
             }
+
+            await displayLatestDiceResultIfNeeded(history, adminUsername);
             
             // Filter bets: show waiting bets from others, or active/completed bets involving current user
             const relevantBets = bets.filter(b => 
@@ -8986,13 +9104,18 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             
             const adminUsername = userData.username.toLowerCase();
             try {
-                await gamesApi('/api/games/blackjack/create', 'POST', {
+                const createData = await gamesApi('/api/games/blackjack/create', 'POST', {
                     creator: adminUsername,
                     creatorName: userData.username,
                     amount: amount
                 });
-                
-                userData.balance -= amount;
+
+                if (typeof createData.newBalance === 'number') {
+                    userData.balance = parseFloat(createData.newBalance);
+                } else {
+                    // Legacy fallback if server not yet updated.
+                    userData.balance -= amount;
+                }
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
                 await saveUserBalanceToFirestore();
                 updateUI();
@@ -9033,11 +9156,6 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     return;
                 }
                 
-                userData.balance -= betAmount;
-                localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                await saveUserBalanceToFirestore();
-                updateUI();
-                
                 const joinData = await gamesApi('/api/games/blackjack/join', 'POST', {
                     matchId: matchId,
                     opponent: adminUsername,
@@ -9047,28 +9165,19 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 if (!result) {
                     throw new Error('Missing game result');
                 }
-                
-                let resultMsg = '';
-                let popupType = 'info';
-                if (result.winner === adminUsername) {
-                    userData.balance += betAmount * 2;
-                    resultMsg = `You win! (${result.opponentScore} vs ${result.creatorScore}) Won $${(betAmount * 2).toFixed(2)}!`;
-                    popupType = 'success';
-                } else if (result.winner === 'tie') {
-                    userData.balance += betAmount * 0.5;
-                    resultMsg = `Tie! You got $${(betAmount * 0.5).toFixed(2)} back (50%).`;
-                    popupType = 'info';
+
+                if (typeof joinData.viewerBalance === 'number') {
+                    userData.balance = parseFloat(joinData.viewerBalance);
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    await saveUserBalanceToFirestore();
+                    updateUI();
                 } else {
-                    resultMsg = `${result.winnerName || 'Opponent'} wins.`;
-                    popupType = 'error';
+                    await loadUserBalanceFromFirestore();
                 }
                 
-                localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                await saveUserBalanceToFirestore();
-                updateUI();
-                
+                await showBlackjackResultScreen(result, adminUsername);
+                markResultSeen('pluxoBlackjackSeenResults', result.id);
                 await renderBlackjackMatches();
-                showAnimatedPopup('Blackjack Result', resultMsg, popupType);
             } catch (error) {
                 showAnimatedPopup('Error', error.message || 'Failed to join match', 'error');
                 await renderBlackjackMatches();
@@ -9085,18 +9194,37 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     matchId: matchId,
                     username: adminUsername
                 });
-                const amount = parseFloat(cancelData.amount || 0);
-                if (amount > 0) {
-                    userData.balance += amount;
-                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                    await saveUserBalanceToFirestore();
-                    updateUI();
+                if (typeof cancelData.newBalance === 'number') {
+                    userData.balance = parseFloat(cancelData.newBalance);
+                } else {
+                    const amount = parseFloat(cancelData.amount || 0);
+                    if (amount > 0) userData.balance += amount;
                 }
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                await saveUserBalanceToFirestore();
+                updateUI();
                 await renderBlackjackMatches();
                 showAnimatedPopup('Success', 'Match cancelled. Amount refunded.', 'success');
             } catch (error) {
                 showAnimatedPopup('Error', error.message || 'Failed to cancel match', 'error');
             }
+        }
+
+        async function displayLatestBlackjackResultIfNeeded(history, adminUsername) {
+            if (!Array.isArray(history) || history.length === 0 || !adminUsername) return;
+            const latest = history.find(h => h.creator === adminUsername || h.opponent === adminUsername);
+            if (!latest || !latest.id) return;
+            if (hasSeenResult('pluxoBlackjackSeenResults', latest.id)) return;
+            const balanceFromHistory = findBestBalanceFromHistory(history, adminUsername);
+            if (typeof balanceFromHistory === 'number') {
+                userData.balance = balanceFromHistory;
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                updateUI();
+            } else {
+                await loadUserBalanceFromFirestore();
+            }
+            await showBlackjackResultScreen(latest, adminUsername);
+            markResultSeen('pluxoBlackjackSeenResults', latest.id);
         }
         
         // Render matches
@@ -9121,6 +9249,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 history = [];
             }
             const adminUsername = userData?.username?.toLowerCase() || '';
+
+            await displayLatestBlackjackResultIfNeeded(history, adminUsername);
             
             // Render open matches
             const openMatches = matches.filter(m => m.status === 'waiting');
@@ -9825,6 +9955,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             
             const itemCount = userData.cart.length;
             const cartItems = [...userData.cart]; // Copy cart items
+            const purchasedProductIds = cartItems
+                .map(item => item.productId)
+                .filter(id => id !== undefined && id !== null);
             
             try {
                 // CRITICAL: Deduct balance from Railway API FIRST (prevents refresh exploit)
@@ -9872,6 +10005,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 await saveUserBalanceToFirestore(); // Sync to Firestore
                 updateUI();
                 updateCartDisplay();
+                await generateProducts();
+                renderProducts();
+                renderPagination();
                 
                 // Notify bot about purchase
                 try {
@@ -9884,7 +10020,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                         body: JSON.stringify({
                             username: userData.username.toLowerCase(),
                             item_count: itemCount,
-                            total_amount: total
+                            total_amount: total,
+                            product_ids: purchasedProductIds,
+                            stock_slots: purchasedProductIds
                         })
                     });
                 } catch (notifyError) {
