@@ -4988,7 +4988,7 @@
                         <span class="box"></span>
                         Remember me
                     </label>
-                    <a href="#" class="forgot" onclick="event.preventDefault(); showAnimatedPopup('Password Reset', 'Contact @pluxomain on Telegram for password reset.', 'info');">Forgot password?</a>
+                    <a href="#" class="forgot" onclick="event.preventDefault(); showAnimatedPopup('Password Reset', 'Contact @nonamebackagain on Telegram for password reset.', 'info');">Forgot password?</a>
                 </div>
 
                 <div class="captcha-row">
@@ -5099,8 +5099,8 @@
             <a class="nav-item admin-nav" id="adminNavItem" onclick="showPage('admin', this)" style="display:none;">Admin</a>
             <a class="nav-item admin-nav" id="sellerNavItem" onclick="showPage('seller-management', this)" style="display:none;">Seller Management</a>
             <a class="nav-item seller-nav" id="sellerListingNavItem" onclick="showPage('seller-listing', this)" style="display:none;">My Listings</a>
-            <a class="nav-item admin-nav" id="adminDiceNavItem" onclick="showPage('admin-dice', this)" style="display:none;">Dice</a>
-            <a class="nav-item admin-nav" id="adminBlackjackNavItem" onclick="showPage('admin-blackjack', this)" style="display:none;">Blackjack</a>
+            <a class="nav-item" id="adminDiceNavItem" onclick="showPage('admin-dice', this)">Dice</a>
+            <a class="nav-item" id="adminBlackjackNavItem" onclick="showPage('admin-blackjack', this)">Blackjack</a>
             <a class="nav-item settings-nav" onclick="openSettings()">⚙</a>
         </nav>
 
@@ -5120,9 +5120,9 @@
                     
                     <div class="section-title">Community Links</div>
                     <p>
-                        Channel: <a href="https://t.me/pluxo_official" target="_blank">https://t.me/pluxo_official</a><br>
-                        Chat: <a href="https://t.me/pluxo_chat" target="_blank">https://t.me/pluxo_chat</a><br>
-                        Support: <strong>@pluxomain</strong>
+                        Channel: <a href="https://t.me/+_OprIQ6fSSMxZWQx" target="_blank">https://t.me/+_OprIQ6fSSMxZWQx</a><br>
+                        Chat: Join the channel, click the PFP, click the messaging logo, and request to join chat on Telegram.<br>
+                        Support: <strong>@nonamebackagain</strong>
                     </p>
 
                     <div class="section-title">🎁 Free Piece Offer</div>
@@ -5409,10 +5409,10 @@
                     <div class="content-card" style="margin-bottom: 24px; background: rgba(37, 99, 235, 0.1); border-color: var(--blue); padding: 32px; text-align: center;">
                         <h2 style="color: var(--blue); margin-bottom: 16px; font-size: 28px;">📞 Need Help?</h2>
                         <p style="font-size: 18px; line-height: 1.8; margin-bottom: 20px;">
-                            For any ticket or problem, contact <strong style="color: var(--blue-light); font-size: 20px;">@pluxomain</strong> on Telegram
+                            For any ticket or problem, contact <strong style="color: var(--blue-light); font-size: 20px;">@nonamebackagain</strong> on Telegram
                         </p>
-                        <a href="https://t.me/pluxomain" target="_blank" class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 14px 32px; font-size: 16px;">
-                            📱 Contact @pluxomain on Telegram
+                        <a href="https://t.me/nonamebackagain" target="_blank" class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 14px 32px; font-size: 16px;">
+                            📱 Contact @nonamebackagain on Telegram
                         </a>
                     </div>
                     
@@ -5686,19 +5686,16 @@
                 
                 <div class="content-card" style="border-color: #8b5cf6;">
                     <h2 style="color: #8b5cf6;">🎲 Dice Game</h2>
-                    <p style="margin-bottom: 20px; color: var(--gray);">Bet against other users or play against the bot. Choose your bet amount ($1-$5).</p>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Bet against other users or play against the bot. Battle for amounts from $1 to $25.</p>
                     
                     <div class="admin-section">
                         <div class="section-title">Create Bet</div>
                         <div class="admin-form" style="flex-direction: column; gap: 16px;">
                             <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $5)</label>
-                                <input type="number" class="input-field" id="diceBetAmount" placeholder="Enter amount (1-5)" min="1" max="5" step="0.01">
+                                <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $25)</label>
+                                <input type="number" class="input-field" id="diceBetAmount" placeholder="Enter amount (1-25)" min="1" max="25" step="0.01">
                             </div>
-                            <div style="display: flex; gap: 12px;">
-                                <button class="btn btn-admin" onclick="createDiceBet('player')" style="background: #8b5cf6; flex: 1;">Create Bet (vs Player)</button>
-                                <button class="btn btn-admin" onclick="createDiceBet('bot')" style="background: #10b981; flex: 1;">Play vs Bot</button>
-                            </div>
+                        <button class="btn btn-admin" onclick="createDiceBet('player')" style="background: #8b5cf6; width: 100%;">Create Bet (PvP)</button>
                         </div>
                     </div>
 
@@ -5742,68 +5739,40 @@
                 </div>
                 
                 <div class="content-card" style="border-color: #10b981;">
-                    <!-- Tab Navigation -->
-                    <div style="display: flex; gap: 12px; margin-bottom: 24px;">
-                        <button class="btn btn-admin" id="bjTabBot" onclick="showBlackjackTab('bot')" style="background: #10b981; flex: 1;">🤖 vs Bot</button>
-                        <button class="btn btn-admin" id="bjTabMultiplayer" onclick="showBlackjackTab('multiplayer')" style="background: #3b82f6; flex: 1; opacity: 0.7;">👥 Multiplayer</button>
-                    </div>
+                    <h2 style="color: #3b82f6;">👥 Multiplayer Blackjack</h2>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Challenge other players! Create a match or join an existing one.</p>
                     
-                    <!-- VS BOT TAB -->
-                    <div id="blackjackBotTab">
-                        <h2 style="color: #10b981;">🎮 Play vs Bot</h2>
-                        <p style="margin-bottom: 20px; color: var(--gray);">Get as close to 21 as possible without going over!</p>
-                        
-                        <div class="admin-section">
-                            <div class="section-title">Place Your Bet</div>
-                            <div class="admin-form" style="flex-direction: column; gap: 16px;">
-                                <div style="display: flex; flex-direction: column; gap: 8px;">
-                                    <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $10)</label>
-                                    <input type="number" class="input-field" id="blackjackBetAmount" placeholder="Enter amount (1-10)" min="1" max="10" step="0.01" value="5">
-                                </div>
-                                <button class="btn btn-admin" id="startBlackjackBtn" onclick="startBlackjackGame()" style="background: #10b981; width: 100%;">
-                                    🎮 Start Game
-                                </button>
+                    <div class="admin-section">
+                        <div class="section-title">➕ Create Match</div>
+                        <div class="admin-form" style="flex-direction: column; gap: 16px;">
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $25)</label>
+                                <input type="number" class="input-field" id="bjMultiplayerBetAmount" placeholder="Enter amount (1-25)" min="1" max="25" step="0.01" value="5">
                             </div>
+                            <button class="btn btn-admin" onclick="createBlackjackMatch()" style="background: #8b5cf6; width: 100%;">
+                                🎲 Create Match (vs Player)
+                            </button>
                         </div>
                     </div>
+                        
+                    <div class="admin-section">
+                        <div class="section-title" style="display: flex; align-items: center; justify-content: space-between;">
+                            <span>📌 Open Matches</span>
+                            <button class="btn btn-admin" onclick="renderBlackjackMatches()" style="background: #3b82f6; padding: 6px 16px; font-size: 12px;">🔄 Refresh</button>
+                        </div>
+                        <div class="dice-bets-list" id="blackjackMatchesList">
+                            <div class="dice-waiting-message">
+                                <div class="waiting-icon">🃏</div>
+                                <p>No open matches</p>
+                                <p style="font-size: 14px; margin-top: 8px;">Create one or wait for others!</p>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <!-- MULTIPLAYER TAB -->
-                    <div id="blackjackMultiplayerTab" style="display: none;">
-                        <h2 style="color: #3b82f6;">👥 Multiplayer Blackjack</h2>
-                        <p style="margin-bottom: 20px; color: var(--gray);">Challenge other players! Create a match or join an existing one.</p>
-                        
-                        <div class="admin-section">
-                            <div class="section-title">➕ Create Match</div>
-                            <div class="admin-form" style="flex-direction: column; gap: 16px;">
-                                <div style="display: flex; flex-direction: column; gap: 8px;">
-                                    <label style="color: var(--gray); font-size: 14px; font-weight: 600;">Bet Amount ($1 - $10)</label>
-                                    <input type="number" class="input-field" id="bjMultiplayerBetAmount" placeholder="Enter amount (1-10)" min="1" max="10" step="0.01" value="5">
-                                </div>
-                                <button class="btn btn-admin" onclick="createBlackjackMatch()" style="background: #8b5cf6; width: 100%;">
-                                    🎲 Create Match (vs Player)
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="admin-section">
-                            <div class="section-title" style="display: flex; align-items: center; justify-content: space-between;">
-                                <span>📌 Open Matches</span>
-                                <button class="btn btn-admin" onclick="renderBlackjackMatches()" style="background: #3b82f6; padding: 6px 16px; font-size: 12px;">🔄 Refresh</button>
-                            </div>
-                            <div class="dice-bets-list" id="blackjackMatchesList">
-                                <div class="dice-waiting-message">
-                                    <div class="waiting-icon">🃏</div>
-                                    <p>No open matches</p>
-                                    <p style="font-size: 14px; margin-top: 8px;">Create one or wait for others!</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="admin-section">
-                            <div class="section-title">📜 Match History</div>
-                            <div class="dice-history-list" id="blackjackHistoryList">
-                                <p style="color: var(--gray);">No match history yet</p>
-                            </div>
+                    <div class="admin-section">
+                        <div class="section-title">📜 Match History</div>
+                        <div class="dice-history-list" id="blackjackHistoryList">
+                            <p style="color: var(--gray);">No match history yet</p>
                         </div>
                     </div>
 
@@ -6228,6 +6197,25 @@
         var WEBHOOK_SECRET = 'pluxo_secret_2024';
         console.log('API URL:', BOT_WEBHOOK_URL);
 
+        async function gamesApi(path, method = 'GET', body = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Webhook-Secret': WEBHOOK_SECRET
+                }
+            };
+            if (body !== null) {
+                options.body = JSON.stringify(body);
+            }
+            const response = await fetch(BOT_WEBHOOK_URL + path, options);
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || data.error) {
+                throw new Error(data.error || ('Request failed: ' + response.status));
+            }
+            return data;
+        }
+
         // Initialize page on load
         if (userData) {
             // Update UI immediately with localStorage data for instant display
@@ -6381,14 +6369,14 @@
             if (isAdmin(userData.username)) {
                 if (adminNav) adminNav.style.display = 'block';
                 if (sellerNav) sellerNav.style.display = 'block';
-                if (adminDiceNav) adminDiceNav.style.display = 'block';
-                if (adminBlackjackNav) adminBlackjackNav.style.display = 'block';
             } else {
                 if (adminNav) adminNav.style.display = 'none';
                 if (sellerNav) sellerNav.style.display = 'none';
-                if (adminDiceNav) adminDiceNav.style.display = 'none';
-                if (adminBlackjackNav) adminBlackjackNav.style.display = 'none';
             }
+            
+            // Dice and blackjack are available for all logged-in users.
+            if (adminDiceNav) adminDiceNav.style.display = 'block';
+            if (adminBlackjackNav) adminBlackjackNav.style.display = 'block';
             
             // Show seller listing nav for sellers
             if (isSeller(userData.username)) {
@@ -7424,45 +7412,7 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
         }
         
         function loadSellerProductsToShop() {
-            const sellerProductsList = getAllSellerProducts();
-            
-            if (sellerProductsList.length > 0) {
-                // Convert seller products to shop format and add to allProducts
-                const convertedProducts = sellerProductsList.map((p, index) => ({
-                    id: p.id || ('SP' + index),
-                    bin: p.bin,
-                    brand: p.brand,
-                    type: p.type,
-                    country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
-                    hasName: p.hasName !== undefined ? p.hasName : true,
-                    hasAddress: p.hasAddress !== undefined ? p.hasAddress : false,
-                    hasZip: p.hasZip !== undefined ? p.hasZip : true,
-                    hasPhone: p.hasPhone !== undefined ? p.hasPhone : false,
-                    hasMail: p.hasMail !== undefined ? p.hasMail : true,
-                    hasSSN: p.hasSSN !== undefined ? p.hasSSN : true,
-                    hasDOB: p.hasDOB !== undefined ? p.hasDOB : true,
-                    bank: p.bank || 'CHASE BANK USA',
-                    base: '2026_1_3_US_Base',
-                    refundable: p.refundable !== undefined ? p.refundable : true,
-                    price: p.price || '12.00',
-                    seller: p.seller
-                }));
-                
-                // Merge with existing products (seller products take priority)
-                const existingProductIds = new Set(allProducts.map(p => p.id));
-                const newSellerProducts = convertedProducts.filter(p => !existingProductIds.has(p.id));
-                allProducts = [...allProducts, ...newSellerProducts];
-                
-                // Update filtered and original products
-                originalProducts = [...allProducts];
-                filteredProducts = [...allProducts];
-                
-                // Refresh shop display if on products page
-                const productsPage = document.getElementById('page-products');
-                if (productsPage && productsPage.style.display !== 'none') {
-                    renderProducts();
-                }
-            }
+            return;
         }
         
         window.addSellerProduct = addSellerProduct;
@@ -7677,6 +7627,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             }
             return isAdmin(userData.username);
         }
+        
+        function verifyGameAccess() {
+            return !!(userData && userData.username);
+        }
 
         // Security: Generate secure product ID
         function generateSecureId() {
@@ -7749,47 +7703,12 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             allStock[adminUsername] = stock;
             localStorage.setItem('pluxoAdminStock', JSON.stringify(allStock));
             
-            // IMPORTANT: Update shop products with admin stock
-            loadAdminProductsToShop();
-            
             return true;
         }
         
         // Load admin products into shop (replaces existing shop products)
         function loadAdminProductsToShop() {
-            const adminProducts = getAllAdminStock();
-            
-            if (adminProducts.length > 0) {
-                // Convert admin products to shop format
-                allProducts = adminProducts.map((p, index) => ({
-                    id: p.id || (index + 1),
-                    bin: p.bin,
-                    brand: p.brand || 'VISA',
-                    type: p.type || 'CREDIT',
-                    country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
-                    hasName: p.hasName !== undefined ? p.hasName : true,
-                    hasAddress: p.hasAddress !== undefined ? p.hasAddress : false,
-                    hasZip: p.hasZip !== undefined ? p.hasZip : true,
-                    hasPhone: p.hasPhone !== undefined ? p.hasPhone : false,
-                    hasMail: p.hasMail !== undefined ? p.hasMail : true,
-                    hasSSN: p.hasSSN !== undefined ? p.hasSSN : true,
-                    hasDOB: p.hasDOB !== undefined ? p.hasDOB : true,
-                    bank: p.bank || 'REVOLUT, LTD.',
-                    base: p.base || '2026_1_3_US_Base',
-                    refundable: p.refundable !== undefined ? p.refundable : true,
-                    price: p.price || '10.00'
-                }));
-                
-                // Update filtered and original products
-                originalProducts = [...allProducts];
-                filteredProducts = [...allProducts];
-                
-                // Refresh shop display if on products page (but don't call renderProducts here to avoid recursion)
-                const productsPage = document.getElementById('page-products');
-                if (productsPage && productsPage.style.display !== 'none') {
-                    currentPage = 1;
-                }
-            }
+            return;
         }
 
         // Add product to admin's stock
@@ -7955,34 +7874,38 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         window.addMyProduct = addMyProduct;
         window.deleteMyProduct = deleteMyProduct;
         
+        const GAME_REFRESH_MS = 1500;
+        let diceRefreshTimer = null;
+        let blackjackRefreshTimer = null;
+        
         /* ==================== DICE BETTING SYSTEM ==================== */
         
         // Get all dice bets from storage
         function getAllDiceBets() {
-            return JSON.parse(localStorage.getItem('pluxoDiceBets')) || [];
+            return [];
         }
 
         // Save dice bets to storage
         function saveDiceBets(bets) {
-            localStorage.setItem('pluxoDiceBets', JSON.stringify(bets));
+            return;
         }
 
         // Get dice bet history
         function getDiceHistory() {
-            return JSON.parse(localStorage.getItem('pluxoDiceHistory')) || [];
+            return [];
         }
 
         // Save dice bet history
         function saveDiceHistory(history) {
-            localStorage.setItem('pluxoDiceHistory', JSON.stringify(history));
+            return;
         }
 
         // Show dice animation
-        function showDiceAnimation(callback, isBotGame = false) {
+        function showDiceAnimation(callback, finalPlayerRoll = null, finalOpponentRoll = null) {
             // Create overlay
             const overlay = document.createElement('div');
             overlay.className = 'dice-animation-overlay';
-            const opponentLabel = isBotGame ? 'Bot' : 'Opponent';
+            const opponentLabel = 'Opponent';
             overlay.innerHTML = `
                 <div class="dice-container">
                     <div class="dice-wrapper">
@@ -7999,18 +7922,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             document.body.appendChild(overlay);
             
             // Generate random rolls
-            const playerRoll = Math.floor(Math.random() * 6) + 1;
-            // Bot has slight advantage - weighted towards higher numbers (only for bot games)
-            let opponentRoll;
-            if (isBotGame) {
-                // Bot has 40% chance to roll 4-6, making it harder
-                opponentRoll = Math.random() < 0.4 ? 
-                    Math.floor(Math.random() * 3) + 4 : // 40% chance of 4-6
-                    Math.floor(Math.random() * 6) + 1;  // 60% chance of 1-6
-            } else {
-                // Fair random roll for player vs player
-                opponentRoll = Math.floor(Math.random() * 6) + 1;
-            }
+            const playerRoll = Number.isInteger(finalPlayerRoll) ? finalPlayerRoll : (Math.floor(Math.random() * 6) + 1);
+            const opponentRoll = Number.isInteger(finalOpponentRoll) ? finalOpponentRoll : (Math.floor(Math.random() * 6) + 1);
             
             // Dice faces emoji mapping
             const diceFaces = {
@@ -8024,7 +7937,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             
             // Animate dice rolling
             let rollCount = 0;
-            const maxRolls = 15;
+            const maxRolls = 10;
             const rollInterval = setInterval(() => {
                 rollCount++;
                 const tempPlayerRoll = Math.floor(Math.random() * 6) + 1;
@@ -8048,20 +7961,24 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     playerDiceEl.textContent = diceFaces[playerRoll];
                     opponentDiceEl.textContent = diceFaces[opponentRoll];
                     
-                    // Wait a moment then remove overlay and call callback
+                    // Wait briefly then remove overlay and call callback
                     setTimeout(() => {
                         overlay.remove();
                         callback(playerRoll, opponentRoll);
-                    }, 1500);
+                    }, 700);
                 }
-            }, 100);
+            }, 70);
         }
 
         // Create a new dice bet
         async function createDiceBet(opponentType = 'player') {
-            // Security: Verify admin access
-            if (!verifyAdminAccess()) {
-                showAnimatedPopup('Error', 'Only admins can create bets', 'error');
+            if (!verifyGameAccess()) {
+                showAnimatedPopup('Error', 'Please login to create a bet', 'error');
+                return;
+            }
+            
+            if (opponentType !== 'player') {
+                showAnimatedPopup('Info', 'Bot mode removed. Use PvP multiplayer.', 'info');
                 return;
             }
             
@@ -8069,8 +7986,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             const amount = parseFloat(amountInput.value);
             
             // Validate bet amount
-            if (!amount || isNaN(amount) || amount < 1 || amount > 5) {
-                showAnimatedPopup('Error', 'Bet amount must be between $1 and $5', 'error');
+            if (!amount || isNaN(amount) || amount < 1 || amount > 25) {
+                showAnimatedPopup('Error', 'Bet amount must be between $1 and $25', 'error');
                 shakeElement(amountInput);
                 return;
             }
@@ -8088,334 +8005,180 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 return;
             }
             
-            const bets = getAllDiceBets();
             const adminUsername = userData.username.toLowerCase();
-            
-            // Check if user already has an active bet
-            const existingBet = bets.find(b => 
-                (b.creator === adminUsername || b.opponent === adminUsername) && 
-                b.status === 'waiting'
-            );
-            
-            if (existingBet) {
-                showAnimatedPopup('Info', 'You already have an active bet. Please complete or cancel it first.', 'info');
-                return;
-            }
-            
-            // If playing vs bot, immediately start the game
-            if (opponentType === 'bot') {
-                // Deduct balance
+            try {
+                const createData = await gamesApi('/api/games/dice/create', 'POST', {
+                    creator: adminUsername,
+                    creatorName: userData.username,
+                    amount: amount
+                });
+                
+                // Deduct balance locally only after API success.
                 userData.balance -= amount;
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
                 await saveUserBalanceToFirestore();
                 updateUI();
                 
-                // Show dice animation (bot game - bot has advantage)
-                showDiceAnimation(async (creatorRoll, botRoll) => {
-                    // Bot roll is already weighted in the animation function (isBotGame=true)
-                    const finalCreatorRoll = creatorRoll;
-                    const finalBotRoll = botRoll;
-                    
-                    // Determine winner
-                    let winner, winnerName, resultMessage;
-                    if (finalCreatorRoll > finalBotRoll) {
-                        winner = adminUsername;
-                        winnerName = userData.username;
-                        const winnings = amount * 2;
-                        userData.balance += winnings; // Win double
-                        resultMessage = `You won! Rolled ${finalCreatorRoll} vs Bot's ${finalBotRoll}. You won $${winnings.toFixed(2)}!`;
-                        showAnimatedPopup('Success', resultMessage, 'success');
-                        // Update leaderboard
-                        await updateDiceLeaderboard(userData.username, amount);
-                    } else if (finalBotRoll > finalCreatorRoll) {
-                        winner = 'bot';
-                        winnerName = 'Bot';
-                        resultMessage = `Bot won! Rolled ${finalBotRoll} vs your ${finalCreatorRoll}. You lost $${amount.toFixed(2)}.`;
-                        showAnimatedPopup('Error', resultMessage, 'error');
-                    } else {
-                        winner = 'tie';
-                        winnerName = 'Tie';
-                        userData.balance += amount * 0.5; // Refund half
-                        resultMessage = `Tie! Both rolled ${finalCreatorRoll}. You got $${(amount * 0.5).toFixed(2)} refunded (50%).`;
-                        showAnimatedPopup('Info', resultMessage, 'info');
-                    }
-                    
-                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                    await saveUserBalanceToFirestore();
-                    updateUI();
-                    
-                    // Save to history
-                    const history = getDiceHistory();
-                    const betRecord = {
-                        id: 'DICE_BOT_' + Date.now(),
-                        creator: adminUsername,
-                        creatorName: userData.username,
-                        opponent: 'bot',
-                        opponentName: 'Bot',
-                        amount: amount.toFixed(2),
-                        status: 'completed',
-                        creatorRoll: finalCreatorRoll,
-                        opponentRoll: finalBotRoll,
-                        winner: winner,
-                        winnerName: winnerName,
-                        createdAt: new Date().toISOString(),
-                        completedAt: new Date().toISOString()
-                    };
-                    history.unshift(betRecord);
-                    if (history.length > 50) history.pop();
-                    saveDiceHistory(history);
-                    
-                    amountInput.value = '';
-                    renderDiceBets();
-                });
-                return;
+                amountInput.value = '';
+                await renderDiceBets();
+                showAnimatedPopup('Success', createData.bet ? 'Bet created! Waiting for opponent...' : 'Bet created!', 'success');
+            } catch (error) {
+                showAnimatedPopup('Error', error.message || 'Failed to create bet', 'error');
             }
-            
-            // Create new bet for player vs player
-            const newBet = {
-                id: 'DICE_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-                creator: adminUsername,
-                creatorName: userData.username,
-                opponent: null,
-                opponentName: null,
-                amount: amount.toFixed(2),
-                status: 'waiting',
-                creatorRoll: null,
-                opponentRoll: null,
-                winner: null,
-                createdAt: new Date().toISOString(),
-                completedAt: null
-            };
-            
-            bets.push(newBet);
-            saveDiceBets(bets);
-            
-            // Deduct balance
-            userData.balance -= amount;
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            await saveUserBalanceToFirestore(); // Sync to Firestore
-            updateUI();
-            
-            amountInput.value = '';
-            renderDiceBets();
-            
-            showAnimatedPopup('Success', 'Bet created! Waiting for opponent...', 'success');
         }
 
         // Accept a dice bet
         async function acceptDiceBet(betId) {
-            // Security: Verify admin access
-            if (!verifyAdminAccess()) {
-                showAnimatedPopup('Error', 'Only admins can accept bets', 'error');
+            if (!verifyGameAccess()) {
+                showAnimatedPopup('Error', 'Please login to join bets', 'error');
                 return;
             }
-            
-            const bets = getAllDiceBets();
-            const bet = bets.find(b => b.id === betId);
-            
-            if (!bet) {
-                showAnimatedPopup('Error', 'Bet not found', 'error');
-                return;
-            }
-            
-            if (bet.status !== 'waiting') {
-                showAnimatedPopup('Info', 'This bet is no longer available', 'info');
-                renderDiceBets();
-                return;
-            }
-            
-            const adminUsername = userData.username.toLowerCase();
-            
-            // Can't accept own bet
-            if (bet.creator === adminUsername) {
-                showAnimatedPopup('Error', 'You cannot accept your own bet', 'error');
-                return;
-            }
-            
-            // Check balance
-            const betAmount = parseFloat(bet.amount);
-            if (userData.balance < betAmount) {
-                showAnimatedPopup('Error', 'Insufficient balance', 'error');
-                return;
-            }
-            
-            // Accept bet
-            bet.opponent = adminUsername;
-            bet.opponentName = userData.username;
-            bet.status = 'active';
-            
-            // Deduct balance from opponent
-            userData.balance -= betAmount;
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            await saveUserBalanceToFirestore(); // Sync to Firestore
-            updateUI();
-            
-            // Show dice animation for player vs player (fair rolls)
-            showDiceAnimation(async (creatorRoll, opponentRoll) => {
-                bet.creatorRoll = creatorRoll;
-                bet.opponentRoll = opponentRoll;
-                
-                // Determine winner (higher roll wins)
-                if (bet.creatorRoll > bet.opponentRoll) {
-                    bet.winner = bet.creator;
-                    bet.winnerName = bet.creatorName;
-                    // Creator wins - they get their bet back + opponent's bet
-                    // Note: Creator's balance will be updated when they view the result
-                    // Update leaderboard for creator
-                    await updateDiceLeaderboard(bet.creatorName, betAmount);
-                } else if (bet.opponentRoll > bet.creatorRoll) {
-                    bet.winner = bet.opponent;
-                    bet.winnerName = bet.opponentName;
-                    // Opponent wins - already deducted, add winnings
-                    userData.balance += betAmount * 2;
-                    // Update leaderboard for opponent (current user)
-                    await updateDiceLeaderboard(userData.username, betAmount);
-                } else {
-                    // Tie - refund half to both players
-                    bet.winner = 'tie';
-                    bet.winnerName = 'Tie';
-                    userData.balance += betAmount * 0.5; // Refund half to opponent
+
+            try {
+                const currentBetsData = await gamesApi('/api/games/dice/bets', 'GET');
+                const bet = (currentBetsData.bets || []).find(b => b.id === betId);
+                if (!bet) {
+                    showAnimatedPopup('Error', 'Bet not found', 'error');
+                    return;
+                }
+                if (bet.status !== 'waiting') {
+                    showAnimatedPopup('Info', 'This bet is no longer available', 'info');
+                    await renderDiceBets();
+                    return;
                 }
                 
-                bet.status = 'completed';
-                bet.completedAt = new Date().toISOString();
+                const adminUsername = userData.username.toLowerCase();
+                if (bet.creator === adminUsername) {
+                    showAnimatedPopup('Error', 'You cannot accept your own bet', 'error');
+                    return;
+                }
                 
-                // Update opponent's balance (current user)
+                const betAmount = parseFloat(bet.amount || 0);
+                if (userData.balance < betAmount) {
+                    showAnimatedPopup('Error', 'Insufficient balance', 'error');
+                    return;
+                }
+                
+                userData.balance -= betAmount;
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                await saveUserBalanceToFirestore(); // Sync to Firestore
+                await saveUserBalanceToFirestore();
                 updateUI();
                 
-                // Move to history
-                const history = getDiceHistory();
-                history.unshift(bet);
-                if (history.length > 50) history.pop(); // Keep last 50
-                saveDiceHistory(history);
-                
-                // Remove from active bets
-                const updatedBets = bets.filter(b => b.id !== betId);
-                saveDiceBets(updatedBets);
-                
-                renderDiceBets();
-                
-                // Show result with animated popup
-                let resultMsg = '';
-                let popupType = 'info';
-                
-                if (bet.winner === 'tie') {
-                    resultMsg = `Tie! Both rolled ${bet.creatorRoll}. You got $${(betAmount * 0.5).toFixed(2)} refunded (50%).`;
-                    popupType = 'info';
-                } else if (bet.winner === adminUsername) {
-                    resultMsg = `You won! Rolled ${bet.opponentRoll} vs ${bet.creatorName}'s ${bet.creatorRoll}. You won $${(betAmount * 2).toFixed(2)}!`;
-                    popupType = 'success';
-                } else {
-                    resultMsg = `You lost! Rolled ${bet.opponentRoll} vs ${bet.creatorName}'s ${bet.creatorRoll}. You lost $${betAmount.toFixed(2)}.`;
-                    popupType = 'error';
+                let acceptData;
+                try {
+                    acceptData = await gamesApi('/api/games/dice/accept', 'POST', {
+                        betId: betId,
+                        opponent: adminUsername,
+                        opponentName: userData.username
+                    });
+                } catch (err) {
+                    // Refund if settlement fails so balance stays consistent.
+                    userData.balance += betAmount;
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    await saveUserBalanceToFirestore();
+                    updateUI();
+                    showAnimatedPopup('Error', err.message || 'Failed to settle bet', 'error');
+                    await renderDiceBets();
+                    return;
                 }
-                
-                showAnimatedPopup('Dice Results', resultMsg, popupType);
-            });
-            
-            return; // Exit early, animation callback will handle the rest
-            
-            bet.status = 'completed';
-            bet.completedAt = new Date().toISOString();
-            
-            // Update opponent's balance (current user)
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            await saveUserBalanceToFirestore(); // Sync to Firestore
-            updateUI();
-            
-            // Move to history
-            const history = getDiceHistory();
-            history.unshift(bet);
-            if (history.length > 50) history.pop(); // Keep last 50
-            saveDiceHistory(history);
-            
-            // Remove from active bets
-            const updatedBets = bets.filter(b => b.id !== betId);
-            saveDiceBets(updatedBets);
-            
-            renderDiceBets();
-            
-            // Show result with animated popup
-            let resultMsg = '';
-            let popupType = 'info';
-            
-            if (bet.winner === 'tie') {
-                resultMsg = `Tie! Both rolled ${bet.creatorRoll}. You got $${(betAmount * 0.5).toFixed(2)} refunded (50%).`;
-                popupType = 'info';
-            } else if (bet.winner === adminUsername) {
-                resultMsg = `You won! Rolled ${bet.opponentRoll} vs ${bet.creatorName}'s ${bet.creatorRoll}. You won $${(betAmount * 2).toFixed(2)}!`;
-                popupType = 'success';
-            } else {
-                resultMsg = `You lost! Rolled ${bet.opponentRoll} vs ${bet.creatorName}'s ${bet.creatorRoll}. You lost $${betAmount.toFixed(2)}.`;
-                popupType = 'error';
+
+                const result = acceptData.result;
+                if (!result) {
+                    userData.balance += betAmount;
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    await saveUserBalanceToFirestore();
+                    updateUI();
+                    showAnimatedPopup('Error', 'Missing game result', 'error');
+                    await renderDiceBets();
+                    return;
+                }
+
+                const myRoll = parseInt(result.opponentRoll, 10) || 1;
+                const enemyRoll = parseInt(result.creatorRoll, 10) || 1;
+                showDiceAnimation(async () => {
+                    if (result.winner === adminUsername) {
+                        userData.balance += betAmount * 2;
+                        await updateDiceLeaderboard(userData.username, betAmount);
+                    } else if (result.winner === 'tie') {
+                        userData.balance += betAmount * 0.5;
+                    }
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    await saveUserBalanceToFirestore();
+                    updateUI();
+                    
+                    await renderDiceBets();
+                    
+                    let resultMsg = '';
+                    let popupType = 'info';
+                    if (result.winner === 'tie') {
+                        resultMsg = `Tie! Both rolled ${result.creatorRoll}. You got $${(betAmount * 0.5).toFixed(2)} refunded (50%).`;
+                        popupType = 'info';
+                    } else if (result.winner === adminUsername) {
+                        resultMsg = `You won! Rolled ${result.opponentRoll} vs ${result.creatorName}'s ${result.creatorRoll}. You won $${(betAmount * 2).toFixed(2)}!`;
+                        popupType = 'success';
+                    } else {
+                        resultMsg = `You lost! Rolled ${result.opponentRoll} vs ${result.creatorName}'s ${result.creatorRoll}. You lost $${betAmount.toFixed(2)}.`;
+                        popupType = 'error';
+                    }
+                    showAnimatedPopup('Dice Results', resultMsg, popupType);
+                }, myRoll, enemyRoll);
+            } catch (error) {
+                showAnimatedPopup('Error', error.message || 'Failed to accept bet', 'error');
+                await renderDiceBets();
             }
-            
-            showAnimatedPopup('Dice Results', resultMsg, popupType);
         }
 
         // Cancel a dice bet
         async function cancelDiceBet(betId) {
-            // Security: Verify admin access
-            if (!verifyAdminAccess()) {
-                showAnimatedPopup('Error', 'Unauthorized access', 'error');
+            if (!verifyGameAccess()) {
+                showAnimatedPopup('Error', 'Please login to cancel bets', 'error');
                 return;
             }
-            
-            const bets = getAllDiceBets();
-            const bet = bets.find(b => b.id === betId);
-            
-            if (!bet) {
-                showAnimatedPopup('Error', 'Bet not found', 'error');
+
+            if (!confirm('Cancel this bet? Your bet amount will be refunded.')) {
                 return;
             }
-            
-            const adminUsername = userData.username.toLowerCase();
-            
-            // Only creator can cancel
-            if (bet.creator !== adminUsername) {
-                showAnimatedPopup('Error', 'Only the bet creator can cancel', 'error');
-                return;
-            }
-            
-            if (bet.status !== 'waiting') {
-                showAnimatedPopup('Error', 'Cannot cancel a bet that has been accepted', 'error');
-                return;
-            }
-            
-            // Use confirm dialog for cancellation
-            if (confirm('Cancel this bet? Your bet amount will be refunded.')) {
-                // Refund balance
-                const betAmount = parseFloat(bet.amount);
-                userData.balance += betAmount;
-                localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                await saveUserBalanceToFirestore(); // Sync to Firestore
-                updateUI();
-                
-                // Remove bet
-                const updatedBets = bets.filter(b => b.id !== betId);
-                saveDiceBets(updatedBets);
-                
-                renderDiceBets();
+
+            try {
+                const adminUsername = userData.username.toLowerCase();
+                const cancelData = await gamesApi('/api/games/dice/cancel', 'POST', {
+                    betId: betId,
+                    username: adminUsername
+                });
+                const betAmount = parseFloat(cancelData.amount || 0);
+                if (betAmount > 0) {
+                    userData.balance += betAmount;
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    await saveUserBalanceToFirestore();
+                    updateUI();
+                }
+                await renderDiceBets();
                 showAnimatedPopup('Success', 'Bet cancelled. Amount refunded.', 'success');
+            } catch (error) {
+                showAnimatedPopup('Error', error.message || 'Failed to cancel bet', 'error');
             }
         }
 
         // Render dice bets
-        function renderDiceBets() {
-            // Security: Verify admin access
-            if (!verifyAdminAccess()) {
-                const betsList = document.getElementById('diceBetsList');
-                const historyList = document.getElementById('diceHistoryList');
-                if (betsList) betsList.innerHTML = '<p style="color: var(--gray);">Access denied</p>';
-                if (historyList) historyList.innerHTML = '<p style="color: var(--gray);">Access denied</p>';
+        async function renderDiceBets() {
+            if (!verifyGameAccess()) {
                 return;
             }
-            
-            const bets = getAllDiceBets();
-            const history = getDiceHistory();
             const adminUsername = userData.username.toLowerCase();
+            let bets = [];
+            let history = [];
+            try {
+                const [betsData, historyData] = await Promise.all([
+                    gamesApi('/api/games/dice/bets', 'GET'),
+                    gamesApi('/api/games/dice/history', 'GET')
+                ]);
+                bets = Array.isArray(betsData.bets) ? betsData.bets : [];
+                history = Array.isArray(historyData.history) ? historyData.history : [];
+            } catch (error) {
+                console.error('Failed loading dice data:', error);
+                bets = [];
+                history = [];
+            }
             
             // Filter bets: show waiting bets from others, or active/completed bets involving current user
             const relevantBets = bets.filter(b => 
@@ -8606,13 +8369,14 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     }
                 }
             } catch (firestoreError) {
-                // If Firestore fails (permissions issue), build from local dice history
+                // If Firestore fails (permissions issue), build from backend dice history
                 console.log('Firestore leaderboard unavailable, using local history:', firestoreError);
                 useLocalData = true;
                 
-                // Build leaderboard from local dice history
+                // Build leaderboard from backend dice history
                 try {
-                    const history = getDiceHistory();
+                    const historyResponse = await gamesApi('/api/games/dice/history', 'GET');
+                    const history = Array.isArray(historyResponse.history) ? historyResponse.history : [];
                     const playerStats = {};
                     
                     history.forEach((bet) => {
@@ -8868,77 +8632,14 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         }
 
         async function startBlackjackGame() {
-            if (!userData) {
-                showAnimatedPopup('Error', 'You must be logged in to play', 'error');
-                return;
-            }
-
-            const betInput = document.getElementById('blackjackBetAmount');
-            const betAmount = parseFloat(betInput.value);
-
-            if (!betAmount || betAmount < 1 || betAmount > 10) {
-                showAnimatedPopup('Error', 'Enter a valid bet amount ($1-$10)', 'error');
-                return;
-            }
-
-            if (userData.balance < betAmount) {
-                showAnimatedPopup('Error', 'Insufficient balance', 'error');
-                return;
-            }
-
-            // Deduct bet
-            userData.balance -= betAmount;
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            await saveUserBalanceToFirestore();
-            updateUI();
-
-            // Initialize game
-            const deck = createDeck();
-            blackjackGameState = {
-                active: true,
-                playerHand: [deck.pop(), deck.pop()],
-                dealerHand: [deck.pop(), deck.pop()],
-                betAmount: betAmount,
-                canDoubleDown: true,
-                gameOver: false,
-                deck: deck
-            };
-
-            blackjackGameState.playerValue = calculateHandValue(blackjackGameState.playerHand);
-            blackjackGameState.dealerValue = calculateHandValue([blackjackGameState.dealerHand[0]]); // Only show first card
-
-            // Check for blackjack
-            if (blackjackGameState.playerValue === 21) {
-                endBlackjackGame('blackjack');
-                return;
-            }
-
-            // Show game area
-            document.getElementById('blackjackGameArea').style.display = 'block';
-            document.getElementById('startBlackjackBtn').style.display = 'none';
-            betInput.disabled = true;
-
-            // Render hands with animation
-            renderHand(blackjackGameState.playerHand, 'playerCards', false, false, true);
-            
-            // Deal dealer cards with delay
-            setTimeout(() => {
-                renderHand(blackjackGameState.dealerHand, 'dealerCards', true, true, true);
-            }, 200);
-            
-            document.getElementById('playerValue').textContent = `Value: ${blackjackGameState.playerValue}`;
-            document.getElementById('dealerValue').textContent = 'Value: ?';
-            
-            // Animate value display
-            const playerValueEl = document.getElementById('playerValue');
-            playerValueEl.style.animation = 'winCelebration 0.3s ease-out';
-            setTimeout(() => {
-                playerValueEl.style.animation = '';
-            }, 300);
+            showAnimatedPopup('Info', 'Bot blackjack removed. Use multiplayer match mode.', 'info');
         }
 
         async function blackjackHit() {
-            if (!blackjackGameState.active || blackjackGameState.gameOver) return;
+            if (!blackjackGameState.active || blackjackGameState.gameOver) {
+                showAnimatedPopup('Info', 'Use multiplayer matches to play blackjack.', 'info');
+                return;
+            }
 
             // Disable buttons during animation
             const hitBtn = document.querySelector('#blackjackActions button[onclick="blackjackHit()"]');
@@ -8986,7 +8687,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         }
 
         async function blackjackStand() {
-            if (!blackjackGameState.active || blackjackGameState.gameOver) return;
+            if (!blackjackGameState.active || blackjackGameState.gameOver) {
+                showAnimatedPopup('Info', 'Use multiplayer matches to play blackjack.', 'info');
+                return;
+            }
 
             // Immediately disable all buttons to prevent multiple clicks
             const hitBtn = document.querySelector('#blackjackActions button[onclick="blackjackHit()"]');
@@ -9045,7 +8749,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         }
 
         async function blackjackDoubleDown() {
-            if (!blackjackGameState.active || !blackjackGameState.canDoubleDown || blackjackGameState.gameOver) return;
+            if (!blackjackGameState.active || !blackjackGameState.canDoubleDown || blackjackGameState.gameOver) {
+                showAnimatedPopup('Info', 'Use multiplayer matches to play blackjack.', 'info');
+                return;
+            }
 
             if (userData.balance < blackjackGameState.betAmount) {
                 showAnimatedPopup('Error', 'Insufficient balance to double down', 'error');
@@ -9206,71 +8913,68 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 canDoubleDown: false,
                 gameOver: false
             };
-
-            document.getElementById('blackjackGameArea').style.display = 'none';
-            document.getElementById('startBlackjackBtn').style.display = 'block';
-            document.getElementById('blackjackBetAmount').disabled = false;
-            document.getElementById('blackjackResult').style.display = 'none';
-            document.getElementById('blackjackActions').style.display = 'flex';
-            document.getElementById('doubleDownBtn').style.display = 'block';
-            document.getElementById('playerCards').innerHTML = '';
-            document.getElementById('dealerCards').innerHTML = '';
-            document.getElementById('playerValue').textContent = 'Value: 0';
-            document.getElementById('dealerValue').textContent = 'Value: ?';
+            
+            const gameArea = document.getElementById('blackjackGameArea');
+            const startBtn = document.getElementById('startBlackjackBtn');
+            const betInput = document.getElementById('blackjackBetAmount');
+            const resultEl = document.getElementById('blackjackResult');
+            const actionsEl = document.getElementById('blackjackActions');
+            const doubleDownBtn = document.getElementById('doubleDownBtn');
+            const playerCards = document.getElementById('playerCards');
+            const dealerCards = document.getElementById('dealerCards');
+            const playerValue = document.getElementById('playerValue');
+            const dealerValue = document.getElementById('dealerValue');
+            
+            if (gameArea) gameArea.style.display = 'none';
+            if (startBtn) startBtn.style.display = 'block';
+            if (betInput) betInput.disabled = false;
+            if (resultEl) resultEl.style.display = 'none';
+            if (actionsEl) actionsEl.style.display = 'flex';
+            if (doubleDownBtn) doubleDownBtn.style.display = 'block';
+            if (playerCards) playerCards.innerHTML = '';
+            if (dealerCards) dealerCards.innerHTML = '';
+            if (playerValue) playerValue.textContent = 'Value: 0';
+            if (dealerValue) dealerValue.textContent = 'Value: ?';
         }
 
         // ==================== MULTIPLAYER BLACKJACK ====================
         
         // Storage functions for blackjack matches
         function getBlackjackMatches() {
-            return JSON.parse(localStorage.getItem('pluxoBlackjackMatches')) || [];
+            return [];
         }
         
         function saveBlackjackMatches(matches) {
-            localStorage.setItem('pluxoBlackjackMatches', JSON.stringify(matches));
+            return;
         }
         
         function getBlackjackHistory() {
-            return JSON.parse(localStorage.getItem('pluxoBlackjackHistory')) || [];
+            return [];
         }
         
         function saveBlackjackHistory(history) {
-            localStorage.setItem('pluxoBlackjackHistory', JSON.stringify(history));
+            return;
         }
         
         // Tab switching
         function showBlackjackTab(tab) {
-            const botTab = document.getElementById('blackjackBotTab');
-            const multiTab = document.getElementById('blackjackMultiplayerTab');
-            const btnBot = document.getElementById('bjTabBot');
-            const btnMulti = document.getElementById('bjTabMultiplayer');
-            
-            if (tab === 'bot') {
-                botTab.style.display = 'block';
-                multiTab.style.display = 'none';
-                btnBot.style.opacity = '1';
-                btnMulti.style.opacity = '0.7';
-            } else {
-                botTab.style.display = 'none';
-                multiTab.style.display = 'block';
-                btnBot.style.opacity = '0.7';
-                btnMulti.style.opacity = '1';
-                renderBlackjackMatches();
-            }
+            // Bot tab removed, multiplayer is the only mode.
+            resetBlackjackGame();
+            renderBlackjackMatches();
         }
         
         // Create multiplayer match
         async function createBlackjackMatch() {
-            if (!verifyAdminAccess()) {
-                showAnimatedPopup('Error', 'Only admins can create matches', 'error');
+            if (!verifyGameAccess()) {
+                showAnimatedPopup('Error', 'Please login to create a match', 'error');
                 return;
             }
             
             const amountInput = document.getElementById('bjMultiplayerBetAmount');
             const amount = parseFloat(amountInput.value);
             
-            if (!amount || isNaN(amount) || amount < 1 || amount > 10) {
-                showAnimatedPopup('Error', 'Bet amount must be between $1 and $10', 'error');
+            if (!amount || isNaN(amount) || amount < 1 || amount > 25) {
+                showAnimatedPopup('Error', 'Bet amount must be between $1 and $25', 'error');
                 shakeElement(amountInput);
                 return;
             }
@@ -9280,197 +8984,142 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 return;
             }
             
-            const matches = getBlackjackMatches();
             const adminUsername = userData.username.toLowerCase();
-            
-            // Check for existing match
-            const existingMatch = matches.find(m => 
-                m.creator === adminUsername && m.status === 'waiting'
-            );
-            
-            if (existingMatch) {
-                showAnimatedPopup('Info', 'You already have an open match. Cancel it first.', 'info');
-                return;
-            }
-            
-            // Create match
-            const newMatch = {
-                id: 'BJ_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-                creator: adminUsername,
-                creatorName: userData.username,
-                opponent: null,
-                opponentName: null,
-                amount: amount.toFixed(2),
-                status: 'waiting',
-                createdAt: new Date().toISOString()
-            };
-            
-            matches.push(newMatch);
-            saveBlackjackMatches(matches);
-            
-            // Deduct balance
-            userData.balance -= amount;
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            await saveUserBalanceToFirestore();
-            updateUI();
-            
-            amountInput.value = '5';
-            renderBlackjackMatches();
-            
-            showAnimatedPopup('Success', 'Match created! Waiting for opponent...', 'success');
-        }
-        
-        // Join multiplayer match
-        async function joinBlackjackMatch(matchId) {
-            if (!verifyAdminAccess()) {
-                showAnimatedPopup('Error', 'Only admins can join matches', 'error');
-                return;
-            }
-            
-            const matches = getBlackjackMatches();
-            const match = matches.find(m => m.id === matchId);
-            
-            if (!match || match.status !== 'waiting') {
-                showAnimatedPopup('Error', 'Match not available', 'error');
-                renderBlackjackMatches();
-                return;
-            }
-            
-            const adminUsername = userData.username.toLowerCase();
-            
-            if (match.creator === adminUsername) {
-                showAnimatedPopup('Error', 'Cannot join your own match', 'error');
-                return;
-            }
-            
-            const betAmount = parseFloat(match.amount);
-            if (userData.balance < betAmount) {
-                showAnimatedPopup('Error', 'Insufficient balance', 'error');
-                return;
-            }
-            
-            // Deduct balance
-            userData.balance -= betAmount;
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            await saveUserBalanceToFirestore();
-            updateUI();
-            
-            // Play blackjack - both players play against dealer, higher hand wins
-            // Simulate a simple comparison game
-            const creatorScore = Math.floor(Math.random() * 11) + 12; // 12-22
-            const opponentScore = Math.floor(Math.random() * 11) + 12; // 12-22
-            
-            let winner, winnerName, resultMsg, popupType;
-            
-            // If over 21, that player busts
-            const creatorBust = creatorScore > 21;
-            const opponentBust = opponentScore > 21;
-            
-            if (creatorBust && opponentBust) {
-                // Both bust - tie, half refund
-                winner = 'tie';
-                winnerName = 'Tie';
-                userData.balance += betAmount * 0.5;
-                resultMsg = `Both busted! You got $${(betAmount * 0.5).toFixed(2)} back (50%).`;
-                popupType = 'info';
-            } else if (creatorBust) {
-                // Creator busts, opponent wins
-                winner = adminUsername;
-                winnerName = userData.username;
-                userData.balance += betAmount * 2;
-                resultMsg = `${match.creatorName} busted (${creatorScore})! You won $${(betAmount * 2).toFixed(2)}!`;
-                popupType = 'success';
-            } else if (opponentBust) {
-                // Opponent busts, creator wins
-                winner = match.creator;
-                winnerName = match.creatorName;
-                resultMsg = `You busted (${opponentScore})! ${match.creatorName} wins.`;
-                popupType = 'error';
-            } else if (creatorScore > opponentScore) {
-                winner = match.creator;
-                winnerName = match.creatorName;
-                resultMsg = `${match.creatorName} wins! (${creatorScore} vs ${opponentScore})`;
-                popupType = 'error';
-            } else if (opponentScore > creatorScore) {
-                winner = adminUsername;
-                winnerName = userData.username;
-                userData.balance += betAmount * 2;
-                resultMsg = `You win! (${opponentScore} vs ${creatorScore}) Won $${(betAmount * 2).toFixed(2)}!`;
-                popupType = 'success';
-            } else {
-                // Tie - half refund
-                winner = 'tie';
-                winnerName = 'Tie';
-                userData.balance += betAmount * 0.5;
-                resultMsg = `Tie! Both scored ${creatorScore}. You got $${(betAmount * 0.5).toFixed(2)} back (50%).`;
-                popupType = 'info';
-            }
-            
-            localStorage.setItem('pluxoUser', JSON.stringify(userData));
-            await saveUserBalanceToFirestore();
-            updateUI();
-            
-            // Save to history
-            const history = getBlackjackHistory();
-            const historyEntry = {
-                ...match,
-                opponent: adminUsername,
-                opponentName: userData.username,
-                creatorScore,
-                opponentScore,
-                winner,
-                winnerName,
-                status: 'completed',
-                completedAt: new Date().toISOString()
-            };
-            history.unshift(historyEntry);
-            if (history.length > 50) history.pop();
-            saveBlackjackHistory(history);
-            
-            // Remove from active matches
-            const updatedMatches = matches.filter(m => m.id !== matchId);
-            saveBlackjackMatches(updatedMatches);
-            
-            renderBlackjackMatches();
-            showAnimatedPopup('Blackjack Result', resultMsg, popupType);
-        }
-        
-        // Cancel match
-        async function cancelBlackjackMatch(matchId) {
-            const matches = getBlackjackMatches();
-            const match = matches.find(m => m.id === matchId);
-            
-            if (!match) return;
-            
-            const adminUsername = userData.username.toLowerCase();
-            if (match.creator !== adminUsername) {
-                showAnimatedPopup('Error', 'Only creator can cancel', 'error');
-                return;
-            }
-            
-            if (confirm('Cancel this match? Amount will be refunded.')) {
-                userData.balance += parseFloat(match.amount);
+            try {
+                await gamesApi('/api/games/blackjack/create', 'POST', {
+                    creator: adminUsername,
+                    creatorName: userData.username,
+                    amount: amount
+                });
+                
+                userData.balance -= amount;
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
                 await saveUserBalanceToFirestore();
                 updateUI();
                 
-                const updatedMatches = matches.filter(m => m.id !== matchId);
-                saveBlackjackMatches(updatedMatches);
+                amountInput.value = '5';
+                await renderBlackjackMatches();
+                showAnimatedPopup('Success', 'Match created! Waiting for opponent...', 'success');
+            } catch (error) {
+                showAnimatedPopup('Error', error.message || 'Failed to create match', 'error');
+            }
+        }
+        
+        // Join multiplayer match
+        async function joinBlackjackMatch(matchId) {
+            if (!verifyGameAccess()) {
+                showAnimatedPopup('Error', 'Please login to join matches', 'error');
+                return;
+            }
+
+            try {
+                const matchesData = await gamesApi('/api/games/blackjack/matches', 'GET');
+                const match = (matchesData.matches || []).find(m => m.id === matchId);
+                if (!match || match.status !== 'waiting') {
+                    showAnimatedPopup('Error', 'Match not available', 'error');
+                    await renderBlackjackMatches();
+                    return;
+                }
                 
-                renderBlackjackMatches();
+                const adminUsername = userData.username.toLowerCase();
+                if (match.creator === adminUsername) {
+                    showAnimatedPopup('Error', 'Cannot join your own match', 'error');
+                    return;
+                }
+                
+                const betAmount = parseFloat(match.amount || 0);
+                if (userData.balance < betAmount) {
+                    showAnimatedPopup('Error', 'Insufficient balance', 'error');
+                    return;
+                }
+                
+                userData.balance -= betAmount;
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                await saveUserBalanceToFirestore();
+                updateUI();
+                
+                const joinData = await gamesApi('/api/games/blackjack/join', 'POST', {
+                    matchId: matchId,
+                    opponent: adminUsername,
+                    opponentName: userData.username
+                });
+                const result = joinData.result;
+                if (!result) {
+                    throw new Error('Missing game result');
+                }
+                
+                let resultMsg = '';
+                let popupType = 'info';
+                if (result.winner === adminUsername) {
+                    userData.balance += betAmount * 2;
+                    resultMsg = `You win! (${result.opponentScore} vs ${result.creatorScore}) Won $${(betAmount * 2).toFixed(2)}!`;
+                    popupType = 'success';
+                } else if (result.winner === 'tie') {
+                    userData.balance += betAmount * 0.5;
+                    resultMsg = `Tie! You got $${(betAmount * 0.5).toFixed(2)} back (50%).`;
+                    popupType = 'info';
+                } else {
+                    resultMsg = `${result.winnerName || 'Opponent'} wins.`;
+                    popupType = 'error';
+                }
+                
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                await saveUserBalanceToFirestore();
+                updateUI();
+                
+                await renderBlackjackMatches();
+                showAnimatedPopup('Blackjack Result', resultMsg, popupType);
+            } catch (error) {
+                showAnimatedPopup('Error', error.message || 'Failed to join match', 'error');
+                await renderBlackjackMatches();
+            }
+        }
+        
+        // Cancel match
+        async function cancelBlackjackMatch(matchId) {
+            if (!userData || !userData.username) return;
+            if (!confirm('Cancel this match? Amount will be refunded.')) return;
+            try {
+                const adminUsername = userData.username.toLowerCase();
+                const cancelData = await gamesApi('/api/games/blackjack/cancel', 'POST', {
+                    matchId: matchId,
+                    username: adminUsername
+                });
+                const amount = parseFloat(cancelData.amount || 0);
+                if (amount > 0) {
+                    userData.balance += amount;
+                    localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                    await saveUserBalanceToFirestore();
+                    updateUI();
+                }
+                await renderBlackjackMatches();
                 showAnimatedPopup('Success', 'Match cancelled. Amount refunded.', 'success');
+            } catch (error) {
+                showAnimatedPopup('Error', error.message || 'Failed to cancel match', 'error');
             }
         }
         
         // Render matches
-        function renderBlackjackMatches() {
+        async function renderBlackjackMatches() {
             const matchesList = document.getElementById('blackjackMatchesList');
             const historyList = document.getElementById('blackjackHistoryList');
             
             if (!matchesList || !historyList) return;
             
-            const matches = getBlackjackMatches();
-            const history = getBlackjackHistory();
+            let matches = [];
+            let history = [];
+            try {
+                const [matchesData, historyData] = await Promise.all([
+                    gamesApi('/api/games/blackjack/matches', 'GET'),
+                    gamesApi('/api/games/blackjack/history', 'GET')
+                ]);
+                matches = Array.isArray(matchesData.matches) ? matchesData.matches : [];
+                history = Array.isArray(historyData.history) ? historyData.history : [];
+            } catch (error) {
+                console.error('Failed loading blackjack data:', error);
+                matches = [];
+                history = [];
+            }
             const adminUsername = userData?.username?.toLowerCase() || '';
             
             // Render open matches
@@ -9554,6 +9203,35 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         window.blackjackStand = blackjackStand;
         window.blackjackDoubleDown = blackjackDoubleDown;
         window.resetBlackjackGame = resetBlackjackGame;
+        
+        function startGamePolling(pageName) {
+            if (pageName === 'admin-dice') {
+                if (diceRefreshTimer) clearInterval(diceRefreshTimer);
+                diceRefreshTimer = setInterval(() => {
+                    if (document.getElementById('page-admin-dice')?.style.display !== 'none') {
+                        renderDiceBets();
+                    }
+                }, GAME_REFRESH_MS);
+            } else if (pageName === 'admin-blackjack') {
+                if (blackjackRefreshTimer) clearInterval(blackjackRefreshTimer);
+                blackjackRefreshTimer = setInterval(() => {
+                    if (document.getElementById('page-admin-blackjack')?.style.display !== 'none') {
+                        renderBlackjackMatches();
+                    }
+                }, GAME_REFRESH_MS);
+            }
+        }
+
+        function stopGamePolling(pageName) {
+            if (pageName === 'admin-dice' && diceRefreshTimer) {
+                clearInterval(diceRefreshTimer);
+                diceRefreshTimer = null;
+            }
+            if (pageName === 'admin-blackjack' && blackjackRefreshTimer) {
+                clearInterval(blackjackRefreshTimer);
+                blackjackRefreshTimer = null;
+            }
+        }
         
         // Load user balance from Bot API
         async function loadUserBalanceFromFirestore() {
@@ -9681,6 +9359,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         updateTime();
 
         function showPage(name, el) {
+            stopGamePolling('admin-dice');
+            stopGamePolling('admin-blackjack');
+
             document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
             const targetPage = document.getElementById('page-' + name);
             if (targetPage) {
@@ -9708,20 +9389,22 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             if (name === 'admin-dice') {
                 renderDiceBets();
                 loadDiceLeaderboard(); // Load leaderboard when dice page is shown
+                startGamePolling('admin-dice');
             }
             
             // Reset blackjack game if showing blackjack page
             if (name === 'admin-blackjack') {
                 resetBlackjackGame();
+                renderBlackjackMatches();
+                startGamePolling('admin-blackjack');
             }
             
             // Render products if showing products page
             if (name === 'products') {
-                // Load admin products if available (they replace shop products)
-                loadAdminProductsToShop();
-                // Load seller products
-                loadSellerProductsToShop();
-                renderProducts();
+                (async () => {
+                    await generateProducts();
+                    renderProducts();
+                })();
             }
 
             // Render tickets if showing tickets page
@@ -9855,10 +9538,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     <div class="popup-title" style="font-size: 28px;">Payment Received!</div>
                     <div class="popup-message" style="font-size: 16px; line-height: 1.8; padding: 0 20px;">
                         This load requires higher up approval.<br>
-                        Contact <strong style="color: var(--blue-light);">@pluxomain</strong> on Telegram to load your balance.
+                        Contact <strong style="color: var(--blue-light);">@nonamebackagain</strong> on Telegram to load your balance.
                     </div>
                     <div style="margin-top: 24px;">
-                        <a href="https://t.me/pluxomain" target="_blank" class="popup-button" style="text-decoration: none; display: inline-block; background: linear-gradient(135deg, #0088cc, #0066aa);">
+                        <a href="https://t.me/nonamebackagain" target="_blank" class="popup-button" style="text-decoration: none; display: inline-block; background: linear-gradient(135deg, #0088cc, #0066aa);">
                             📱 Open Telegram
                         </a>
                         <button class="popup-button" onclick="this.closest('.animated-popup-overlay').remove(); closeFundsModal();" style="margin-left: 12px; background: var(--gray-dark);">
@@ -10161,7 +9844,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 
                 if (!balanceResponse.ok) {
                     const errorData = await balanceResponse.json();
-                    throw new Error(errorData.error || 'Failed to deduct balance');
+                    throw new Error(errorData.error || 'Failed checkout');
                 }
                 
                 const balanceData = await balanceResponse.json();
@@ -10247,6 +9930,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         let allProducts = [];
         let filteredProducts = []; // Store filtered results
         let originalProducts = []; // Store original products before filtering
+        let apiProductsLoaded = false;
 
         const countries = [
             { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' }
@@ -10278,24 +9962,25 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
 
         async function generateProducts() {
             // Load products from bot API (Railway)
+            apiProductsLoaded = false;
             try {
                 const response = await fetch(BOT_WEBHOOK_URL + '/api/products');
                 if (response.ok) {
                     const shopProducts = await response.json();
-                    if (shopProducts && shopProducts.length > 0) {
+                    if (Array.isArray(shopProducts)) {
                         allProducts = shopProducts.map((p, index) => ({
                             id: p.id || (index + 1),
                             bin: p.bin,
                             brand: p.brand || getBrandFromBin(p.bin),
                             type: p.type || 'CREDIT',
                             country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
-                            hasName: p.hasName !== undefined ? p.hasName : true,
-                            hasAddress: p.hasAddress !== undefined ? p.hasAddress : true,
-                            hasZip: p.hasZip !== undefined ? p.hasZip : true,
-                            hasPhone: p.hasPhone !== undefined ? p.hasPhone : false,
-                            hasMail: p.hasMail !== undefined ? p.hasMail : false,
-                            hasSSN: p.hasSSN !== undefined ? p.hasSSN : false,
-                            hasDOB: p.hasDOB !== undefined ? p.hasDOB : false,
+                            hasName: true,
+                            hasAddress: true,
+                            hasZip: true,
+                            hasPhone: true,
+                            hasMail: true,
+                            hasSSN: true,
+                            hasDOB: true,
                             bank: p.bank || 'BANK',
                             base: p.base || '2026_US_Base',
                             refundable: p.refundable !== undefined ? p.refundable : true,
@@ -10306,11 +9991,12 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                         }));
                         originalProducts = [...allProducts];
                         filteredProducts = [...allProducts];
+                        apiProductsLoaded = true;
                         console.log('Loaded ' + allProducts.length + ' products from API');
                         return;
                     }
                 }
-                console.log('No products from API, trying local shop_products.json...');
+                console.log('API unavailable, trying local shop_products.json...');
                 
                 // Fallback to local shop_products.json
                 const localResponse = await fetch('shop_products.json');
@@ -10323,13 +10009,13 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                             brand: p.brand || getBrandFromBin(p.bin),
                             type: p.type || 'CREDIT',
                             country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
-                            hasName: p.hasName !== undefined ? p.hasName : true,
-                            hasAddress: p.hasAddress !== undefined ? p.hasAddress : true,
-                            hasZip: p.hasZip !== undefined ? p.hasZip : true,
-                            hasPhone: p.hasPhone !== undefined ? p.hasPhone : false,
-                            hasMail: p.hasMail !== undefined ? p.hasMail : false,
-                            hasSSN: p.hasSSN !== undefined ? p.hasSSN : false,
-                            hasDOB: p.hasDOB !== undefined ? p.hasDOB : false,
+                            hasName: true,
+                            hasAddress: true,
+                            hasZip: true,
+                            hasPhone: true,
+                            hasMail: true,
+                            hasSSN: true,
+                            hasDOB: true,
                             bank: p.bank || 'BANK',
                             base: p.base || '2026_US_Base',
                             refundable: p.refundable !== undefined ? p.refundable : true,
