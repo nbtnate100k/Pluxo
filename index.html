@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' http://localhost:5000 https://*.railway.app https://*.github.io https://*.firebaseio.com https://*.googleapis.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.googleapis.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' http://127.0.0.1:5000 http://localhost:5000 https://pluxo.net https://www.pluxo.net https://api.pluxo.net https://*.railway.app https://*.github.io https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://www.gstatic.com https://*.gstatic.com https://www.google-analytics.com https://*.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com;">
     <title>Pluxo</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css">
@@ -29,17 +29,20 @@
 
         body {
             font-family: 'DM Sans', sans-serif;
-            background: #000000;
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
-                radial-gradient(2px 2px at 60px 70px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 50px 50px, #fff, transparent),
-                radial-gradient(1px 1px at 20px 40px, rgba(255,255,255,0.6), transparent),
-                radial-gradient(2px 2px at 90px 20px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.5), transparent),
-                radial-gradient(1px 1px at 160px 30px, rgba(255,255,255,0.6), transparent);
-            background-repeat: repeat;
-            background-size: 200px 100px;
+            /* Pluxo admin-style slate base + starfield (bot token stays on server .env only — never here) */
+            background-color: #020617;
+            background-image:
+                linear-gradient(165deg, rgba(15, 23, 42, 0.88) 0%, rgba(2, 6, 23, 0.95) 42%, rgba(12, 18, 34, 0.92) 100%),
+                radial-gradient(2px 2px at 20px 30px, #e2e8f0, transparent),
+                radial-gradient(2px 2px at 60px 70px, rgba(226,232,240,0.75), transparent),
+                radial-gradient(1px 1px at 50px 50px, #cbd5e1, transparent),
+                radial-gradient(1px 1px at 20px 40px, rgba(148,163,184,0.55), transparent),
+                radial-gradient(2px 2px at 90px 20px, rgba(203,213,225,0.65), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(148,163,184,0.45), transparent),
+                radial-gradient(1px 1px at 160px 30px, rgba(203,213,225,0.5), transparent);
+            background-repeat: no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
+            background-size: 100% 100%, 200px 100px, 200px 100px, 200px 100px, 200px 100px, 200px 100px, 200px 100px, 200px 100px;
+            background-attachment: fixed, scroll, scroll, scroll, scroll, scroll, scroll, scroll;
             color: var(--white);
             min-height: 100vh;
             position: relative;
@@ -722,7 +725,7 @@
             inset: 0;
             background: rgba(0,0,0,0.85);
             backdrop-filter: blur(8px);
-            z-index: 1000;
+            z-index: 12050;
             justify-content: center;
             align-items: center;
             opacity: 0;
@@ -5003,7 +5006,8 @@
                 </div>
                 
                 <p style="text-align: center; margin-top: 24px; color: var(--gray); font-size: 14px;">
-                    Don't have an account? <a href="#" onclick="event.preventDefault(); openRegister();" style="color: var(--blue-light); font-weight: 600;">Create one</a>
+                    Don't have an account?
+                    <a href="#" onclick="event.preventDefault(); window.openRegister && window.openRegister();" style="color: var(--blue-light); font-weight: 600;">Create one</a>
                 </p>
             </form>
         </div>
@@ -5016,32 +5020,47 @@
                 <div class="graphic-center">P</div>
             </div>
         </div>
+    </div>
 
-        <!-- Register Modal -->
-        <div class="modal-bg" id="registerModal">
-            <div class="modal-box">
-                <button class="modal-close" onclick="closeRegister()">×</button>
-                <h2>Create Account</h2>
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label>Username</label>
-                        <input type="text" class="input-field" id="regUser" placeholder="Choose username" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" class="input-field" id="regEmail" placeholder="Your email" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" class="input-field" id="regPass" placeholder="Create password" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Confirm Password</label>
-                        <input type="password" class="input-field" id="regPassConfirm" placeholder="Confirm password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Create Account</button>
-                </form>
+    <!-- Register Modal (outside #loginPage: parent had overflow:hidden which hid fixed overlay in some layouts) -->
+    <div class="modal-bg modal-bg-register" id="registerModal">
+        <div class="modal-box">
+            <button type="button" class="modal-close" onclick="closeRegister()">×</button>
+            <h2>Create Account</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" class="input-field" id="regUser" placeholder="Choose username" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="input-field" id="regEmail" placeholder="Your email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="input-field" id="regPass" placeholder="Create password" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" class="input-field" id="regPassConfirm" placeholder="Confirm password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- New admin: name your stock base (synced with server) -->
+    <div class="modal-bg modal-bg-register" id="adminStockBaseModal">
+        <div class="modal-box" onclick="event.stopPropagation();">
+            <h2>Welcome, admin</h2>
+            <p style="color: var(--gray); line-height: 1.55; font-size: 14px;">
+                You can upload stock to the shop. First, pick a <strong>base name</strong> customers will see (letters, numbers, underscores). Reserved names <code>MONEY_BASE</code> and <code>TONY_BASE</code> cannot be used.
+            </p>
+            <div class="form-group">
+                <label>Your base name</label>
+                <input type="text" class="input-field" id="adminStockBaseInput" placeholder="e.g. EU_CREW_BASE" autocomplete="off">
             </div>
+            <button type="button" class="btn btn-primary" style="width:100%;" onclick="submitAdminStockBaseSetup()">Save and continue</button>
         </div>
     </div>
 
@@ -5091,11 +5110,11 @@
         </div>
 
         <nav class="nav-bar">
-            <a class="nav-item active" onclick="showPage('news', this)">News</a>
+            <a class="nav-item active" id="newsNavItem" onclick="showPage('news', this)">News</a>
             <a class="nav-item" onclick="showPage('products', this)">Products</a>
             <a class="nav-item" onclick="showPage('wholesale', this)">Wholesale</a>
             <a class="nav-item" onclick="showPage('orders', this)">Orders</a>
-            <a class="nav-item" onclick="showPage('tickets', this)">Tickets</a>
+            <a class="nav-item" id="ticketsNavItem" onclick="showPage('tickets', this)">Tickets</a>
             <a class="nav-item admin-nav" id="adminNavItem" onclick="showPage('admin', this)" style="display:none;">Admin</a>
             <a class="nav-item admin-nav" id="sellerNavItem" onclick="showPage('seller-management', this)" style="display:none;">Seller Management</a>
             <a class="nav-item seller-nav" id="sellerListingNavItem" onclick="showPage('seller-listing', this)" style="display:none;">My Listings</a>
@@ -5172,29 +5191,38 @@
                                 <label class="filter-label">Zips</label>
                                 <textarea class="filter-textarea" placeholder="Please use a carriage return to separate multiple records."></textarea>
                             </div>
-                            <div class="filter-group">
-                                <label class="filter-label">Bank</label>
-                                <select class="filter-select">
-                                    <option>All</option>
-                                    <option>CHASE BANK USA</option>
-                                    <option>BANK OF NOVA SCOTIA</option>
-                                    <option>CAPITAL ONE BANK</option>
-                                    <option>WELLS FARGO BANK</option>
-                                </select>
-                            </div>
                         </div>
 
                         <!-- Middle Column -->
                         <div class="filter-column">
                             <div class="filter-group">
                                 <label class="filter-label">Country</label>
-                                <select class="filter-select">
-                                    <option>All</option>
-                                    <option>🇺🇸 United States</option>
-                                    <option>🇬🇧 United Kingdom</option>
-                                    <option>🇨🇦 Canada</option>
-                                    <option>🇦🇺 Australia</option>
-                                    <option>🇩🇪 Germany</option>
+                                <select class="filter-select pluxo-filter-country">
+                                    <option value="All">All</option>
+                                    <option value="US">🇺🇸 United States</option>
+                                    <option value="GB">🇬🇧 United Kingdom</option>
+                                    <option value="CA">🇨🇦 Canada</option>
+                                    <option value="AU">🇦🇺 Australia</option>
+                                    <option value="DE">🇩🇪 Germany</option>
+                                    <option value="FR">🇫🇷 France</option>
+                                    <option value="IT">🇮🇹 Italy</option>
+                                    <option value="ES">🇪🇸 Spain</option>
+                                    <option value="NL">🇳🇱 Netherlands</option>
+                                    <option value="BE">🇧🇪 Belgium</option>
+                                    <option value="AT">🇦🇹 Austria</option>
+                                    <option value="CH">🇨🇭 Switzerland</option>
+                                    <option value="IE">🇮🇪 Ireland</option>
+                                    <option value="PT">🇵🇹 Portugal</option>
+                                    <option value="PL">🇵🇱 Poland</option>
+                                    <option value="SE">🇸🇪 Sweden</option>
+                                    <option value="NO">🇳🇴 Norway</option>
+                                    <option value="DK">🇩🇰 Denmark</option>
+                                    <option value="FI">🇫🇮 Finland</option>
+                                    <option value="NZ">🇳🇿 New Zealand</option>
+                                    <option value="JP">🇯🇵 Japan</option>
+                                    <option value="BR">🇧🇷 Brazil</option>
+                                    <option value="MX">🇲🇽 Mexico</option>
+                                    <option value="IN">🇮🇳 India</option>
                                 </select>
                             </div>
                             <div class="toggle-list">
@@ -5246,9 +5274,10 @@
                             </div>
                             <div class="filter-group">
                                 <label class="filter-label">Base</label>
-                                <select class="filter-select">
-                                    <option>All</option>
-                                    <option>2026_1_3_US_Base</option>
+                                <select id="pluxoFilterBaseSelect" class="filter-select">
+                                    <option value="All">All</option>
+                                    <option value="MONEY_BASE">MONEY_BASE</option>
+                                    <option value="TONY_BASE">TONY_BASE</option>
                                 </select>
                             </div>
                             <div class="filter-group">
@@ -5288,7 +5317,6 @@
                                 <th>Mail</th>
                                 <th>SSN</th>
                                 <th>DOB</th>
-                                <th>Bank</th>
                                 <th>Base</th>
                                 <th>Refundable</th>
                                 <th>Check price / Unchecked price</th>
@@ -5368,7 +5396,6 @@
                                 <th>Phone</th>
                                 <th>IP</th>
                                 <th>Email Password</th>
-                                <th>Bank</th>
                                 <th>Base</th>
                                 <th>Price</th>
                                 <th>Refundable</th>
@@ -5406,25 +5433,26 @@
                 </div>
                 
                 <div class="tickets-container">
-                    <div class="content-card" style="margin-bottom: 24px; background: rgba(37, 99, 235, 0.1); border-color: var(--blue); padding: 32px; text-align: center;">
-                        <h2 style="color: var(--blue); margin-bottom: 16px; font-size: 28px;">📞 Need Help?</h2>
-                        <p style="font-size: 18px; line-height: 1.8; margin-bottom: 20px;">
-                            For any ticket or problem, contact <strong style="color: var(--blue-light); font-size: 20px;">@nonamebackagain</strong> on Telegram
+                    <div class="content-card" style="margin-bottom: 24px; background: rgba(37, 99, 235, 0.08); border-color: var(--blue); padding: 24px;">
+                        <h2 style="color: var(--blue); margin: 0 0 12px; font-size: 22px;">Support</h2>
+                        <p style="font-size: 15px; line-height: 1.65; color: var(--gray); margin: 0 0 18px;">
+                            Open a ticket here. Staff reply on Telegram (<code>/treply …</code>); replies appear below when you refresh or leave this tab open.
                         </p>
-                        <a href="https://t.me/nonamebackagain" target="_blank" class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 14px 32px; font-size: 16px;">
-                            📱 Contact @nonamebackagain on Telegram
-                        </a>
-                    </div>
-                    
-                    <div class="tickets-header" style="display: none;">
-                        <div class="ticket-tabs">
-                            <button class="ticket-tab active" onclick="filterTickets('all', this)">All</button>
-                            <button class="ticket-tab" onclick="filterTickets('progressing', this)">Progressing</button>
-                            <button class="ticket-tab" onclick="filterTickets('resolved', this)">Resolved</button>
+                        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+                            <button type="button" class="btn-create-ticket" onclick="openCreateTicket()" style="display: inline-block;">＋ Create ticket</button>
+                            <a href="https://t.me/nonamebackagain" target="_blank" rel="noopener noreferrer" style="font-size: 14px; color: var(--blue-light);">Telegram fallback →</a>
                         </div>
                     </div>
 
-                    <div class="tickets-table-container" style="display: none;">
+                    <div class="tickets-header" style="">
+                        <div class="ticket-tabs">
+                            <button type="button" class="ticket-tab active" onclick="filterTickets('all', this)">All</button>
+                            <button type="button" class="ticket-tab" onclick="filterTickets('progressing', this)">Open</button>
+                            <button type="button" class="ticket-tab" onclick="filterTickets('resolved', this)">Resolved</button>
+                        </div>
+                    </div>
+
+                    <div class="tickets-table-container" style="">
                         <table class="tickets-table">
                             <thead>
                                 <tr>
@@ -5460,7 +5488,18 @@
                     <div class="admin-badge" id="adminBadge">ADMIN</div>
                     
                     <h2>User Management</h2>
-                    <p style="margin-bottom: 24px;">Grant or revoke admin access for users. Only the owner can manage admin privileges.</p>
+                    <p style="margin-bottom: 24px;">Admins can <strong>promote</strong> registered users to admin (server synced). Only the owner can <strong>revoke</strong> admin in this panel.</p>
+
+                    <div class="admin-section">
+                        <div class="section-title">Telegram bot</div>
+                        <p style="margin-bottom: 12px; color: var(--gray); font-size: 13px;">Shows whether this server process has a live polling thread and lets you spawn one again if it exited (still needs valid <code style="background: rgba(0,0,0,.25); padding: 2px 6px; border-radius: 4px;">TELEGRAM_BOT_TOKEN</code>).</p>
+                        <div id="telegramBotStatusLine" style="margin-bottom: 12px; font-size: 13px; font-family: ui-monospace, monospace;"></div>
+                        <div class="admin-form" style="flex-wrap: wrap; gap: 12px;">
+                            <button type="button" class="btn btn-admin" onclick="refreshTelegramBotStatus()" style="background: #64748b;">Refresh status</button>
+                            <button type="button" class="btn btn-admin" onclick="startTelegramBotFromPanel()" style="background: #0088cc;">Start Telegram bot</button>
+                        </div>
+                        <p style="margin-top: 14px; color: var(--gray); font-size: 12px;">Set <code style="background: rgba(0,0,0,.25); padding: 2px 6px; border-radius: 4px;">TELEGRAM_BOT_TOKEN</code> from @BotFather in your server <code>.env</code>; see <code>.env.example</code>. Owner id <code style="background: rgba(0,0,0,.25); padding: 2px 6px; border-radius: 4px;">7173346586</code> belongs in <code>OWNER_TELEGRAM_ID</code>.</p>
+                    </div>
                     
                     <div class="admin-section">
                         <div class="section-title">Load Username (Admin Only)</div>
@@ -5492,7 +5531,53 @@
                         <div class="section-title">Add Admin</div>
                         <div class="admin-form">
                             <input type="text" class="input-field" id="newAdminUser" placeholder="Enter username to grant admin">
-                            <button class="btn btn-admin" onclick="addAdmin()">Grant Access</button>
+                            <button type="button" class="btn btn-admin" onclick="addAdmin()">Promote to admin</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-title">Upload shop stock</div>
+                        <p id="pluxoStockUploadBaseHint" style="margin-bottom: 12px; color: var(--gray); font-size: 13px;"></p>
+                        <div class="admin-form" style="flex-direction: column; gap: 12px; align-items: stretch;">
+                            <label style="font-size: 13px; color: var(--gray);">Country for this batch (US, France, Germany, …)</label>
+                            <select class="input-field" id="pluxoStockUploadCountry">
+                                <option value="US">🇺🇸 United States</option>
+                                <option value="GB">🇬🇧 United Kingdom</option>
+                                <option value="CA">🇨🇦 Canada</option>
+                                <option value="AU">🇦🇺 Australia</option>
+                                <option value="DE">🇩🇪 Germany</option>
+                                <option value="FR">🇫🇷 France</option>
+                                <option value="IT">🇮🇹 Italy</option>
+                                <option value="ES">🇪🇸 Spain</option>
+                                <option value="NL">🇳🇱 Netherlands</option>
+                                <option value="BE">🇧🇪 Belgium</option>
+                                <option value="AT">🇦🇹 Austria</option>
+                                <option value="CH">🇨🇭 Switzerland</option>
+                                <option value="IE">🇮🇪 Ireland</option>
+                                <option value="PT">🇵🇹 Portugal</option>
+                                <option value="PL">🇵🇱 Poland</option>
+                                <option value="SE">🇸🇪 Sweden</option>
+                                <option value="NO">🇳🇴 Norway</option>
+                                <option value="DK">🇩🇰 Denmark</option>
+                                <option value="FI">🇫🇮 Finland</option>
+                                <option value="NZ">🇳🇿 New Zealand</option>
+                                <option value="JP">🇯🇵 Japan</option>
+                                <option value="BR">🇧🇷 Brazil</option>
+                                <option value="MX">🇲🇽 Mexico</option>
+                                <option value="IN">🇮🇳 India</option>
+                            </select>
+                            <div id="pluxoStockUploadSystemBaseRow" style="display: none;">
+                                <label style="font-size: 13px; color: var(--gray);">System base (site owner only)</label>
+                                <select class="input-field" id="pluxoStockUploadSystemBase">
+                                    <option value="MONEY_BASE">MONEY_BASE</option>
+                                    <option value="TONY_BASE">TONY_BASE</option>
+                                </select>
+                            </div>
+                            <label style="font-size: 13px; color: var(--gray);">Price per line ($)</label>
+                            <input type="number" class="input-field" id="pluxoStockUploadPrice" placeholder="e.g. 25.00" step="0.01" min="0.01">
+                            <label style="font-size: 13px; color: var(--gray);">Bulk lines (same format as Telegram /stock)</label>
+                            <textarea class="input-field" id="pluxoStockUploadBulk" rows="8" placeholder="Paste PAN|MM/YY|CVV|… lines" style="min-height: 140px; font-family: ui-monospace, monospace; font-size: 12px;"></textarea>
+                            <button type="button" class="btn btn-admin" onclick="submitPluxoAdminStockBulk()" style="background: #10b981; width: 100%;">Upload to API</button>
                         </div>
                     </div>
 
@@ -5552,7 +5637,7 @@
                 <!-- Ticket Management Section -->
                 <div class="content-card" style="margin-top: 24px; border-color: #f59e0b;">
                     <h2 style="color: #f59e0b;">🎫 Ticket Management</h2>
-                    <p style="margin-bottom: 20px;">Review and respond to user support tickets.</p>
+                    <p style="margin-bottom: 20px;">Tickets are stored on the server. Use the Telegram bot to view and answer: <code style="background: rgba(0,0,0,.2); padding: 2px 6px;">/ticket</code>, <code style="background: rgba(0,0,0,.2); padding: 2px 6px;">/treply &lt;id&gt;</code>, <code style="background: rgba(0,0,0,.2); padding: 2px 6px;">/tresolve &lt;id&gt;</code>.</p>
                     
                     <div class="admin-ticket-filters">
                         <button class="admin-ticket-tab active" onclick="filterAdminTickets('all', this)">All Tickets</button>
@@ -5626,10 +5711,10 @@
                         </div>
                     </div>
 
-                    <!-- Card Stock Management (from Telegram bot) -->
+                    <!-- Card Stock Management -->
                     <div class="admin-section" style="margin-top: 30px; border-top: 2px solid rgba(34, 197, 94, 0.3); padding-top: 20px;">
                         <div class="section-title">📦 Card Stock Management</div>
-                        <p style="color: var(--gray); font-size: 14px; margin-bottom: 16px;">Add actual card numbers with keys. Cards will be redeemable by key.</p>
+                        <p style="color: var(--gray); font-size: 14px; margin-bottom: 16px;">Listings use no redemption keys — buyers receive full line data in Orders after purchase. You can also stock via the Telegram shop bot.</p>
                         
                         <div class="admin-form" style="flex-direction: column; gap: 12px;">
                             <input type="number" class="input-field" id="cardStockPrice" placeholder="Price per card (e.g., 15.00)" step="0.01" min="0">
@@ -5638,7 +5723,7 @@
                                 <strong>Format 1 (Pipe):</strong> 5355851164846467|02|2026|358<br>
                                 <strong>Format 2 (Multi-line):</strong> 4145670692391812 01/29 651<br>Name<br>Address<br>City, State ZIP<br>Country
                             </small>
-                            <button class="btn btn-admin" onclick="addCardStock()" style="background: #22c55e; width: 100%;">Add Cards & Generate Keys</button>
+                            <button class="btn btn-admin" onclick="addCardStock()" style="background: #22c55e; width: 100%;">Add cards to stock</button>
                         </div>
                     </div>
 
@@ -5651,29 +5736,17 @@
                 </div>
             </div>
 
-            <!-- KEY REDEMPTION PAGE -->
+            <!-- Orders info (keys deprecated) -->
             <div class="page-content" id="page-redeem" style="display:none;">
                 <div class="page-header">
-                    <h1>Redeem Key</h1>
+                    <h1>Order details</h1>
                     <div class="line" style="background: #8b5cf6;"></div>
                 </div>
                 
                 <div class="content-card" style="border-color: #8b5cf6;">
-                    <h2 style="color: #8b5cf6;">🔑 Redeem Your Card</h2>
-                    <p style="margin-bottom: 20px; color: var(--gray);">Enter your redemption key to receive your card details.</p>
-                    
-                    <div class="admin-section">
-                        <div class="section-title">Enter Redemption Key</div>
-                        <div class="admin-form" style="flex-direction: column; gap: 12px;">
-                            <input type="text" class="input-field" id="redeemKeyInput" placeholder="Enter key (e.g., HM6ABOFE0Z14JRXP)" style="text-transform: uppercase; font-family: monospace; font-size: 16px; letter-spacing: 2px;">
-                            <button class="btn btn-admin" onclick="redeemKey()" style="background: #8b5cf6; width: 100%;">Redeem Key</button>
-                        </div>
-                    </div>
-
-                    <div class="admin-section" id="redeemedCardDisplay" style="display: none;">
-                        <div class="section-title">Your Card</div>
-                        <div id="redeemedCardContent" style="padding: 20px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; font-family: monospace; white-space: pre-wrap; word-break: break-all;"></div>
-                    </div>
+                    <h2 style="color: #8b5cf6;">📋 After you buy</h2>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Pluxo no longer uses redemption keys. Everything you purchase appears under <strong>Orders</strong> with full line details when available.</p>
+                    <p style="color: var(--gray); font-size: 14px;">Use the navigation menu to open <strong>Orders</strong> and copy your data from there.</p>
                 </div>
             </div>
 
@@ -5837,8 +5910,6 @@
                 </div>
             </div>
         </main>
-
-        <!-- Cart Panel -->
         <div class="cart-panel" id="cartPanel">
             <div class="cart-head">
                 <h3>Your Cart</h3>
@@ -5928,7 +5999,20 @@
                             <div style="font-weight: 600; margin-bottom: 8px; color: var(--blue);">Payment Instructions:</div>
                             <div id="instructionText" style="font-size: 14px; color: var(--gray); line-height: 1.5;"></div>
                         </div>
-                        <button type="button" class="btn btn-primary" style="width:100%; background: linear-gradient(135deg, #22c55e, #16a34a); font-size: 18px; font-weight: 700; padding: 16px;" onclick="markAsPaid()">✓ I Have Paid</button>
+                        <div id="topUpAfterPaidPanel" style="display: none; margin-bottom: 18px;">
+                            <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;">
+                                <strong style="color: #fca5a5;">Important</strong>
+                                <p style="margin: 8px 0 0; font-size: 13px; color: var(--gray); line-height: 1.55;">
+                                    Too many bogus submissions can flag abuse and may lead to your <strong>account or IP being restricted or banned from this site.</strong>
+                                </p>
+                            </div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text);">Blockchain confirmation link</label>
+                            <p style="font-size: 13px; color: var(--gray); margin-bottom: 8px;">Paste your public explorer link showing the transaction (BTC example):<br><code style="font-size: 11px; word-break: break-all; color: var(--blue-light);">https://mempool.space/tx/...</code></p>
+                            <input type="url" class="input-field" id="cryptoConfirmationUrl" placeholder="https://mempool.space/tx/..." autocomplete="off" style="margin-bottom: 12px;">
+                            <button type="button" class="btn btn-primary" style="width:100%; background: linear-gradient(135deg, #0088cc, #006699); font-size: 17px; font-weight: 700; padding: 14px;" onclick="submitCryptoTopUpRequest()">Submit for verification</button>
+                            <button type="button" class="btn" style="width:100%; margin-top: 10px; opacity: 0.85;" onclick="hideTopUpAfterPaidPanel()">Back</button>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="btnIHavePaidCrypto" style="width:100%; background: linear-gradient(135deg, #22c55e, #16a34a); font-size: 18px; font-weight: 700; padding: 16px;" onclick="markAsPaid()">✓ I Have Paid</button>
                     </form>
                 </div>
             </div>
@@ -6126,14 +6210,11 @@
             if (!userData || !userData.username) {
                 return false;
             }
-            
-            // Check if user still exists
-            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
-            if (!users[userData.username]) {
-                return false;
+            if (pluxoGetAuthToken()) {
+                return true;
             }
-            
-            return true;
+            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+            return !!users[userData.username];
         }
         
         // Security: Secure admin action wrapper
@@ -6187,15 +6268,292 @@
         window.showDashboard = showDashboard;
         window.showLogin = showLogin;
 
-        // Bot API Config - Set your Railway API URL here
-        // If hosting website separately from API, set RAILWAY_API_URL to your Railway deployment
-        var RAILWAY_API_URL = 'https://web-production-8c20.up.railway.app';  // Railway bot API URL
-        
-        var BOT_WEBHOOK_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
-            ? 'http://localhost:5000' 
-            : (RAILWAY_API_URL || window.location.origin);  // Uses RAILWAY_API_URL if set, otherwise same origin
+        // Bot API — must match pluxo_backend.py (local: python pluxo_backend.py → http://localhost:5000)
+        // On pluxo.net the page is often static-only; API lives elsewhere. RAILWAY_API_URL overrides everything (non-empty).
+        // If nginx proxies /api on the same host as the HTML, set PLUXO_API_HOST to '' so requests use this origin.
+        var RAILWAY_API_URL = '';  // e.g. https://your-app.up.railway.app
+        var PLUXO_API_HOST = 'https://api.pluxo.net';  // API when opened from pluxo.net / www.pluxo.net; '' = same origin as page
+
+        var BOT_WEBHOOK_URL = (function () {
+            var h = window.location.hostname || '';
+            if (h === 'localhost' || h === '127.0.0.1') return 'http://localhost:5000';
+            var explicit = (RAILWAY_API_URL || '').replace(/\/$/, '');
+            if (explicit) return explicit;
+            if (h === 'pluxo.net' || h === 'www.pluxo.net') {
+                var prod = (PLUXO_API_HOST || '').replace(/\/$/, '');
+                return prod || String(window.location.origin || '').replace(/\/$/, '');
+            }
+            return String(window.location.origin || '').replace(/\/$/, '');
+        })();
         var WEBHOOK_SECRET = 'pluxo_secret_2024';
         console.log('API URL:', BOT_WEBHOOK_URL);
+
+        function pluxoGetAuthToken() {
+            try { return sessionStorage.getItem('pluxo_auth_token') || ''; } catch (err) { return ''; }
+        }
+        function pluxoSetAuthToken(t) {
+            try {
+                if (t) sessionStorage.setItem('pluxo_auth_token', t);
+                else sessionStorage.removeItem('pluxo_auth_token');
+            } catch (err) {}
+        }
+        function pluxoAuthHeaders(withJsonBody) {
+            const h = {};
+            if (withJsonBody !== false) {
+                h['Content-Type'] = 'application/json';
+            }
+            h['X-Webhook-Secret'] = WEBHOOK_SECRET;
+            const tok = pluxoGetAuthToken();
+            if (tok) {
+                h['Authorization'] = 'Bearer ' + tok;
+            }
+            return h;
+        }
+        function mergeAdminList(username, isSiteAdmin) {
+            const normalized = (username || '').toLowerCase().trim();
+            let list = JSON.parse(localStorage.getItem('pluxoAdmins')) || [OWNER.toLowerCase()];
+            list = Array.from(new Set(list.map(function (x) { return String(x).toLowerCase(); })));
+            if (list.indexOf(OWNER.toLowerCase()) === -1) list.push(OWNER.toLowerCase());
+            if (isSiteAdmin && normalized && list.indexOf(normalized) === -1) {
+                list.push(normalized);
+            }
+            adminList = list;
+            localStorage.setItem('pluxoAdmins', JSON.stringify(list));
+        }
+        async function restorePluxoSession() {
+            const tok = pluxoGetAuthToken();
+            if (!tok) {
+                return;
+            }
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/auth/me', { headers: pluxoAuthHeaders(false) });
+                if (!r.ok) {
+                    pluxoSetAuthToken('');
+                    return;
+                }
+                var d = await r.json().catch(function () { return {}; });
+                if (!d.success || !d.username) {
+                    pluxoSetAuthToken('');
+                    return;
+                }
+                var prev = userData ? userData.cart : [];
+                userData = {
+                    username: d.username,
+                    balance: parseFloat(d.balance || 0),
+                    totalRecharge: parseFloat(d.totalRecharge || 0),
+                    cart: prev && prev.length ? prev : [],
+                    firebaseUID: userData ? userData.firebaseUID : null,
+                    stockBase: d.stock_base != null ? d.stock_base : null,
+                    needsStockBase: !!d.needs_stock_base,
+                    canUseSystemStockBases: !!d.can_use_system_stock_bases
+                };
+                mergeAdminList(d.username, !!d.is_site_admin);
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                var lut = {};
+                lut[d.username.toLowerCase()] = { email: '', pass_hidden: true };
+                var oldU = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+                Object.assign(lut, oldU);
+                localStorage.setItem('pluxoUsers', JSON.stringify(lut));
+            } catch (e) {
+                console.log('restorePluxoSession:', e.message);
+                pluxoSetAuthToken('');
+            }
+        }
+
+        function pluxoMaybePromptAdminStockBase() {
+            if (!userData || !userData.needsStockBase || !isAdmin(userData.username)) return;
+            var m = document.getElementById('adminStockBaseModal');
+            if (m) m.classList.add('active');
+        }
+
+        function pluxoSyncAdminStockForm() {
+            var row = document.getElementById('pluxoStockUploadSystemBaseRow');
+            var hint = document.getElementById('pluxoStockUploadBaseHint');
+            if (!userData || !isAdmin(userData.username)) return;
+            var can = !!userData.canUseSystemStockBases;
+            if (row) row.style.display = can ? 'block' : 'none';
+            if (hint) {
+                if (userData.canUseSystemStockBases) {
+                    hint.textContent = 'Site owner: choose MONEY_BASE or TONY_BASE for this upload (set PLUXO_SITE_OWNER_USERNAME in server .env to enable).';
+                } else if (userData.stockBase) {
+                    hint.textContent = 'Lines are listed under your base: ' + userData.stockBase + '.';
+                } else if (userData.needsStockBase) {
+                    hint.textContent = 'Complete the welcome prompt to name your base before uploading.';
+                } else {
+                    hint.textContent = '';
+                }
+            }
+        }
+
+        async function submitAdminStockBaseSetup() {
+            var inp = document.getElementById('adminStockBaseInput');
+            var v = (inp && inp.value || '').trim().toUpperCase();
+            if (!v) {
+                showAnimatedPopup('Error', 'Enter a base name', 'error');
+                return;
+            }
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/admin/set-stock-base', {
+                    method: 'POST',
+                    headers: pluxoAuthHeaders(),
+                    body: JSON.stringify({ base_key: v })
+                });
+                var d = await r.json().catch(function () { return {}; });
+                if (!r.ok || !d.ok) throw new Error(d.error || 'Could not save base');
+                userData.stockBase = d.stock_base || v;
+                userData.needsStockBase = false;
+                localStorage.setItem('pluxoUser', JSON.stringify(userData));
+                var m = document.getElementById('adminStockBaseModal');
+                if (m) m.classList.remove('active');
+                if (inp) inp.value = '';
+                showAnimatedPopup('Success', 'Base ' + userData.stockBase + ' is saved. Upload stock below or via Telegram.', 'success');
+                pluxoSyncAdminStockForm();
+            } catch (err) {
+                showAnimatedPopup('Error', err.message || 'Error', 'error');
+            }
+        }
+
+        async function promoteSiteAdminOnServer(username) {
+            var r = await fetch(BOT_WEBHOOK_URL + '/api/admin/promote-site-admin', {
+                method: 'POST',
+                headers: pluxoAuthHeaders(),
+                body: JSON.stringify({ username: (username || '').toLowerCase().trim() })
+            });
+            var d = await r.json().catch(function () { return {}; });
+            if (!r.ok || !d.ok) {
+                throw new Error(d.error || ('HTTP ' + r.status));
+            }
+            return d;
+        }
+
+        async function submitPluxoAdminStockBulk() {
+            if (!verifyAdminAccess()) return;
+            var priceEl = document.getElementById('pluxoStockUploadPrice');
+            var bulkEl = document.getElementById('pluxoStockUploadBulk');
+            var ctryEl = document.getElementById('pluxoStockUploadCountry');
+            var sysEl = document.getElementById('pluxoStockUploadSystemBase');
+            var price = parseFloat(priceEl && priceEl.value);
+            var bulk = (bulkEl && bulkEl.value || '').trim();
+            var country = (ctryEl && ctryEl.value) || 'US';
+            var body = { price: price, bulk: bulk, country: country };
+            if (userData && userData.canUseSystemStockBases && sysEl) {
+                body.system_base = sysEl.value || 'MONEY_BASE';
+            }
+            if (!bulk) {
+                showAnimatedPopup('Error', 'Paste one or more card lines', 'error');
+                return;
+            }
+            if (!price || price <= 0 || isNaN(price)) {
+                showAnimatedPopup('Error', 'Enter a valid price', 'error');
+                return;
+            }
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/admin/stock-bulk', {
+                    method: 'POST',
+                    headers: pluxoAuthHeaders(),
+                    body: JSON.stringify(body)
+                });
+                var d = await r.json().catch(function () { return {}; });
+                if (!r.ok || !d.ok) throw new Error(d.error || 'Upload failed');
+                showAnimatedPopup('Success', 'Added ' + d.added + ' line(s) → ' + d.base, 'success');
+                if (bulkEl) bulkEl.value = '';
+                await generateProducts();
+                var pp = document.getElementById('page-products');
+                if (pp && pp.style.display !== 'none') {
+                    renderProducts();
+                    renderPagination();
+                }
+            } catch (err2) {
+                showAnimatedPopup('Error', err2.message || 'Error', 'error');
+            }
+        }
+
+        function refreshPluxoBaseFilterOptions() {
+            var sel = document.getElementById('pluxoFilterBaseSelect');
+            if (!sel) return;
+            var prev = sel.value || 'All';
+            var bases = { MONEY_BASE: true, TONY_BASE: true };
+            (allProducts || []).forEach(function (p) {
+                if (p && p.base) bases[String(p.base)] = true;
+            });
+            var sorted = Object.keys(bases).sort();
+            sel.innerHTML = '<option value="All">All</option>' +
+                sorted.map(function (b) {
+                    return '<option value="' + String(b).replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' + String(b).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</option>';
+                }).join('');
+            if (prev && Array.prototype.some.call(sel.options, function (o) { return o.value === prev; })) {
+                sel.value = prev;
+            }
+        }
+        window.submitAdminStockBaseSetup = submitAdminStockBaseSetup;
+        window.submitPluxoAdminStockBulk = submitPluxoAdminStockBulk;
+
+        async function signupPluxoAPI(username, email, password) {
+            var u = (username || '').toLowerCase().trim();
+            var r = await fetch(BOT_WEBHOOK_URL + '/api/signup', {
+                method: 'POST',
+                headers: pluxoAuthHeaders(),
+                body: JSON.stringify({
+                    username: u,
+                    email: email || '',
+                    password: password
+                })
+            });
+            var d = await r.json().catch(function () { return {}; });
+            if (!r.ok || !d.ok) {
+                throw new Error(d.error || ('Signup failed: ' + r.status));
+            }
+            pluxoSetAuthToken(d.token || '');
+            userData = {
+                username: d.username || u,
+                balance: parseFloat(d.balance || 0),
+                totalRecharge: parseFloat(d.totalRecharge || 0),
+                cart: [],
+                firebaseUID: null,
+                stockBase: d.stock_base != null ? d.stock_base : null,
+                needsStockBase: !!d.needs_stock_base,
+                canUseSystemStockBases: !!d.can_use_system_stock_bases
+            };
+            mergeAdminList(userData.username, !!d.is_site_admin);
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            var lut = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+            lut[userData.username.toLowerCase()] = { email: email || '', backend: true };
+            localStorage.setItem('pluxoUsers', JSON.stringify(lut));
+        }
+
+        async function loginPluxoAPI(username, password) {
+            var u = (username || '').toLowerCase().trim();
+            var r = await fetch(BOT_WEBHOOK_URL + '/api/auth/login', {
+                method: 'POST',
+                headers: pluxoAuthHeaders(),
+                body: JSON.stringify({ username: u, password: password })
+            });
+            var d = await r.json().catch(function () { return {}; });
+            if (!r.ok || !d.success) {
+                throw new Error(d.error || 'Invalid login credentials');
+            }
+            pluxoSetAuthToken(d.token || '');
+            var prevCart = userData ? userData.cart : [];
+            userData = {
+                username: d.username || u,
+                balance: parseFloat(d.balance || 0),
+                totalRecharge: parseFloat(d.totalRecharge || 0),
+                cart: prevCart || [],
+                firebaseUID: null,
+                stockBase: d.stock_base != null ? d.stock_base : null,
+                needsStockBase: !!d.needs_stock_base,
+                canUseSystemStockBases: !!d.can_use_system_stock_bases
+            };
+            mergeAdminList(userData.username, !!d.is_site_admin);
+            localStorage.setItem('pluxoUser', JSON.stringify(userData));
+            var lut = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
+            lut[userData.username.toLowerCase()] = { backend: true };
+            localStorage.setItem('pluxoUsers', JSON.stringify(lut));
+        }
+
+        window.signupPluxoAPI = signupPluxoAPI;
+        window.loginPluxoAPI = loginPluxoAPI;
+        window.pluxoSetAuthToken = pluxoSetAuthToken;
 
         async function gamesApi(path, method = 'GET', body = null) {
             const options = {
@@ -6216,39 +6574,27 @@
             return data;
         }
 
-        // Initialize page on load
-        if (userData) {
-            // Update UI immediately with localStorage data for instant display
-            updateUI();
-            
-            // Always try to load balance from Firestore (works even without firebaseUID by using username)
-            // Load balance first (most important), then orders
-            loadUserBalanceFromFirestore().then(() => {
-                // Load orders if Firebase UID exists
-                if (userData.firebaseUID) {
-                    loadOrdersFromFirestore().then(() => {
-                        showDashboard();
-                    }).catch(() => {
-                        showDashboard();
-                    });
-                } else {
-                    showDashboard();
+        (async function initPluxoApp() {
+            await restorePluxoSession();
+            if (userData) {
+                updateUI();
+                try {
+                    await loadUserBalanceFromFirestore();
+                } catch (e1) {
+                    console.log('Balance load:', e1);
                 }
-            }).catch(() => {
-                // If balance load fails, still show dashboard
                 if (userData.firebaseUID) {
-                    loadOrdersFromFirestore().then(() => {
-                        showDashboard();
-                    }).catch(() => {
-                        showDashboard();
-                    });
-                } else {
-                    showDashboard();
+                    try {
+                        await loadOrdersFromFirestore();
+                    } catch (e2) {}
                 }
-            });
-        } else {
-            showLogin();
-        }
+                showDashboard();
+                pluxoMaybePromptAdminStockBase();
+                pluxoSyncAdminStockForm();
+            } else {
+                showLogin();
+            }
+        })();
 
         // Login functions
         function togglePassword() {
@@ -6270,45 +6616,44 @@
             document.getElementById('captchaQ').textContent = `${a} + ${b} = ?`;
         }
 
-        function openRegister() { document.getElementById('registerModal').classList.add('active'); }
-        function closeRegister() { document.getElementById('registerModal').classList.remove('active'); }
+        function openRegister() {
+            var el = document.getElementById('registerModal');
+            if (el) el.classList.add('active');
+        }
+        function closeRegister() {
+            var el = document.getElementById('registerModal');
+            if (el) el.classList.remove('active');
+        }
+        window.openRegister = openRegister;
+        window.closeRegister = closeRegister;
 
-        document.getElementById('registerForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const user = document.getElementById('regUser').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const pass = document.getElementById('regPass').value;
-            const passC = document.getElementById('regPassConfirm').value;
+        var registerFormEl = document.getElementById('registerForm');
+        if (registerFormEl) {
+            registerFormEl.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const user = document.getElementById('regUser').value.trim();
+                const email = document.getElementById('regEmail').value.trim();
+                const pass = document.getElementById('regPass').value;
+                const passC = document.getElementById('regPassConfirm').value;
 
-            if (pass !== passC) { showAnimatedPopup('Error', 'Passwords do not match', 'error'); return; }
-            if (pass.length < 6) { showAnimatedPopup('Error', 'Password must be at least 6 characters', 'error'); return; }
+                if (pass !== passC) { showAnimatedPopup('Error', 'Passwords do not match', 'error'); return; }
+                if (pass.length < 6) { showAnimatedPopup('Error', 'Password must be at least 6 characters', 'error'); return; }
+                if (!user || user.length < 3) { showAnimatedPopup('Error', 'Username at least 3 characters', 'error'); return; }
 
-            const users = JSON.parse(localStorage.getItem('pluxoUsers')) || {};
-            if (users[user]) { showAnimatedPopup('Error', 'Username taken', 'error'); return; }
-
-            users[user] = { email, pass };
-            localStorage.setItem('pluxoUsers', JSON.stringify(users));
-            
-            // Notify bot API about new registration
-            try {
-                const response = await fetch(BOT_WEBHOOK_URL + '/api/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Webhook-Secret': WEBHOOK_SECRET
-                    },
-                    body: JSON.stringify({ username: user.toLowerCase(), email: email })
-                });
-                const data = await response.json();
-                console.log('User registered with bot:', data);
-            } catch (err) {
-                console.log('Bot notification skipped:', err.message);
-            }
-            
-            showAnimatedPopup('Success', 'Account created! You can now sign in.', 'success');
-            closeRegister();
-            document.getElementById('username').value = user;
-        });
+                try {
+                    await signupPluxoAPI(user.toLowerCase(), email, pass);
+                    closeRegister();
+                    await loadUserBalanceFromFirestore();
+                    showDashboard();
+                    pluxoMaybePromptAdminStockBase();
+                    pluxoSyncAdminStockForm();
+                    showAnimatedPopup('Success', 'Account created! You are logged in.', 'success');
+                    document.getElementById('username').value = user;
+                } catch (err) {
+                    showAnimatedPopup('Error', err.message || 'Sign up failed', 'error');
+                }
+            });
+        }
 
         // OLD LOGIN HANDLER DISABLED - Now using Firebase authentication
         // This handler was auto-registering users and bypassing Firebase auth
@@ -6395,58 +6740,42 @@
             }
         }
 
-        // Admin functions - Secured
-        function addAdmin() {
-            // Security: Only owner can add admins
-            if (!userData || !isOwner(userData.username)) {
-                alert('Only the owner can add admins');
+        async function addAdmin() {
+            if (!userData || !isAdmin(userData.username)) {
+                alert('Only admins can promote other users');
                 return;
             }
-            
-            // Security: Rate limiting
-            const rateCheck = checkRateLimit('addAdmin', 5, 60000);
+            var rateCheck = checkRateLimit('addAdmin', 5, 60000);
             if (!rateCheck.allowed) {
                 alert(rateCheck.message);
                 return;
             }
-            
-            const usernameInput = document.getElementById('newAdminUser');
-            let username = usernameInput.value.trim();
-            
-            // Security: Input validation
+            var usernameInput = document.getElementById('newAdminUser');
+            var username = usernameInput.value.trim();
             if (!username) {
                 alert('Enter a username');
                 shakeElement(usernameInput);
                 return;
             }
-            
-            // Security: Sanitize and validate username
             username = sanitizeInput(username);
             if (username.length < 3 || username.length > 30) {
                 alert('Username must be 3-30 characters');
                 shakeElement(usernameInput);
                 return;
             }
-            
-            // Security: Prevent adding owner as admin (already admin)
             if (username.toLowerCase() === OWNER.toLowerCase()) {
                 alert('Owner is already an admin');
                 return;
             }
-            
-            // Allow adding admin even if user doesn't exist yet
-            // User will be created when they register
-            
-            if (adminList.includes(username.toLowerCase())) {
-                alert('User is already an admin');
-                return;
+            try {
+                await promoteSiteAdminOnServer(username);
+                mergeAdminList(username.toLowerCase(), true);
+                usernameInput.value = '';
+                renderAdminPanel();
+                alert(username + ' has been promoted (server saved)');
+            } catch (err) {
+                alert(err.message || 'Promote failed');
             }
-            
-            adminList.push(username.toLowerCase());
-            localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
-            usernameInput.value = '';
-            renderAdminPanel();
-            alert(username + ' has been granted admin access');
         }
 
         function revokeAdmin(username) {
@@ -6485,34 +6814,28 @@
             }
         }
 
-        function grantAdminFromList(username) {
-            // Security: Only owner can grant admin
-            if (!userData || !isOwner(userData.username)) {
-                alert('Only the owner can add admins');
+        async function grantAdminFromList(username) {
+            if (!userData || !isAdmin(userData.username)) {
+                alert('Only admins can promote users');
                 return;
             }
-            
-            // Security: Input validation
             if (!username || typeof username !== 'string') {
                 alert('Invalid username');
                 return;
             }
-            
-            // Security: Sanitize username
             username = sanitizeInput(username).trim();
-            
-            // Security: Rate limiting
-            const rateCheck = checkRateLimit('grantAdmin', 5, 60000);
+            var rateCheck = checkRateLimit('grantAdmin', 5, 60000);
             if (!rateCheck.allowed) {
                 alert(rateCheck.message);
                 return;
             }
-            
-            if (!adminList.includes(username.toLowerCase())) {
-                adminList.push(username.toLowerCase());
-                localStorage.setItem('pluxoAdmins', JSON.stringify(adminList));
+            try {
+                await promoteSiteAdminOnServer(username);
+                mergeAdminList(username.toLowerCase(), true);
                 renderAdminPanel();
-                alert(username + ' has been granted admin access');
+                alert(username + ' has been promoted (server saved)');
+            } catch (e) {
+                alert(e.message || 'Promote failed');
             }
         }
 
@@ -6559,7 +6882,6 @@
                         const safeUser = sanitizeInput(user);
                         const userIsAdmin = isAdmin(user);
                         const userIsOwner = isOwner(user);
-                        const safeOnClick = `grantAdminFromList('${safeUser.replace(/'/g, "\\'")}')`;
                         
                         return `
                             <div class="user-item">
@@ -6568,8 +6890,8 @@
                                     ${userIsOwner ? '<span class="owner-badge">OWNER</span>' : 
                                       userIsAdmin ? '<span class="admin-badge-sm">ADMIN</span>' : ''}
                                 </div>
-                                ${!userIsAdmin && isOwner(userData?.username) ? 
-                                    `<button class="btn-grant" onclick="${safeOnClick}">Grant Admin</button>` : 
+                                ${!userIsAdmin && isAdmin(userData?.username) ? 
+                                    `<button class="btn-grant" onclick="grantAdminFromList('${safeUser.replace(/'/g, "\\'")}')">Promote admin</button>` : 
                                     ''}
                             </div>
                         `;
@@ -6583,10 +6905,12 @@
             const statTickets = document.getElementById('statTickets');
             if (statUsers) statUsers.textContent = Object.keys(users).length;
             if (statAdmins) statAdmins.textContent = adminList.length;
-            if (statTickets) statTickets.textContent = allTickets.filter(t => t.status === 'progressing').length;
-
-            // Render admin tickets
-            renderAdminTickets();
+            if (statTickets) {
+                statTickets.textContent = String(
+                    adminTicketsCache.filter(function (t) { return t.status === 'progressing'; }).length
+                );
+            }
+            syncAdminTicketsQuiet();
             
             // Render balance requests
             renderBalanceRequests();
@@ -7258,6 +7582,7 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
         window.loadUserBalanceByUID = loadUserBalanceByUID;
         window.loadAllUserBalances = loadAllUserBalances;
         window.loadUserBalanceFromFirestore = loadUserBalanceFromFirestore;
+        window.loadOrdersFromFirestore = loadOrdersFromFirestore;
         
         // Manual refresh balance function (for debugging/fixing balance issues)
         window.refreshBalance = async function() {
@@ -7270,6 +7595,52 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
             await loadUserBalanceFromFirestore();
             showAnimatedPopup('Success', `Balance refreshed! Current balance: $${(userData.balance || 0).toFixed(2)}`, 'success');
         };
+
+        async function refreshTelegramBotStatus() {
+            const line = document.getElementById('telegramBotStatusLine');
+            if (!line) return;
+            line.textContent = 'Loading status…';
+            try {
+                const r = await fetch(BOT_WEBHOOK_URL + '/telegram-status');
+                const d = await r.json().catch(function () { return {}; });
+                if (!r.ok) {
+                    line.textContent = 'Status HTTP ' + r.status;
+                    return;
+                }
+                line.innerHTML =
+                    '<span style="color:#94a3b8">token:'
+                    + (d.token_set ? 'yes' : 'no')
+                    + ' | owner:' + (d.owner_set ? 'yes' : 'no')
+                    + ' | disabled:' + !!d.disabled
+                    + ' | thread_alive:' + !!d.bot_thread_alive + '</span>';
+            } catch (e) {
+                line.textContent = 'Status error: ' + e.message;
+            }
+        }
+
+        async function startTelegramBotFromPanel() {
+            try {
+                const r = await fetch(BOT_WEBHOOK_URL + '/api/telegram/start-bot', {
+                    method: 'POST',
+                    headers: pluxoAuthHeaders(),
+                });
+                const d = await r.json().catch(function () { return {}; });
+                if (!r.ok) {
+                    showAnimatedPopup('Error', d.error || ('HTTP ' + r.status), 'error');
+                    await refreshTelegramBotStatus();
+                    return;
+                }
+                const kind = d.status === 'already_running' ? 'info' : 'success';
+                const title = d.status === 'already_running' ? 'Info' : 'Success';
+                showAnimatedPopup(title, d.detail || d.status || 'OK', kind);
+                await refreshTelegramBotStatus();
+            } catch (e) {
+                showAnimatedPopup('Error', e.message || 'Failed to start bot', 'error');
+            }
+        }
+
+        window.refreshTelegramBotStatus = refreshTelegramBotStatus;
+        window.startTelegramBotFromPanel = startTelegramBotFromPanel;
         
         // Seller product listing system
         let sellerProducts = JSON.parse(localStorage.getItem('pluxoSellerProducts')) || {};
@@ -7319,7 +7690,7 @@ const safePaymentMethod = sanitizeInput(req.paymentMethod || 'N/A');
                 brand: brand,
                 type: type,
                 price: price.toFixed(2),
-                base: '2026_1_3_US_Base',
+                base: 'MONEY_BASE',
                 seller: sellerUsername,
                 createdAt: new Date().toISOString(),
                 country: { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
@@ -7767,7 +8138,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 hasSSN: true,
                 hasDOB: true,
                 bank: 'REVOLUT, LTD.', // Default bank
-                base: '2026_1_3_US_Base', // Default base
+                base: 'MONEY_BASE', // Default base
                 refundable: true,
                 price: parseFloat(price).toFixed(2),
                 addedBy: userData.username.toLowerCase(),
@@ -9376,9 +9747,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 
                 const response = await fetch(url, {
                     method: 'GET',
-                    headers: {
-                        'X-Webhook-Secret': WEBHOOK_SECRET
-                    }
+                    headers: pluxoAuthHeaders(false)
                 });
                 
                 if (response.ok) {
@@ -9405,10 +9774,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             try {
                 const response = await fetch(`${BOT_WEBHOOK_URL}/api/balance/update`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Webhook-Secret': WEBHOOK_SECRET
-                    },
+                    headers: pluxoAuthHeaders(),
                     body: JSON.stringify({
                         username: userData.username.toLowerCase(),
                         action: action,  // 'subtract' or 'add'
@@ -9491,6 +9857,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         function showPage(name, el) {
             stopGamePolling('admin-dice');
             stopGamePolling('admin-blackjack');
+            stopTicketsPagePoll();
 
             document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
             const targetPage = document.getElementById('page-' + name);
@@ -9503,6 +9870,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             // Render admin panel if showing admin page
             if (name === 'admin') {
                 renderAdminPanel();
+                pluxoSyncAdminStockForm();
+                pluxoMaybePromptAdminStockBase();
             }
             
             // Render seller management if showing seller-management page
@@ -9539,7 +9908,12 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
 
             // Render tickets if showing tickets page
             if (name === 'tickets') {
-                renderTickets();
+                stopTicketsPagePoll();
+                (async function () {
+                    await syncUserTicketsQuiet();
+                    renderTickets();
+                    startTicketsPagePoll();
+                })();
             }
 
             // Render orders if showing orders page
@@ -9631,18 +10005,40 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             const instructionText = document.getElementById('instructionText');
             
             const instructions = {
-                'btc': 'Send the exact amount to:\n\nbc1qvykus2xjawptxwz7qp0mwn5zxdetvzydv40eml',
-                'ltc': 'Send the exact amount to:\n\nltc1qugzzl82j354mr69f3qtrm2fshhczpmxvh2vxrn'
+                'btc': 'Send the exact amount to:\n\nbc1qvykus2xjawptxwz7qp0mwn5zxdetvzydv40eml\n\nAfter sending, tap “I Have Paid” and paste your public tx link from a block explorer (e.g. mempool.space/tx/…).',
+                'ltc': 'Send the exact amount to:\n\nltc1qugzzl82j354mr69f3qtrm2fshhczpmxvh2vxrn\n\nAfter sending, tap “I Have Paid” and paste your public transaction URL from blockchair, mempool.space (LTC), or similar explorer.'
             };
             
             instructionText.textContent = instructions[method] || 'Please complete the payment.';
         }
 
-        // Mark as Paid function with cool animation
+        function hideTopUpAfterPaidPanel() {
+            var panel = document.getElementById('topUpAfterPaidPanel');
+            var btn = document.getElementById('btnIHavePaidCrypto');
+            var instr = document.getElementById('paymentInstructions');
+            if (panel) panel.style.display = 'none';
+            if (btn) btn.style.display = '';
+            if (instr) instr.style.display = '';
+            var inp = document.getElementById('cryptoConfirmationUrl');
+            if (inp) inp.value = '';
+        }
+
+        function isExplorerTxHttpsUrl(raw) {
+            var s = String(raw || '').trim();
+            if (s.length < 24 || s.length > 480) return false;
+            var u;
+            try { u = new URL(s); } catch (e) { return false; }
+            if (u.protocol !== 'https:') return false;
+            var h = u.hostname.toLowerCase();
+            if (h === 'localhost' || h.indexOf('127.') === 0) return false;
+            var p = (u.pathname || '').toLowerCase();
+            return p.indexOf('/tx/') !== -1 || p.indexOf('/transaction/') !== -1 || p.indexOf('/transactions/') !== -1;
+        }
+
+        // Step 3: after "I Have Paid" — proof link → POST /api/topup/submit
         function markAsPaid() {
-            const paymentMethod = document.getElementById('payMethod').value;
-            const amt = parseFloat(document.getElementById('fundAmt').value);
-            const bonusCode = document.getElementById('bonusCode').value.trim();
+            var paymentMethod = document.getElementById('payMethod').value;
+            var amt = parseFloat(document.getElementById('fundAmt').value);
             
             if (!paymentMethod || (paymentMethod !== 'btc' && paymentMethod !== 'ltc')) {
                 showAnimatedPopup('Error', 'Please select a payment method', 'error');
@@ -9654,8 +10050,84 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 return;
             }
             
-            // Show cool paid animation popup
-            showPaidAnimation();
+            var panel = document.getElementById('topUpAfterPaidPanel');
+            var btn = document.getElementById('btnIHavePaidCrypto');
+            var instr = document.getElementById('paymentInstructions');
+            if (panel && btn) {
+                panel.style.display = 'block';
+                btn.style.display = 'none';
+                if (instr) instr.style.display = 'none';
+                var inp = document.getElementById('cryptoConfirmationUrl');
+                if (inp) { inp.value = ''; setTimeout(function () { inp.focus(); }, 100); }
+            }
+        }
+
+        async function submitCryptoTopUpRequest() {
+            if (!pluxoGetAuthToken() || !userData || !userData.username) {
+                showAnimatedPopup('Login required', 'Sign in before submitting your payment link.', 'error');
+                return;
+            }
+            var paymentMethod = document.getElementById('payMethod').value;
+            var amt = parseFloat(document.getElementById('fundAmt').value);
+            var confirmation_url = (document.getElementById('cryptoConfirmationUrl') || {}).value || '';
+            
+            if (!paymentMethod || (paymentMethod !== 'btc' && paymentMethod !== 'ltc')) {
+                showAnimatedPopup('Error', 'Please select a payment method', 'error');
+                return;
+            }
+            if (!amt || amt < 10) {
+                showAnimatedPopup('Error', 'Please select an amount (minimum $10)', 'error');
+                return;
+            }
+            if (!isExplorerTxHttpsUrl(confirmation_url)) {
+                showAnimatedPopup(
+                    'Invalid link',
+                    'Paste a full https explorer URL that includes the transaction path, e.g. https://mempool.space/tx/…',
+                    'error'
+                );
+                return;
+            }
+            var btn = document.querySelector('#topUpAfterPaidPanel .btn-primary');
+            if (btn) { btn.disabled = true; btn.style.opacity = '0.65'; }
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/topup/submit', {
+                    method: 'POST',
+                    headers: pluxoAuthHeaders(),
+                    body: JSON.stringify({
+                        username: String(userData.username).toLowerCase().trim(),
+                        amount_usd: amt,
+                        method: paymentMethod,
+                        confirmation_url: confirmation_url.trim()
+                    })
+                });
+                var d = await r.json().catch(function () { return {}; });
+                if (!r.ok || !d.ok) {
+                    throw new Error(d.error || ('Request failed (' + r.status + ')'));
+                }
+                hideTopUpAfterPaidPanel();
+                showTopUpPendingAnimation();
+                closeFundsModal();
+            } catch (err) {
+                showAnimatedPopup('Submit failed', (err && err.message) ? err.message : String(err), 'error');
+            } finally {
+                if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+            }
+        }
+
+        function showTopUpPendingAnimation() {
+            var overlay = document.createElement('div');
+            overlay.className = 'animated-popup-overlay';
+            overlay.style.display = 'flex';
+            overlay.innerHTML = '<div class="animated-popup success" style="max-width: 520px;">' +
+                '<div class="popup-icon" style="font-size: 72px;">⏳</div>' +
+                '<div class="popup-title" style="font-size: 24px;">Submitted for review</div>' +
+                '<div class="popup-message" style="font-size: 15px; line-height: 1.7; padding: 0 16px;">' +
+                'Staff will verify your explorer link on Telegram. Once your top-up is <strong>accepted</strong>, ' +
+                'your balance updates automatically — refresh the page or revisit your profile if needed.' +
+                '</div>' +
+                '<div style="margin-top: 20px;"><button type="button" class="popup-button" ' +
+                'onclick="this.closest(\'.animated-popup-overlay\').remove();">Close</button></div></div>';
+            document.body.appendChild(overlay);
         }
 
         function showPaidAnimation() {
@@ -9769,10 +10241,12 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             
             // Update payment instructions
             updatePaymentInstructions();
+            hideTopUpAfterPaidPanel();
         }
 
         function closeFundsModal() {
             document.getElementById('fundsModal').classList.remove('active');
+            hideTopUpAfterPaidPanel();
             // Reset to step 1
             document.getElementById('fundsStep1').style.display = 'block';
             document.getElementById('fundsStep2').style.display = 'none';
@@ -9827,6 +10301,8 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         window.selectAmount = selectAmount;
         window.proceedToStep3 = proceedToStep3;
         window.markAsPaid = markAsPaid;
+        window.hideTopUpAfterPaidPanel = hideTopUpAfterPaidPanel;
+        window.submitCryptoTopUpRequest = submitCryptoTopUpRequest;
         window.showPaidAnimation = showPaidAnimation;
 
         async function addFunds(e) {
@@ -9940,6 +10416,15 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 showAnimatedPopup('Info', 'Cart is empty', 'info');
                 return;
             }
+
+            if (userData.cart.some(function (i) { return i.kind === 'lead'; })) {
+                showAnimatedPopup(
+                    'Error',
+                    'Your cart still has old lead line items. Remove them (✕) or clear the cart, then add products again.',
+                    'error'
+                );
+                return;
+            }
             
             const total = userData.cart.reduce((s, i) => s + (parseFloat(i.price) || 0), 0);
             
@@ -9955,82 +10440,51 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             
             const itemCount = userData.cart.length;
             const cartItems = [...userData.cart]; // Copy cart items
-            const purchasedProductIds = cartItems
-                .map(item => item.productId)
-                .filter(id => id !== undefined && id !== null);
             
             try {
-                // CRITICAL: Deduct balance from Railway API FIRST (prevents refresh exploit)
-                const balanceResponse = await fetch(BOT_WEBHOOK_URL + '/api/balance/update', {
+                // Atomic checkout: deduct balance + remove sold rows from server inventory
+                const checkoutResponse = await fetch(BOT_WEBHOOK_URL + '/api/purchase/checkout', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Webhook-Secret': WEBHOOK_SECRET
-                    },
+                    headers: pluxoAuthHeaders(),
                     body: JSON.stringify({
                         username: userData.username.toLowerCase(),
-                        action: 'subtract',
-                        amount: total,
-                        reason: 'Purchase'
+                        items: cartItems.map(item => ({
+                            productId: item.productId,
+                            price: parseFloat(item.price) || 0
+                        }))
                     })
                 });
                 
-                if (!balanceResponse.ok) {
-                    const errorData = await balanceResponse.json();
-                    throw new Error(errorData.error || 'Failed checkout');
+                const checkoutData = await checkoutResponse.json().catch(() => ({}));
+                if (!checkoutResponse.ok) {
+                    throw new Error(checkoutData.error || 'Checkout failed');
                 }
                 
-                const balanceData = await balanceResponse.json();
-                
-                // Update local balance to match server
-                userData.balance = balanceData.newBalance;
+                userData.balance = checkoutData.newBalance;
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
                 
-                // Save orders for each cart item
-                for (const item of cartItems) {
+                const bought = checkoutData.items || [];
+                for (const row of bought) {
                     const product = {
-                        bin: item.bin || (item.name ? item.name.split(' - ')[1] : '000000') || '000000',
-                        bank: item.bank || 'UNKNOWN BANK',
-                        base: item.base || '2026_1_3_US_Base',
-                        price: parseFloat(item.price) || 0,
-                        refundable: item.refundable !== undefined ? item.refundable : true,
-                        key: item.key || '' // Include the purchase key
+                        bin: row.bin || '000000',
+                        base: row.base || 'MONEY_BASE',
+                        price: parseFloat(row.price) || 0,
+                        refundable: row.refundable !== undefined ? row.refundable : true,
+                        full_info: row.full_info || ''
                     };
                     await saveOrder(product);
                 }
                 
-                // Clear cart
                 userData.cart = [];
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                await saveUserBalanceToFirestore(); // Sync to Firestore
+                await saveUserBalanceToFirestore();
                 updateUI();
                 updateCartDisplay();
                 await generateProducts();
                 renderProducts();
                 renderPagination();
                 
-                // Notify bot about purchase
-                try {
-                    await fetch(BOT_WEBHOOK_URL + '/api/purchase/notify', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Webhook-Secret': WEBHOOK_SECRET
-                        },
-                        body: JSON.stringify({
-                            username: userData.username.toLowerCase(),
-                            item_count: itemCount,
-                            total_amount: total,
-                            product_ids: purchasedProductIds,
-                            stock_slots: purchasedProductIds
-                        })
-                    });
-                } catch (notifyError) {
-                    console.error('Failed to notify bot:', notifyError);
-                    // Don't fail the purchase if notification fails
-                }
-                
-                showAnimatedPopup('Success', `Purchase complete! ${itemCount} item(s) added to your orders. Check Orders page for your keys.`, 'success');
+                showAnimatedPopup('Success', `Purchase complete! ${itemCount} item(s) added to your orders. Open the Orders page for full details.`, 'success');
                 toggleCart();
                 
                 // Refresh orders page if it's open
@@ -10049,6 +10503,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         function logout() {
             if (confirm('Log out?')) {
                 localStorage.removeItem('pluxoUser');
+                pluxoSetAuthToken('');
                 userData = null;
                 showLogin();
             }
@@ -10076,14 +10531,6 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
 
         const brands = ['VISA', 'MASTERCARD', 'AMEX'];
         const types = ['DEBIT', 'CREDIT'];
-        const bases = ['World_Mix', 'US_Base', 'UK_Mix', 'EU_Mix', 'CA_Base', 'AU_Mix', 'Asia_Mix'];
-        const banks = [
-            'BANK OF NOVA SCOTIA', 'CAPITAL ONE BANK', 'TORONTO-DOMINION BANK',
-            'REVOLUT, LTD.', 'NATIONAL AUSTRALIA BANK LIMITED', 'STANDARD CHARTERED BANK',
-            'DEUTSCHE KREDITBANK AKTIENGESELLSCHAFT', 'MALAYAN BANKING BERHAD',
-            'CHASE BANK USA', 'WELLS FARGO BANK', 'BARCLAYS BANK', 'HSBC BANK'
-        ];
-
         // Function to determine brand from BIN prefix
         function getBrandFromBin(bin) {
             const binStr = String(bin);
@@ -10112,18 +10559,17 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                             brand: p.brand || getBrandFromBin(p.bin),
                             type: p.type || 'CREDIT',
                             country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
-                            hasName: true,
-                            hasAddress: true,
-                            hasZip: true,
-                            hasPhone: true,
-                            hasMail: true,
+                            hasName: !!p.has_name,
+                            hasAddress: !!p.has_address,
+                            hasZip: !!p.has_zip,
+                            hasPhone: !!p.has_phone,
+                            hasMail: !!p.has_mail,
                             hasSSN: true,
                             hasDOB: true,
-                            bank: p.bank || 'BANK',
-                            base: p.base || '2026_US_Base',
+                            base: p.base || 'MONEY_BASE',
                             refundable: p.refundable !== undefined ? p.refundable : true,
                             price: p.price || '10.00',
-                            key: p.key || '',
+                            key: '',
                             seller_id: p.seller_id || '',
                             full_info: p.full_info || ''
                         }));
@@ -10131,6 +10577,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                         filteredProducts = [...allProducts];
                         apiProductsLoaded = true;
                         console.log('Loaded ' + allProducts.length + ' products from API');
+                        refreshPluxoBaseFilterOptions();
                         return;
                     }
                 }
@@ -10147,24 +10594,24 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                             brand: p.brand || getBrandFromBin(p.bin),
                             type: p.type || 'CREDIT',
                             country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
-                            hasName: true,
-                            hasAddress: true,
-                            hasZip: true,
-                            hasPhone: true,
-                            hasMail: true,
+                            hasName: !!p.has_name,
+                            hasAddress: !!p.has_address,
+                            hasZip: !!p.has_zip,
+                            hasPhone: !!p.has_phone,
+                            hasMail: !!p.has_mail,
                             hasSSN: true,
                             hasDOB: true,
-                            bank: p.bank || 'BANK',
-                            base: p.base || '2026_US_Base',
+                            base: p.base || 'MONEY_BASE',
                             refundable: p.refundable !== undefined ? p.refundable : true,
                             price: p.price || '10.00',
-                            key: p.key || '',
+                            key: '',
                             seller_id: p.seller_id || '',
                             full_info: p.full_info || ''
                         }));
                         originalProducts = [...allProducts];
                         filteredProducts = [...allProducts];
                         console.log('Loaded ' + allProducts.length + ' products from local file');
+                        refreshPluxoBaseFilterOptions();
                         return;
                     }
                 }
@@ -10176,6 +10623,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             allProducts = [];
             originalProducts = [];
             filteredProducts = [];
+            refreshPluxoBaseFilterOptions();
         }
 
         function renderProducts() {
@@ -10203,14 +10651,13 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                             <span class="country-code">${p.country.code}</span>
                         </div>
                     </td>
-                    <td><span class="${p.hasName ? 'check-yes' : 'check-no'}">${p.hasName ? '✓' : '✗'}</span></td>
-                    <td><span class="${p.hasAddress ? 'check-yes' : 'check-no'}">${p.hasAddress ? '✓' : '✗'}</span></td>
-                    <td><span class="${p.hasZip ? 'check-yes' : 'check-no'}">${p.hasZip ? '✓' : '✗'}</span></td>
-                    <td><span class="${p.hasPhone ? 'check-yes' : 'check-no'}">${p.hasPhone ? '✓' : '✗'}</span></td>
-                    <td><span class="${p.hasMail ? 'check-yes' : 'check-no'}">${p.hasMail ? '✓' : '✗'}</span></td>
+                    <td><span class="${p.hasName ? 'check-yes' : 'check-no'}">${p.hasName ? '✓' : 'x'}</span></td>
+                    <td><span class="${p.hasAddress ? 'check-yes' : 'check-no'}">${p.hasAddress ? '✓' : 'x'}</span></td>
+                    <td><span class="${p.hasZip ? 'check-yes' : 'check-no'}">${p.hasZip ? '✓' : 'x'}</span></td>
+                    <td><span class="${p.hasPhone ? 'check-yes' : 'check-no'}">${p.hasPhone ? '✓' : 'x'}</span></td>
+                    <td><span class="${p.hasMail ? 'check-yes' : 'check-no'}">${p.hasMail ? '✓' : 'x'}</span></td>
                     <td><span class="${p.hasSSN ? 'check-yes' : 'check-no'}">${p.hasSSN ? '✓' : '✗'}</span></td>
                     <td><span class="${p.hasDOB ? 'check-yes' : 'check-no'}">${p.hasDOB ? '✓' : '✗'}</span></td>
-                    <td><span class="bank-name">${p.bank}</span></td>
                     <td>${p.base}</td>
                     <td><span class="refund-yes">Yes</span></td>
                     <td><span class="price-cell">$ ${p.price}</span></td>
@@ -10351,10 +10798,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 price: parseFloat(product.price),
                 bin: product.bin,
                 brand: product.brand,
-                bank: product.bank,
                 base: product.base,
                 refundable: product.refundable,
-                key: product.key || '' // Include the purchase key
+                full_info: product.full_info || ''
             });
 
             localStorage.setItem('pluxoUser', JSON.stringify(userData));
@@ -10402,11 +10848,12 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             // Get filter values
             const binsTextarea = document.querySelector('.filter-container .filter-group:first-child .filter-textarea');
             const zipsTextarea = document.querySelectorAll('.filter-container .filter-textarea')[1];
-            const bankSelect = document.querySelectorAll('.filter-select')[0];
-            const countrySelect = document.querySelectorAll('.filter-select')[1];
-            const brandSelect = document.querySelectorAll('.filter-select')[2];
-            const typeSelect = document.querySelectorAll('.filter-select')[3];
-            const baseSelect = document.querySelectorAll('.filter-select')[4];
+            const countrySelect = document.querySelector('.pluxo-filter-country')
+                || document.querySelectorAll('.filter-container .filter-select')[0];
+            const brandSelect = document.querySelectorAll('.filter-select')[1];
+            const typeSelect = document.querySelectorAll('.filter-select')[2];
+            const baseSelect = document.getElementById('pluxoFilterBaseSelect')
+                || document.querySelectorAll('.filter-container .filter-select')[3];
             const minPriceInput = document.querySelectorAll('.price-input')[0];
             const maxPriceInput = document.querySelectorAll('.price-input')[1];
             
@@ -10425,7 +10872,6 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             const zipsList = zipsInput ? zipsInput.split('\n').map(z => z.trim()).filter(z => z.length > 0) : [];
             
             // Get select values
-            const bankValue = bankSelect ? bankSelect.value : 'All';
             const countryValue = countrySelect ? countrySelect.value : 'All';
             const brandValue = brandSelect ? brandSelect.value : 'All';
             const typeValue = typeSelect ? typeSelect.value : 'All';
@@ -10455,11 +10901,6 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 });
             }
             
-            // Filter by Bank
-            if (bankValue && bankValue !== 'All') {
-                products = products.filter(p => p.bank === bankValue);
-            }
-            
             // Filter by Brand
             if (brandValue && brandValue !== 'All') {
                 products = products.filter(p => p.brand === brandValue);
@@ -10476,15 +10917,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             }
             
             // Filter by Country
-            if (countryValue && countryValue !== 'All') {
-                const countryCode = countryValue.includes('United States') ? 'US' :
-                                  countryValue.includes('United Kingdom') ? 'GB' :
-                                  countryValue.includes('Canada') ? 'CA' :
-                                  countryValue.includes('Australia') ? 'AU' :
-                                  countryValue.includes('Germany') ? 'DE' : '';
-                if (countryCode) {
-                    products = products.filter(p => p.country.code === countryCode);
-                }
+            if (countrySelect && countrySelect.value && countrySelect.value !== 'All') {
+                products = products.filter(function (p) {
+                    return p.country && p.country.code === countrySelect.value;
+                });
             }
             
             // Filter by Price Range
@@ -10577,9 +11013,9 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                             price: parseFloat(product.price),
                             bin: product.bin,
                             brand: product.brand,
-                            bank: product.bank,
                             base: product.base,
-                            refundable: product.refundable
+                            refundable: product.refundable,
+                            full_info: product.full_info || ''
                         });
                         addedCount++;
                     } else {
@@ -10671,13 +11107,11 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         const emailDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'proton.me'];
 
         function generateOrderDetails(product) {
-            // SIMPLIFIED: Only return the key and essential info
             return {
                 id: 'ORD' + Date.now() + Math.floor(Math.random() * 1000),
-                key: product.key || 'NO-KEY-PROVIDED',
+                full_info: product.full_info || '',
                 price: product.price,
                 bin: product.bin,
-                bank: product.bank,
                 base: product.base,
                 refundable: product.refundable,
                 purchaseDate: new Date().toISOString(),
@@ -10823,20 +11257,20 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             document.querySelector('.orders-table').style.display = 'table';
 
             tbody.innerHTML = orders.map(o => {
-                // Show only key and minimal info (hide fake card details)
-                const displayKey = o.key && o.key !== 'NO-KEY-PROVIDED' ? o.key : '⚠️ NO KEY';
+                const fi = (o.full_info && String(o.full_info).trim()) ? String(o.full_info) : '';
+                const detailHtml = fi
+                    ? `<pre style="margin:0;white-space:pre-wrap;word-break:break-all;font-size:12px;background:rgba(0,0,0,.25);padding:12px;border-radius:8px;border:1px solid var(--gray-border);max-height:220px;overflow:auto;">${fi.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>`
+                    : '<span style="color:var(--gray);font-size:13px;">No full line stored for this order — BIN shown below.</span>';
                 return `
                 <tr>
                     <td><input type="checkbox" class="order-check" data-id="${o.id}" onchange="updateSelectedCount()"></td>
                     <td colspan="12" style="text-align: left; padding: 20px;">
                         <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="font-size: 18px; font-weight: 600; color: #8b5cf6; font-family: monospace; letter-spacing: 1px;">
-                                🔑 KEY: ${displayKey}
-                            </div>
+                            <div style="font-size: 14px; font-weight: 600; color: #86efac;">📄 Purchase details</div>
+                            ${detailHtml}
                             <div style="display: flex; gap: 20px; color: var(--gray); font-size: 13px;">
                                 <span>💳 BIN: ${o.bin || '-'}</span>
                                 <span>💰 Price: $${o.price || '0.00'}</span>
-                                <span>🏦 Bank: ${o.bank || '-'}</span>
                                 <span>📅 Date: ${new Date(o.purchaseDate).toLocaleDateString()}</span>
                             </div>
                         </div>
@@ -10936,9 +11370,10 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                 return;
             }
 
-            let csv = 'Card No,Exp Date,CVV2,Name,Address,State,City,ZIP,Mail,Phone,IP,Email Password,Bank,Base,Price,Refundable,Key,Date\n';
+            let csv = 'Card No,Exp Date,CVV2,Name,Address,State,City,ZIP,Mail,Phone,IP,Email Password,Base,Price,Refundable,Key,Date\n';
             orders.forEach(o => {
-                csv += `"${o.cardNo}","${o.expDate}","${o.cvv}","${o.name}","${o.address}","${o.state}","${o.city}","${o.zip}","${o.mail}","${o.phone}","${o.ip}","${o.emailPassword}","${o.bank}","${o.base}","$${o.price}","${o.refundable ? 'Yes' : 'No'}","${o.key || ''}","${new Date(o.purchaseDate).toLocaleDateString()}"\n`;
+                const fi = (o.full_info || '').replace(/"/g, '""');
+                csv += `"${o.cardNo}","${o.expDate}","${o.cvv}","${o.name}","${o.address}","${o.state}","${o.city}","${o.zip}","${o.mail}","${o.phone}","${o.ip}","${o.emailPassword}","${o.base}","$${o.price}","${o.refundable ? 'Yes' : 'No'}","${fi}","${new Date(o.purchaseDate).toLocaleDateString()}"\n`;
             });
 
             const blob = new Blob([csv], { type: 'text/csv' });
@@ -10950,17 +11385,171 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             window.URL.revokeObjectURL(url);
         }
 
-        // ==================== TICKET SYSTEM ====================
-        let allTickets = JSON.parse(localStorage.getItem('pluxoTickets')) || [];
-        let currentTicketFilter = 'all';
-        let currentAdminTicketFilter = 'all';
-        let viewingTicketId = null;
+        // ==================== TICKET SYSTEM (server + Telegram replies) ====================
+        var myTicketsCache = [];
+        var adminTicketsCache = [];
+        var currentTicketFilter = 'all';
+        var currentAdminTicketFilter = 'all';
+        var viewingTicketId = null;
+        var ticketsPagePollTimer = null;
+        var ticketViewPollTimer = null;
 
-        function generateTicketId() {
-            return 'TK' + Date.now().toString().slice(-8);
+        function stopTicketsPagePoll() {
+            if (ticketsPagePollTimer) {
+                clearInterval(ticketsPagePollTimer);
+                ticketsPagePollTimer = null;
+            }
+        }
+
+        function stopViewTicketPoll() {
+            if (ticketViewPollTimer) {
+                clearInterval(ticketViewPollTimer);
+                ticketViewPollTimer = null;
+            }
+        }
+
+        function startTicketsPagePoll() {
+            stopTicketsPagePoll();
+            ticketsPagePollTimer = setInterval(function () {
+                syncUserTicketsQuiet();
+            }, 14000);
+        }
+
+        function startViewTicketPoll(ticketId) {
+            stopViewTicketPoll();
+            if (!ticketId) return;
+            ticketViewPollTimer = setInterval(function () {
+                if (viewingTicketId !== ticketId) return;
+                refreshTicketDetailQuiet(ticketId);
+            }, 9000);
+        }
+
+        function mapTicketFromApi(t) {
+            if (!t || !t.id) return null;
+            return {
+                id: t.id,
+                user: t.site_username || t.user || '',
+                subject: String(t.subject || ''),
+                reason: String(t.reason || ''),
+                description: '',
+                status: t.status === 'resolved' ? 'resolved' : 'progressing',
+                createdAt: t.created_at || t.createdAt,
+                messages: (t.messages || []).map(function (m) {
+                    return {
+                        sender: m.sender || '',
+                        text: m.text || '',
+                        time: m.time || '',
+                        isAdmin: !!(typeof m.is_admin !== 'undefined' ? m.is_admin : m.isAdmin)
+                    };
+                })
+            };
+        }
+
+        function ticketEscapeMultiline(raw) {
+            return String(raw || '').split(/\n/).map(function (line) {
+                return sanitizeInput(line);
+            }).join('<br>');
+        }
+
+        function upsertTicketInCaches(tm) {
+            if (!tm || !tm.id) return;
+
+            function merge(arr, row) {
+                var ix = arr.findIndex(function (x) { return x.id === row.id; });
+                if (ix >= 0) arr[ix] = row;
+                else arr.push(row);
+            }
+            var myU = userData && userData.username
+                ? String(userData.username).toLowerCase().trim() : '';
+            if (myU && String(tm.user || '').toLowerCase().trim() === myU) {
+                merge(myTicketsCache, tm);
+                myTicketsCache.sort(function (a, b) {
+                    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                });
+            }
+            if (typeof verifyAdminAccess === 'function' && verifyAdminAccess()) {
+                merge(adminTicketsCache, tm);
+                adminTicketsCache.sort(function (a, b) {
+                    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                });
+            }
+        }
+
+        function findTicketById(id) {
+            return myTicketsCache.find(function (x) { return x.id === id; })
+                || adminTicketsCache.find(function (x) { return x.id === id; }) || null;
+        }
+
+        async function syncUserTicketsQuiet() {
+            if (!userData || !pluxoGetAuthToken()) {
+                myTicketsCache = [];
+                renderTickets();
+                return;
+            }
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/tickets', { headers: pluxoAuthHeaders(false) });
+                var d = await r.json().catch(function () { return {}; });
+                if (!r.ok || !d.ok) return;
+                myTicketsCache = (d.tickets || []).map(mapTicketFromApi).filter(Boolean);
+                renderTickets();
+                if (viewingTicketId) {
+                    var live = findTicketById(viewingTicketId);
+                    if (live) paintTicketModal(live);
+                }
+                if (typeof verifyAdminAccess === 'function' && verifyAdminAccess()) {
+                    syncAdminTicketsQuiet();
+                }
+            } catch (e) {
+                console.warn('syncUserTicketsQuiet', e);
+            }
+        }
+
+        async function syncAdminTicketsQuiet() {
+            if (!pluxoGetAuthToken() || !(typeof verifyAdminAccess === 'function' && verifyAdminAccess())) {
+                return;
+            }
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/tickets/admin/all', { headers: pluxoAuthHeaders(false) });
+                var d = await r.json().catch(function () { return {}; });
+                if (!r.ok || !d.ok) return;
+                adminTicketsCache = (d.tickets || []).map(mapTicketFromApi).filter(Boolean);
+
+                var st = document.getElementById('statTickets');
+                if (st) {
+                    var openCt = adminTicketsCache.filter(function (t) {
+                        return t.status === 'progressing';
+                    }).length;
+                    st.textContent = String(openCt);
+                }
+                renderAdminTickets();
+            } catch (e) {
+                console.warn('syncAdminTicketsQuiet', e);
+            }
+        }
+
+        async function refreshTicketDetailQuiet(id) {
+            if (!pluxoGetAuthToken() || !id) return;
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/tickets/' + encodeURIComponent(id), {
+                    headers: pluxoAuthHeaders(false)
+                });
+                var d = await r.json().catch(function () { return {}; });
+                if (!r.ok || !d.ok || !d.ticket) return;
+                var tm = mapTicketFromApi(d.ticket);
+                if (tm) {
+                    upsertTicketInCaches(tm);
+                    paintTicketModal(tm);
+                }
+                renderTickets();
+                renderAdminTickets();
+            } catch (e) { console.warn(e); }
         }
 
         function openCreateTicket() {
+            if (!userData || !pluxoGetAuthToken()) {
+                showAnimatedPopup('Login required', 'Sign in to create a ticket.', 'error');
+                return;
+            }
             document.getElementById('createTicketModal').classList.add('active');
         }
 
@@ -10971,48 +11560,56 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             document.getElementById('ticketDescription').value = '';
         }
 
-        function submitTicket(e) {
+        async function submitTicket(e) {
             e.preventDefault();
-            if (!userData) {
-                alert('Please login first');
+            if (!userData || !pluxoGetAuthToken()) {
+                showAnimatedPopup('Login required', 'Please sign in first.', 'error');
                 return;
             }
-
-            const ticket = {
-                id: generateTicketId(),
-                user: userData.username,
-                subject: document.getElementById('ticketSubject').value,
-                reason: document.getElementById('ticketReason').value,
-                description: document.getElementById('ticketDescription').value,
-                status: 'progressing',
-                createdAt: new Date().toISOString(),
-                messages: [{
-                    sender: userData.username,
-                    text: document.getElementById('ticketDescription').value,
-                    time: new Date().toISOString(),
-                    isAdmin: false
-                }]
-            };
-
-            allTickets.push(ticket);
-            localStorage.setItem('pluxoTickets', JSON.stringify(allTickets));
-            
-            closeCreateTicket();
-            renderTickets();
-            alert('Ticket submitted successfully! Ticket ID: ' + ticket.id);
+            var subject = document.getElementById('ticketSubject').value.trim();
+            var reason = document.getElementById('ticketReason').value.trim();
+            var description = document.getElementById('ticketDescription').value.trim();
+            if (subject.length < 3 || reason.length < 2 || description.length < 5) {
+                showAnimatedPopup('Incomplete', 'Add a subject, reason, and a clear description.', 'error');
+                return;
+            }
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/tickets', {
+                    method: 'POST',
+                    headers: pluxoAuthHeaders(),
+                    body: JSON.stringify({ subject: subject, reason: reason, description: description })
+                });
+                var d = await r.json().catch(function () { return {}; });
+                if (!r.ok || !d.ok) {
+                    throw new Error(d.error || ('Failed (' + r.status + ')'));
+                }
+                closeCreateTicket();
+                var tm = mapTicketFromApi(d.ticket);
+                if (tm) upsertTicketInCaches(tm);
+                await syncUserTicketsQuiet();
+                showAnimatedPopup(
+                    'Ticket sent',
+                    'ID: ' + (d.ticket && d.ticket.id ? d.ticket.id : '') + ' — staff get a Telegram alert.',
+                    'success'
+                );
+            } catch (err) {
+                showAnimatedPopup('Error', err && err.message ? err.message : String(err), 'error');
+            }
         }
 
         function renderTickets() {
-            const tbody = document.getElementById('ticketsTableBody');
-            const noData = document.getElementById('noTicketsData');
-            if (!tbody || !userData) return;
+            var tbody = document.getElementById('ticketsTableBody');
+            var noData = document.getElementById('noTicketsData');
+            if (!tbody || !userData || !pluxoGetAuthToken()) {
+                if (tbody) tbody.innerHTML = '';
+                if (noData && (!userData || !pluxoGetAuthToken())) noData.classList.add('show');
+                return;
+            }
 
-            // Filter tickets for current user
-            let userTickets = allTickets.filter(t => t.user.toLowerCase() === userData.username.toLowerCase());
+            var userTickets = myTicketsCache.slice();
 
-            // Apply status filter
             if (currentTicketFilter !== 'all') {
-                userTickets = userTickets.filter(t => t.status === currentTicketFilter);
+                userTickets = userTickets.filter(function (t) { return t.status === currentTicketFilter; });
             }
 
             if (userTickets.length === 0) {
@@ -11022,161 +11619,219 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
             }
 
             noData.classList.remove('show');
-            tbody.innerHTML = userTickets.map((t, idx) => `
-                <tr>
-                    <td>${idx + 1}</td>
-                    <td>${t.subject}</td>
-                    <td>${t.reason}</td>
-                    <td><span class="ticket-status ${t.status}">${t.status === 'progressing' ? 'Progressing' : 'Resolved'}</span></td>
-                    <td>${new Date(t.createdAt).toLocaleString()}</td>
-                    <td><button class="btn-view-ticket" onclick="viewTicket('${t.id}')">View</button></td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = userTickets.map(function (t, idx) {
+                var safeSub = sanitizeInput(String(t.subject));
+                var safeRe = sanitizeInput(String(t.reason));
+                var stLabel = t.status === 'progressing' ? 'Open' : 'Resolved';
+                return '<tr>\
+                    <td>' + (idx + 1) + '</td>\
+                    <td>' + safeSub + '</td>\
+                    <td>' + safeRe + '</td>\
+                    <td><span class="ticket-status ' + t.status + '">' + stLabel + '</span></td>\
+                    <td>' + new Date(t.createdAt).toLocaleString() + '</td>\
+                    <td><button type="button" class="btn-view-ticket" onclick="viewTicket(\'' + t.id + '\')">View</button></td>\
+                </tr>';
+            }).join('');
         }
 
         function filterTickets(status, btn) {
             currentTicketFilter = status;
-            document.querySelectorAll('.ticket-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
+            document.querySelectorAll('.ticket-tab').forEach(function (t) { t.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
             renderTickets();
         }
 
-        function viewTicket(ticketId) {
-            const ticket = allTickets.find(t => t.id === ticketId);
-            if (!ticket) return;
-
-            viewingTicketId = ticketId;
+        function paintTicketModal(ticket) {
+            if (!ticket || !ticket.id) return;
+            viewingTicketId = ticket.id;
 
             document.getElementById('viewTicketId').textContent = ticket.id;
             document.getElementById('viewTicketSubject').textContent = ticket.subject;
             document.getElementById('viewTicketReason').textContent = ticket.reason;
             document.getElementById('viewTicketTime').textContent = new Date(ticket.createdAt).toLocaleString();
-            
-            const statusBadge = document.getElementById('viewTicketStatus');
-            statusBadge.textContent = ticket.status === 'progressing' ? 'Progressing' : 'Resolved';
+
+            var statusBadge = document.getElementById('viewTicketStatus');
+            statusBadge.textContent = ticket.status === 'progressing' ? 'Open' : 'Resolved';
             statusBadge.className = 'ticket-status-badge ' + ticket.status;
 
-            // Render messages
-            const messagesContainer = document.getElementById('ticketMessages');
-            messagesContainer.innerHTML = ticket.messages.map(m => `
-                <div class="ticket-message ${m.isAdmin ? 'admin' : 'user'}">
-                    <div class="ticket-message-header">
-                        <span class="ticket-message-sender">${m.isAdmin ? '🛡️ Admin' : m.sender}</span>
-                        <span class="ticket-message-time">${new Date(m.time).toLocaleString()}</span>
-                    </div>
-                    <div class="ticket-message-text">${m.text}</div>
-                </div>
-            `).join('');
+            var messagesContainer = document.getElementById('ticketMessages');
+            messagesContainer.innerHTML = (ticket.messages || []).map(function (m) {
+                var side = m.isAdmin ? 'admin' : 'user';
+                var who = m.isAdmin ? '🛡️ Admin' : sanitizeInput(String(m.sender));
+                var tline = ticketEscapeMultiline(m.text);
+                return '<div class="ticket-message ' + side + '">\
+                    <div class="ticket-message-header">\
+                        <span class="ticket-message-sender">' + who + '</span>\
+                        <span class="ticket-message-time">' + new Date(m.time).toLocaleString() + '</span>\
+                    </div>\
+                    <div class="ticket-message-text">' + tline + '</div>\
+                </div>';
+            }).join('');
 
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            document.getElementById('ticketReplyForm').style.display =
+                ticket.status === 'progressing' ? 'flex' : 'none';
+        }
 
-            // Show/hide reply form based on ticket status
-            document.getElementById('ticketReplyForm').style.display = ticket.status === 'progressing' ? 'flex' : 'none';
+        function viewTicket(ticketId) {
+            var ticket = findTicketById(ticketId);
+            if (!ticket) {
+                if (pluxoGetAuthToken()) {
+                    refreshTicketDetailQuiet(ticketId).then(function () {
+                        var t2 = findTicketById(ticketId);
+                        if (t2) {
+                            paintTicketModal(t2);
+                            document.getElementById('viewTicketModal').classList.add('active');
+                            startViewTicketPoll(ticketId);
+                        } else {
+                            showAnimatedPopup('Ticket', 'Could not load that ticket.', 'error');
+                        }
+                    });
+                }
+                return;
+            }
 
+            paintTicketModal(ticket);
             document.getElementById('viewTicketModal').classList.add('active');
+            startViewTicketPoll(ticketId);
         }
 
         function closeViewTicket() {
+            stopViewTicketPoll();
             document.getElementById('viewTicketModal').classList.remove('active');
             document.getElementById('ticketReplyText').value = '';
             viewingTicketId = null;
         }
 
-        function sendTicketReply() {
-            if (!viewingTicketId || !userData) return;
+        async function sendTicketReply() {
+            if (!viewingTicketId || !userData || !pluxoGetAuthToken()) return;
 
-            const text = document.getElementById('ticketReplyText').value.trim();
+            var text = document.getElementById('ticketReplyText').value.trim();
             if (!text) {
-                alert('Please enter a message');
+                showAnimatedPopup('Reply', 'Type a message before sending.', 'error');
                 return;
             }
 
-            const ticket = allTickets.find(t => t.id === viewingTicketId);
-            if (!ticket) return;
-
-            const isAdminUser = isAdmin(userData.username);
-
-            ticket.messages.push({
-                sender: userData.username,
-                text: text,
-                time: new Date().toISOString(),
-                isAdmin: isAdminUser
-            });
-
-            localStorage.setItem('pluxoTickets', JSON.stringify(allTickets));
-            
-            document.getElementById('ticketReplyText').value = '';
-            viewTicket(viewingTicketId); // Refresh the view
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/tickets/' + encodeURIComponent(viewingTicketId) + '/reply', {
+                    method: 'POST',
+                    headers: pluxoAuthHeaders(),
+                    body: JSON.stringify({ text: text })
+                });
+                var d = await r.json().catch(function () { return {}; });
+                if (!r.ok || !d.ok) {
+                    throw new Error(d.error || ('Failed (' + r.status + ')'));
+                }
+                document.getElementById('ticketReplyText').value = '';
+                var tm = mapTicketFromApi(d.ticket);
+                if (tm) upsertTicketInCaches(tm);
+                paintTicketModal(tm || findTicketById(viewingTicketId));
+            } catch (err) {
+                showAnimatedPopup('Error', err && err.message ? err.message : String(err), 'error');
+            }
         }
 
-        // Admin Ticket Functions
         function renderAdminTickets() {
-            const container = document.getElementById('adminTicketsList');
-            if (!container) return;
+            var container = document.getElementById('adminTicketsList');
+            if (!container || !(typeof verifyAdminAccess === 'function' && verifyAdminAccess())) return;
 
-            let tickets = [...allTickets];
+            var tickets = adminTicketsCache.slice();
 
-            // Apply filter
             if (currentAdminTicketFilter !== 'all') {
-                tickets = tickets.filter(t => t.status === currentAdminTicketFilter);
+                tickets = tickets.filter(function (t) {
+                    return t.status === currentAdminTicketFilter;
+                });
             }
 
-            // Sort by newest first
-            tickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            tickets.sort(function (a, b) {
+                return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+            });
 
             if (tickets.length === 0) {
                 container.innerHTML = '<div class="admin-no-tickets">No tickets found</div>';
                 return;
             }
 
-            container.innerHTML = tickets.map(t => `
-                <div class="admin-ticket-item">
-                    <div class="admin-ticket-header">
-                        <div>
-                            <div class="admin-ticket-title">${t.subject}</div>
-                            <div class="admin-ticket-meta">
-                                <span class="admin-ticket-user">@${t.user}</span> • 
-                                ${t.reason} • 
-                                ${new Date(t.createdAt).toLocaleString()} • 
-                                <span class="ticket-status ${t.status}">${t.status === 'progressing' ? 'Progressing' : 'Resolved'}</span>
-                            </div>
-                        </div>
-                        <div class="admin-ticket-actions">
-                            ${t.status === 'progressing' ? `<button class="btn-resolve" onclick="resolveTicket('${t.id}')">✓ Resolve</button>` : ''}
-                            <button class="btn-message" onclick="viewTicket('${t.id}')">💬 View/Reply</button>
-                        </div>
-                    </div>
-                    <div class="admin-ticket-preview">${t.messages[t.messages.length - 1]?.text.substring(0, 150)}${t.messages[t.messages.length - 1]?.text.length > 150 ? '...' : ''}</div>
-                </div>
-            `).join('');
+            container.innerHTML = tickets.map(function (t) {
+                var last = t.messages[t.messages.length - 1];
+                var prev = last ? String(last.text || '') : '';
+                prev = sanitizeInput(prev.length > 150 ? prev.substring(0, 150) + '…' : prev);
+                var safeTit = sanitizeInput(String(t.subject));
+                var safeRe = sanitizeInput(String(t.reason));
+                var uesc = sanitizeInput(String(t.user));
+
+                var actions = '';
+                if (t.status === 'progressing') {
+                    actions += '<button type="button" class="btn-resolve" onclick="resolveTicket(\''
+                        + t.id + '\')">✓ Resolve</button> ';
+                }
+                actions += '<button type="button" class="btn-message" onclick="viewTicket(\'' + t.id + '\')">💬 View/Reply</button>';
+
+                var stLbl = t.status === 'progressing' ? 'Open' : 'Resolved';
+
+                return '<div class="admin-ticket-item">\
+                    <div class="admin-ticket-header">\
+                        <div>\
+                            <div class="admin-ticket-title">' + safeTit + '</div>\
+                            <div class="admin-ticket-meta">\
+                                @' + uesc + ' • ' + safeRe + ' • '
+                                + new Date(t.createdAt).toLocaleString() + ' • \
+                                <span class="ticket-status ' + t.status + '">' + stLbl + '</span>\
+                            </div>\
+                        </div>\
+                        <div class="admin-ticket-actions">' + actions + '</div>\
+                    </div>\
+                    <div class="admin-ticket-preview">' + prev + '</div>\
+                </div>';
+            }).join('');
         }
 
         function filterAdminTickets(status, btn) {
             currentAdminTicketFilter = status;
-            document.querySelectorAll('.admin-ticket-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
+            document.querySelectorAll('.admin-ticket-tab').forEach(function (t) { t.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
             renderAdminTickets();
         }
 
-        function resolveTicket(ticketId) {
-            const ticket = allTickets.find(t => t.id === ticketId);
-            if (!ticket) return;
+        async function resolveTicket(ticketId) {
+            if (!ticketId || !pluxoGetAuthToken()) return;
 
-            if (confirm('Mark this ticket as resolved?')) {
-                ticket.status = 'resolved';
-                ticket.messages.push({
-                    sender: 'System',
-                    text: `Ticket marked as resolved by ${userData.username}`,
-                    time: new Date().toISOString(),
-                    isAdmin: true
+            if (!confirm('Mark this ticket as resolved?')) return;
+
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/tickets/admin/resolve', {
+                    method: 'POST',
+                    headers: pluxoAuthHeaders(),
+                    body: JSON.stringify({ ticket_id: ticketId })
                 });
-                
-                localStorage.setItem('pluxoTickets', JSON.stringify(allTickets));
+                var d = await r.json().catch(function () { return {}; });
+                if (!r.ok || !d.ok) {
+                    throw new Error(d.error || ('Failed (' + r.status + ')'));
+                }
+                var tm = mapTicketFromApi(d.ticket);
+                if (tm) upsertTicketInCaches(tm);
+                await syncAdminTicketsQuiet();
+                await syncUserTicketsQuiet();
                 renderAdminTickets();
                 renderTickets();
-                alert('Ticket resolved!');
+                if (viewingTicketId === ticketId) paintTicketModal(findTicketById(ticketId));
+            } catch (err) {
+                showAnimatedPopup('Error', err && err.message ? err.message : String(err), 'error');
             }
         }
+
+        window.openCreateTicket = openCreateTicket;
+        window.closeCreateTicket = closeCreateTicket;
+        window.submitTicket = submitTicket;
+        window.filterTickets = filterTickets;
+        window.viewTicket = viewTicket;
+        window.closeViewTicket = closeViewTicket;
+        window.sendTicketReply = sendTicketReply;
+        window.filterAdminTickets = filterAdminTickets;
+        window.resolveTicket = resolveTicket;
+        window.stopTicketsPagePoll = stopTicketsPagePoll;
+        window.syncUserTicketsQuiet = syncUserTicketsQuiet;
+        window.syncAdminTicketsQuiet = syncAdminTicketsQuiet;
     </script>
 
     <script type="module">
@@ -11231,126 +11886,58 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
 
         console.log("🔥 Firebase fully ready");
 
-        // ----------- USERNAME TO EMAIL FUNCTION -----------
-        function usernameToEmail(username) {
-            return `${username.toLowerCase()}@pluxo.app`;
-        }
-
-        // ----------- SIGN UP FUNCTION -----------
-        // Bot webhook URL - change to your Railway URL for production
-        // For local testing: 'http://localhost:5000'
-        // For production: 'https://your-app.up.railway.app'
-        // (Already defined above)
-        
-        async function notifyBotNewUser(username, email) {
-            try {
-                await fetch(`${BOT_WEBHOOK_URL}/api/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Webhook-Secret': WEBHOOK_SECRET
-                    },
-                    body: JSON.stringify({ username, email })
-                });
-            } catch (err) {
-                console.log('Bot notification skipped:', err.message);
-            }
-        }
-        
         async function signUp(username, password) {
-            const email = usernameToEmail(username);
             try {
-                const userCred = await createUserWithEmailAndPassword(auth, email, password);
-                console.log("Account created:", userCred.user.uid);
-                
-                // Store username in Firestore for login checking
-                await setDoc(doc(db, 'users', username.toLowerCase()), {
-                    username: username.toLowerCase(),
-                    email: email,
-                    createdAt: new Date().toISOString()
-                });
-                
-                // Notify bot about new user registration
-                notifyBotNewUser(username.toLowerCase(), email);
-                
+                if (!window.signupPluxoAPI) {
+                    showAnimatedPopup('Error', 'Still loading… try again in a moment.', 'error');
+                    return;
+                }
+                const u = (username || '').toLowerCase().trim();
+                await window.signupPluxoAPI(u, '', password);
+                if (typeof window.loadUserBalanceFromFirestore === 'function') {
+                    await window.loadUserBalanceFromFirestore();
+                }
+                if (typeof window.showDashboard === 'function') {
+                    window.showDashboard();
+                }
+                if (typeof pluxoMaybePromptAdminStockBase === 'function') pluxoMaybePromptAdminStockBase();
+                if (typeof pluxoSyncAdminStockForm === 'function') pluxoSyncAdminStockForm();
                 showAnimatedPopup('Success', 'Account created successfully!', 'success');
             } catch (err) {
                 showAnimatedPopup('Error', err.message || 'Error creating account', 'error');
             }
         }
 
-        // ----------- LOGIN FUNCTION -----------
         async function login(username, password) {
-            const email = usernameToEmail(username);
             try {
-                const userCred = await signInWithEmailAndPassword(auth, email, password);
-                // ✅ Login successful
-                console.log("Logged in:", userCred.user.uid);
-                
-                // Initialize user data
-                let existingData = JSON.parse(localStorage.getItem('pluxoUser')) || null;
-                userData = existingData || { 
-                    username: username, 
-                    balance: 0.00, 
-                    totalRecharge: 0.00, 
-                    cart: [],
-                    firebaseUID: userCred.user.uid // Store Firebase UID for Firestore operations
-                };
-                
-                // Load user balance from Firestore if available
-                await loadUserBalanceFromFirestore();
-                userData.username = username; // Update username from Firebase
-                userData.firebaseUID = userCred.user.uid; // Always update Firebase UID
-                localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                
-                // Load orders from Firestore
-                await loadOrdersFromFirestore();
-                
-                // Navigate to dashboard
+                if (!window.loginPluxoAPI) {
+                    showAnimatedPopup('Error', 'Still loading… try again in a moment.', 'error');
+                    return;
+                }
+                await window.loginPluxoAPI(username, password);
+                if (typeof window.loadUserBalanceFromFirestore === 'function') {
+                    await window.loadUserBalanceFromFirestore();
+                }
+                let ud = null;
+                try {
+                    ud = JSON.parse(localStorage.getItem('pluxoUser'));
+                } catch (_) {}
+                if (ud && ud.firebaseUID && typeof window.loadOrdersFromFirestore === 'function') {
+                    await window.loadOrdersFromFirestore();
+                }
                 if (typeof window.showDashboard === 'function') {
                     window.showDashboard();
                 } else {
-                    // Fallback if showDashboard not available yet
                     document.getElementById('loginPage').style.display = 'none';
                     document.getElementById('dashboardPage').style.display = 'block';
-                    // Try to update UI if functions exist
                     if (typeof updateUI === 'function') updateUI();
                     if (typeof updateCartDisplay === 'function') updateCartDisplay();
                 }
+                if (typeof pluxoMaybePromptAdminStockBase === 'function') pluxoMaybePromptAdminStockBase();
+                if (typeof pluxoSyncAdminStockForm === 'function') pluxoSyncAdminStockForm();
                 showAnimatedPopup('Success', 'Login successful!', 'success');
             } catch (err) {
-                // ❌ Handle different error types
-                console.log("Login failed:", err.code, err.message);
-                
-                // Check error code
-                // Firebase v9+ uses 'auth/invalid-credential' for both user-not-found and wrong-password
-                if (err.code === 'auth/user-not-found') {
-                    // User doesn't exist
-                    showAnimatedPopup('Info', 'Please register account first', 'info');
-                } else if (err.code === 'auth/invalid-credential') {
-                    // Could be either user-not-found OR wrong-password
-                    // Check Firestore to see if username is registered
-                    try {
-                        const userDoc = await getDoc(doc(db, 'users', username.toLowerCase()));
-                        if (userDoc.exists()) {
-                            // Username exists in Firestore, so password was wrong
-                            showAnimatedPopup('Error', 'Invalid login credentials', 'error');
-                        } else {
-                            // Username not in Firestore, user doesn't exist
-                            showAnimatedPopup('Info', 'Please register account first', 'info');
-                        }
-                    } catch (checkErr) {
-                        // Error checking Firestore, default to invalid login
-                        console.log("Error checking user:", checkErr);
-                        showAnimatedPopup('Error', 'Invalid login credentials', 'error');
-                    }
-                } else if (err.code === 'auth/wrong-password') {
-                    showAnimatedPopup('Error', 'Invalid login credentials', 'error');
-                } else {
-                    // Generic error
-                    showAnimatedPopup('Error', 'Invalid login credentials', 'error');
-                }
-                return; // Make sure it stops here and doesn't proceed
+                showAnimatedPopup('Error', err.message || 'Invalid login credentials', 'error');
             }
         }
 
@@ -11385,17 +11972,6 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
                     }
                     
                     login(username, password);
-                });
-            }
-
-            // Hook into register form
-            const registerForm = document.getElementById("registerForm");
-            if (registerForm) {
-                registerForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const username = document.getElementById("regUser").value;
-                    const password = document.getElementById("regPass").value;
-                    signUp(username, password);
                 });
             }
 
