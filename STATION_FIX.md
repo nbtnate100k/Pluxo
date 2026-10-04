@@ -1,6 +1,8 @@
 # “The train has not arrived at the station” — fix in Railway
 
-That page means **`pluxo.net` DNS hits Railway**, but **no running web service is connected to that domain**. The Pluxo code in GitHub is fine; Railway routing is not wired yet.
+That page usually means **`pluxo.net` (no www) is not attached to your service**, while **`www.pluxo.net` may already work**.
+
+**Check:** open **https://www.pluxo.net/pluxo-ok** — if you see `"pluxo": true`, the app is live; only the **apex** domain needs to be added in Networking.
 
 Request IDs like `SavR8YyBSP-HYrPHH4GxDA` are normal until step 4 below is done.
 

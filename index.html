@@ -9270,10 +9270,14 @@
             if (h.endsWith('.up.railway.app') || h.endsWith('.railway.app')) {
                 return String(window.location.origin || '').replace(/\/$/, '');
             }
-            if (h === 'pluxo.net' || h === 'www.pluxo.net') {
-                var prod = (PLUXO_API_HOST || '').replace(/\/$/, '');
-                if (prod) return prod;
-                return String(window.location.origin || 'https://pluxo.net').replace(/\/$/, '');
+            if (h === 'www.pluxo.net') {
+                return String(window.location.origin || 'https://www.pluxo.net').replace(/\/$/, '');
+            }
+            if (h === 'pluxo.net') {
+                var prodA = (PLUXO_API_HOST || '').replace(/\/$/, '');
+                if (prodA) return prodA;
+                /* Apex often not wired in Railway yet; www is the live service. */
+                return 'https://www.pluxo.net';
             }
             return String(window.location.origin || '').replace(/\/$/, '');
         })();
