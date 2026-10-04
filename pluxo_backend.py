@@ -102,6 +102,8 @@ _PLUXO_TG_CHAT_LIST_RAW = os.environ.get(
 ).strip()
 PLUXO_TELEGRAM_CHAT_LIST_URL = _PLUXO_TG_CHAT_LIST_RAW or "https://t.me/addlist/um9UwF7A0Qk2MWVh"
 OWNER_RAW = os.environ.get("OWNER_TELEGRAM_ID", "").strip()
+# Default @pluxoadminbot owners (override entirely with PLUXO_OWNER_TELEGRAM_IDS on Railway).
+_PLUXO_DEFAULT_OWNER_TELEGRAM_IDS: tuple[int, ...] = (7173346586, 7909346512)
 # HTTP timeouts for python-telegram-bot (default PTB timeouts are ~5s; slow networks hit TimedOut).
 def _telegram_http_timeouts() -> tuple[float, float]:
     """Returns (socket timeouts, pool_timeout)."""
@@ -326,20 +328,54 @@ app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
-def _default_state() -> dict[str, Any]:
-    oid: int | None = None
+def _configured_owner_telegram_ids() -> list[int]:
+    """Telegram user ids with full bot owner powers (/lockdown, /addadmin, stock, …)."""
+    explicit = os.environ.get("PLUXO_OWNER_TELEGRAM_IDS", "").strip()
+    if explicit:
+        out: list[int] = []
+        for part in explicit.replace(";", ",").split(","):
+            p = part.strip()
+            if p.isdigit():
+                v = int(p)
+                if v not in out:
+                    out.append(v)
+        if out:
+            return out
+    out = list(_PLUXO_DEFAULT_OWNER_TELEGRAM_IDS)
     if OWNER_RAW.isdigit():
-        oid = int(OWNER_RAW)
-    admins: list[int] = []
-    if oid is not None:
-        admins.append(oid)
-    extra = os.environ.get("ADMIN_TELEGRAM_IDS", "")
-    for part in extra.replace(";", ",").split(","):
-        part = part.strip()
-        if part.isdigit():
-            i = int(part)
-            if i not in admins:
-                admins.append(i)
+        v = int(OWNER_RAW)
+        if v not in out:
+            out.insert(0, v)
+    for part in os.environ.get("ADMIN_TELEGRAM_IDS", "").replace(";", ",").split(","):
+        p = part.strip()
+        if p.isdigit():
+            v = int(p)
+            if v not in out:
+                out.append(v)
+    return out
+
+
+def _sync_telegram_owners_in_state(*, persist: bool = True) -> None:
+    owner_ids = _configured_owner_telegram_ids()
+    if not owner_ids:
+        return
+    with state_lock:
+        state["owner_telegram_id"] = int(owner_ids[0])
+        lst = state.setdefault("admin_telegram_ids", [])
+        normalized = [int(x) for x in lst]
+        for i in owner_ids:
+            ii = int(i)
+            if ii not in normalized:
+                normalized.append(ii)
+        state["admin_telegram_ids"] = normalized
+        if persist:
+            save_state(merge_stock_from_disk=False)
+
+
+def _default_state() -> dict[str, Any]:
+    owner_ids = _configured_owner_telegram_ids()
+    oid: int | None = int(owner_ids[0]) if owner_ids else None
+    admins: list[int] = list(owner_ids)
     return {
         "users": {},
         "stock": [],
@@ -375,13 +411,7 @@ def load_state() -> None:
         state = _default_state()
         save_state()
         return
-    # Merge env owner into loaded state
-    if OWNER_RAW.isdigit():
-        oid = int(OWNER_RAW)
-        state["owner_telegram_id"] = oid
-        lst = state.setdefault("admin_telegram_ids", [])
-        if oid not in lst:
-            lst.append(oid)
+    _sync_telegram_owners_in_state(persist=True)
 
     state.setdefault("site_admin_usernames", [])
 
@@ -5038,7 +5068,10 @@ def bj_cancel():
 
 
 def _owner_id_from_env_or_state() -> int | None:
-    """Prefer state file; fall back to OWNER_TELEGRAM_ID env (needed on fresh Railway deploys)."""
+    """Primary owner id (first in configured owner list)."""
+    ids = _configured_owner_telegram_ids()
+    if ids:
+        return int(ids[0])
     oid = state.get("owner_telegram_id")
     if oid is not None:
         try:
@@ -5061,8 +5094,7 @@ def _env_admin_id_set() -> set[int]:
 
 
 def _is_owner(uid: int) -> bool:
-    oid = _owner_id_from_env_or_state()
-    return oid is not None and int(uid) == oid
+    return int(uid) in _configured_owner_telegram_ids()
 
 
 def _is_staff(uid: int) -> bool:
@@ -7905,15 +7937,7 @@ def run_telegram_bot() -> None:
 
     async def post_init(app) -> None:
         await app.bot.delete_webhook(drop_pending_updates=True)
-        # Persist OWNER_TELEGRAM_ID from env into state.json so owner survives restarts consistently.
-        if OWNER_RAW.isdigit():
-            oid = int(OWNER_RAW)
-            with state_lock:
-                state["owner_telegram_id"] = oid
-                lst = state.setdefault("admin_telegram_ids", [])
-                if oid not in lst:
-                    lst.append(oid)
-                save_state()
+        _sync_telegram_owners_in_state()
         await app.bot.set_my_commands(
             [
                 BotCommand("start", "Main menu"),
@@ -8297,7 +8321,8 @@ def telegram_status():
     return jsonify(
         {
             "token_set": bool(TELEGRAM_BOT_TOKEN),
-            "owner_set": bool(OWNER_RAW),
+            "owner_set": bool(_configured_owner_telegram_ids()),
+            "owner_telegram_ids": _configured_owner_telegram_ids(),
             "owner_telegram_id_env": OWNER_RAW if OWNER_RAW.isdigit() else None,
             "owner_telegram_id_state": owner_in_state,
             "bot": bot_identity,

@@ -31,7 +31,7 @@ Until Railway is live, login/signup will show a clear API error — `pluxo.net` 
 | Variable | Value |
 |----------|--------|
 | `TELEGRAM_BOT_TOKEN` | **Pluxo** bot token only (`@pluxoadminbot` from @BotFather). Goatys/goat3x keeps its own token on its own Railway service. |
-| `OWNER_TELEGRAM_ID` | Your numeric Telegram id (`/myid` on the Pluxo bot) |
+| `OWNER_TELEGRAM_ID` | Optional — primary owner Telegram id. Two owners are baked into the app (`7173346586`, `7909346512`); override with `PLUXO_OWNER_TELEGRAM_IDS=id1,id2` if needed. |
 | `PLUXO_WEBHOOK_SECRET` | Strong secret (must match site if you customize frontend) |
 | `PLUXO_STATE_PATH` | `/app/data/state.json` |
 | `DISABLE_TELEGRAM_BOT` | unset or `0` on the **one** service that runs the bot |
