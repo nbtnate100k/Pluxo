@@ -1,0 +1,12 @@
+# Railway config (https://docs.railway.com/guides/config-as-code)
+# If custom domain shows "train has not arrived", the domain is not linked to THIS service's active deploy — see STATION_FIX.md
+
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "gunicorn pluxo_backend:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120 --access-logfile -"
+healthcheckPath = "/pluxo-ok"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+numReplicas = 1
