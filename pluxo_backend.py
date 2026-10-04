@@ -7798,6 +7798,45 @@ def _telegram_read_leader_lock_pid(lock_path: Path) -> int | None:
         return None
 
 
+def _telegram_pid_cmdline(pid: int) -> str:
+    try:
+        raw = Path(f"/proc/{pid}/cmdline").read_bytes()
+    except OSError:
+        return ""
+    return raw.replace(b"\x00", b" ").decode(errors="ignore").lower()
+
+
+def _telegram_poll_lock_holder_valid(pid: int | None) -> bool:
+    """Reject stale locks after Railway redeploy (PID reuse on persistent volume)."""
+    if pid is None or pid <= 0:
+        return False
+    if pid == os.getpid():
+        return telegram_worker_alive()
+    if not _pid_is_running(pid):
+        return False
+    cmd = _telegram_pid_cmdline(pid)
+    if not cmd:
+        # No /proc (non-Linux dev) — fall back to liveness only.
+        return True
+    return "pluxo_backend" in cmd or "gunicorn" in cmd
+
+
+def _telegram_poll_lock_path() -> Path:
+    return DATA_DIR / "telegram_poll.lock"
+
+
+def _telegram_release_poll_lock_if_ours() -> None:
+    lock_path = _telegram_poll_lock_path()
+    if not lock_path.exists():
+        return
+    holder = _telegram_read_leader_lock_pid(lock_path)
+    if holder == os.getpid():
+        try:
+            lock_path.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
 def _telegram_try_become_poll_leader() -> tuple[bool, str]:
     """
     Telegram allows only ONE getUpdates consumer per bot token. Gunicorn / multiple Flask
@@ -7806,7 +7845,7 @@ def _telegram_try_become_poll_leader() -> tuple[bool, str]:
     then set DISABLE_TELEGRAM_BOT=1 on all but ONE deploy / use a single worker.
     """
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    lock_path = DATA_DIR / "telegram_poll.lock"
+    lock_path = _telegram_poll_lock_path()
     mode = os.environ.get("PLUXO_TELEGRAM_POLL", "").strip().lower()
 
     # Per-process opt-out so extra Gunicorn workers only serve HTTP.
@@ -7827,15 +7866,17 @@ def _telegram_try_become_poll_leader() -> tuple[bool, str]:
             return True, f"leader lock OK (pid {os.getpid()})"
         except FileExistsError:
             other_pid = _telegram_read_leader_lock_pid(lock_path)
-            if other_pid is None or not _pid_is_running(other_pid):
+            if other_pid == os.getpid():
+                return True, f"leader lock already held by this process (pid {other_pid})"
+            if not _telegram_poll_lock_holder_valid(other_pid):
                 try:
                     lock_path.unlink(missing_ok=True)
                 except OSError:
                     pass
                 continue
             return False, (
-                f"another process holds telegram_poll.lock (pid {other_pid}) — "
-                "this worker will not poll. Use one worker, or PLUXO_TELEGRAM_POLL=never here."
+                f"another Pluxo worker holds telegram_poll.lock (pid {other_pid}) — "
+                "this worker will not poll. Use one Gunicorn worker, or PLUXO_TELEGRAM_POLL=never here."
             )
     return False, "could not acquire telegram_poll.lock (try deleting data/telegram_poll.lock if stale)"
 
@@ -8075,6 +8116,9 @@ def run_telegram_bot() -> None:
 
         print("[telegram] FATAL: polling crashed:", repr(exc), flush=True)
         traceback.print_exc()
+    finally:
+        _telegram_release_poll_lock_if_ours()
+        print("[telegram] polling stopped; poll lock released if held by this process.", flush=True)
 
 
 def telegram_worker_alive() -> bool:
@@ -8084,6 +8128,21 @@ def telegram_worker_alive() -> bool:
 
 
 _telegram_spawn_lock = threading.Lock()
+_telegram_recover_last_at: float = 0.0
+
+
+def _telegram_maybe_recover_polling(reason: str = "recover") -> str | None:
+    """Restart polling when the thread died but the Pluxo token is configured."""
+    global _telegram_recover_last_at
+    if TELEGRAM_BOT_DISABLED or not TELEGRAM_BOT_TOKEN:
+        return None
+    if telegram_worker_alive():
+        return None
+    now = time.time()
+    if reason == "recover" and now - _telegram_recover_last_at < 25:
+        return None
+    _telegram_recover_last_at = now
+    return run_bot_thread(reason)
 
 
 def run_bot_thread(reason: str = "auto") -> str:
@@ -8231,6 +8290,9 @@ def _telegram_bot_identity() -> dict[str, Any] | None:
 @app.get("/telegram-status")
 def telegram_status():
     """Quick check (no secret) so you can confirm Railway sees the env vars."""
+    recover = _telegram_maybe_recover_polling("recover")
+    lock_path = _telegram_poll_lock_path()
+    lock_pid = _telegram_read_leader_lock_pid(lock_path) if lock_path.exists() else None
     with state_lock:
         owner_in_state = state.get("owner_telegram_id")
     bot_identity = _telegram_bot_identity()
@@ -8249,6 +8311,10 @@ def telegram_status():
             "bot_thread_started": _telegram_bootstrapped,
             "bot_thread_alive": telegram_worker_alive(),
             "spawn_result": TELEGRAM_SPAWN_RESULT,
+            "recover_attempt": recover,
+            "poll_lock_pid": lock_pid,
+            "poll_lock_valid": _telegram_poll_lock_holder_valid(lock_pid),
+            "process_pid": os.getpid(),
             "polling_env": os.environ.get("PLUXO_TELEGRAM_POLL", "").strip() or None,
             "hints": [
                 "Pluxo service: TELEGRAM_BOT_TOKEN = Pluxo bot (@pluxoadminbot). Goatys token stays on goat3x service only.",
