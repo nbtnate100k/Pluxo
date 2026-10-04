@@ -8151,22 +8151,69 @@ def ensure_telegram_bot_started() -> None:
 ensure_telegram_bot_started()
 
 
+_telegram_getme_cache: dict[str, Any] | None = None
+_telegram_getme_cache_at: float = 0.0
+
+
+def _telegram_bot_identity() -> dict[str, Any] | None:
+    """Resolve @username for the configured token (helps verify Railway has the right bot)."""
+    global _telegram_getme_cache, _telegram_getme_cache_at
+    if not TELEGRAM_BOT_TOKEN:
+        return None
+    now = time.time()
+    if _telegram_getme_cache and now - _telegram_getme_cache_at < 120:
+        return _telegram_getme_cache
+    try:
+        import urllib.error
+        import urllib.request
+
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getMe",
+            headers={"User-Agent": "Pluxo/telegram-status"},
+        )
+        with urllib.request.urlopen(req, timeout=12) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+        if not payload.get("ok"):
+            return {"error": payload.get("description") or "getMe failed"}
+        bot = payload.get("result") or {}
+        _telegram_getme_cache = {
+            "id": bot.get("id"),
+            "username": bot.get("username"),
+            "first_name": bot.get("first_name"),
+        }
+        _telegram_getme_cache_at = now
+        return _telegram_getme_cache
+    except urllib.error.HTTPError as exc:
+        return {"error": f"HTTP {exc.code}"}
+    except Exception as exc:
+        return {"error": str(exc)[:200]}
+
+
 @app.get("/telegram-status")
 def telegram_status():
     """Quick check (no secret) so you can confirm Railway sees the env vars."""
+    with state_lock:
+        owner_in_state = state.get("owner_telegram_id")
+    bot_identity = _telegram_bot_identity()
     return jsonify(
         {
             "token_set": bool(TELEGRAM_BOT_TOKEN),
             "owner_set": bool(OWNER_RAW),
+            "owner_telegram_id_env": OWNER_RAW if OWNER_RAW.isdigit() else None,
+            "owner_telegram_id_state": owner_in_state,
+            "bot": bot_identity,
             "disabled": TELEGRAM_BOT_DISABLED,
             "bot_thread_started": _telegram_bootstrapped,
             "bot_thread_alive": telegram_worker_alive(),
             "spawn_result": TELEGRAM_SPAWN_RESULT,
             "polling_env": os.environ.get("PLUXO_TELEGRAM_POLL", "").strip() or None,
             "hints": [
+                "Chat the bot shown in bot.username (not goat3x's bot). /start should reply even before OWNER_TELEGRAM_ID is set.",
+                "Stock/admin commands need OWNER_TELEGRAM_ID = your numeric id from /myid on this bot, then redeploy.",
                 "If messages show two checkmarks but no reply: nothing is polling this bot token, or a second server also polls (Telegram returns 409 Conflict).",
                 "Only one machine/process may call getUpdates per bot. Extra Gunicorn workers: set PLUXO_TELEGRAM_POLL=never on workers that should not poll.",
                 "Two Railway replicas with the same token: set DISABLE_TELEGRAM_BOT=1 on one replica, or scale to 1 instance for the app that runs the bot.",
+                "Never commit TELEGRAM_BOT_TOKEN to git — set it only in Railway Variables.",
             ],
         }
     )
