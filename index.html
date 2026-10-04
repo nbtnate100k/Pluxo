@@ -4455,12 +4455,8 @@
                             </div>
                             <div class="filter-group">
                                 <label class="filter-label">Bank</label>
-                                <select class="filter-select">
-                                    <option>All</option>
-                                    <option>CHASE BANK USA</option>
-                                    <option>BANK OF NOVA SCOTIA</option>
-                                    <option>CAPITAL ONE BANK</option>
-                                    <option>WELLS FARGO BANK</option>
+                                <select class="filter-select" id="pluxoFilterBankSelect">
+                                    <option value="All">All</option>
                                 </select>
                             </div>
                         </div>
@@ -4528,11 +4524,8 @@
                             </div>
                             <div class="filter-group">
                                 <label class="filter-label">Base</label>
-                                <select class="filter-select">
-                                    <option>All</option>
-                                    <option>2025_12_27_World_Mix</option>
-                                    <option>2025_12_27_US_Base</option>
-                                    <option>2025_12_27_UK_Mix</option>
+                                <select class="filter-select" id="pluxoFilterBaseSelect">
+                                    <option value="All">All</option>
                                 </select>
                             </div>
                             <div class="filter-group">
@@ -5901,23 +5894,90 @@
             }
         }
 
+        var pluxoStockBasesCatalog = [];
+
+        function pluxoEscapeOptionAttr(s) {
+            return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        }
+
+        function pluxoEscapeOptionText(s) {
+            return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
+        }
+
+        async function loadPluxoStockBasesCatalog() {
+            try {
+                var r = await fetch(BOT_WEBHOOK_URL + '/api/stock-bases?_=' + Date.now(), { cache: 'no-store' });
+                if (r.ok) {
+                    var rows = await r.json();
+                    pluxoStockBasesCatalog = Array.isArray(rows) ? rows : [];
+                }
+            } catch (e) {
+                console.warn('[filters] stock-bases:', e);
+            }
+        }
+
+        function refreshPluxoBankFilterOptions() {
+            var sel = document.getElementById('pluxoFilterBankSelect');
+            if (!sel) return;
+            var prev = sel.value || 'All';
+            var banks = {};
+            (allProducts || []).forEach(function (p) {
+                var b = String((p && (p.bank || p.issuer)) || '').trim();
+                if (b) banks[b] = true;
+            });
+            var sorted = Object.keys(banks).sort(function (a, b) { return a.localeCompare(b, undefined, { sensitivity: 'base' }); });
+            sel.innerHTML = '<option value="All">All</option>' +
+                sorted.map(function (b) {
+                    return '<option value="' + pluxoEscapeOptionAttr(b) + '">' + pluxoEscapeOptionText(b) + '</option>';
+                }).join('');
+            if (prev && Array.prototype.some.call(sel.options, function (o) { return o.value === prev; })) {
+                sel.value = prev;
+            }
+        }
+
         function refreshPluxoBaseFilterOptions() {
             var sel = document.getElementById('pluxoFilterBaseSelect');
             if (!sel) return;
             sel.classList.add('cards-base-mini', 'filter-select');
             var prev = sel.value || 'All';
-            var bases = { MONEY_BASE: true, TONY_BASE: true };
+            var inStock = {};
             (allProducts || []).forEach(function (p) {
-                if (p && p.base) bases[String(p.base)] = true;
+                if (p && p.base) inStock[String(p.base).trim().toUpperCase()] = true;
             });
-            var sorted = Object.keys(bases).sort();
+            var options = [];
+            var seen = {};
+            (pluxoStockBasesCatalog || []).forEach(function (row) {
+                var id = String(row.id || '').trim().toUpperCase();
+                if (!id || !inStock[id] || seen[id]) return;
+                seen[id] = true;
+                options.push({
+                    id: id,
+                    label: String(row.label || row.id || id).trim() || id
+                });
+            });
+            Object.keys(inStock).sort().forEach(function (id) {
+                if (seen[id]) return;
+                var sample = (allProducts || []).find(function (p) {
+                    return String(p.base || '').trim().toUpperCase() === id;
+                });
+                options.push({
+                    id: id,
+                    label: String((sample && sample.base_label) || id).trim() || id
+                });
+            });
+            options.sort(function (a, b) { return a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }); });
             sel.innerHTML = '<option value="All">All</option>' +
-                sorted.map(function (b) {
-                    return '<option value="' + String(b).replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' + String(b).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</option>';
+                options.map(function (o) {
+                    return '<option value="' + pluxoEscapeOptionAttr(o.id) + '">' + pluxoEscapeOptionText(o.label) + '</option>';
                 }).join('');
             if (prev && Array.prototype.some.call(sel.options, function (o) { return o.value === prev; })) {
                 sel.value = prev;
             }
+        }
+
+        function refreshPluxoProductFilterDropdowns() {
+            refreshPluxoBankFilterOptions();
+            refreshPluxoBaseFilterOptions();
         }
         window.submitAdminStockBaseSetup = submitAdminStockBaseSetup;
         window.submitPluxoAdminStockBulk = submitPluxoAdminStockBulk;
@@ -7907,6 +7967,7 @@ function getBrandFromBin(bin) {
         async function generateProducts() {
             // Load products from bot API (Railway)
             apiProductsLoaded = false;
+            await loadPluxoStockBasesCatalog();
             try {
                 const response = await fetch(
                     BOT_WEBHOOK_URL + '/api/products?_=' + Date.now(),
@@ -7930,7 +7991,7 @@ function getBrandFromBin(bin) {
                         filteredProducts = [...allProducts];
                         apiProductsLoaded = true;
                         console.log('Loaded ' + allProducts.length + ' products from API');
-                        refreshPluxoBaseFilterOptions();
+                        refreshPluxoProductFilterDropdowns();
                         return;
                     }
                 }
@@ -7945,7 +8006,7 @@ function getBrandFromBin(bin) {
                         originalProducts = [...allProducts];
                         filteredProducts = [...allProducts];
                         console.log('Loaded ' + allProducts.length + ' products from local file');
-                        refreshPluxoBaseFilterOptions();
+                        refreshPluxoProductFilterDropdowns();
                         return;
                     }
                 }
@@ -7957,7 +8018,7 @@ function getBrandFromBin(bin) {
             allProducts = [];
             originalProducts = [];
             filteredProducts = [];
-            refreshPluxoBaseFilterOptions();
+            refreshPluxoProductFilterDropdowns();
         }
 
         function renderProducts() {
@@ -8175,11 +8236,11 @@ function getBrandFromBin(bin) {
             // Get filter values
             const binsTextarea = document.querySelector('.filter-container .filter-group:first-child .filter-textarea');
             const zipsTextarea = document.querySelectorAll('.filter-container .filter-textarea')[1];
-            const bankSelect = document.querySelectorAll('.filter-select')[0];
+            const bankSelect = document.getElementById('pluxoFilterBankSelect');
             const countrySelect = document.querySelectorAll('.filter-select')[1];
             const brandSelect = document.querySelectorAll('.filter-select')[2];
             const typeSelect = document.querySelectorAll('.filter-select')[3];
-            const baseSelect = document.querySelectorAll('.filter-select')[4];
+            const baseSelect = document.getElementById('pluxoFilterBaseSelect');
             const minPriceInput = document.querySelectorAll('.price-input')[0];
             const maxPriceInput = document.querySelectorAll('.price-input')[1];
             
@@ -8230,7 +8291,10 @@ function getBrandFromBin(bin) {
             
             // Filter by Bank
             if (bankValue && bankValue !== 'All') {
-                products = products.filter(p => p.bank === bankValue);
+                products = products.filter(function (p) {
+                    var b = String(p.bank || p.issuer || '').trim();
+                    return b === bankValue;
+                });
             }
             
             // Filter by Brand
@@ -8245,7 +8309,10 @@ function getBrandFromBin(bin) {
             
             // Filter by Base
             if (baseValue && baseValue !== 'All') {
-                products = products.filter(p => p.base === baseValue);
+                var baseNeed = String(baseValue).trim().toUpperCase();
+                products = products.filter(function (p) {
+                    return String(p.base || '').trim().toUpperCase() === baseNeed;
+                });
             }
             
             // Filter by Country
