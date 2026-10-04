@@ -1,30 +1,70 @@
-# pluxo.net / www — Railway “Application not found”
+# “The train has not arrived at the station” / Application not found
 
-If `https://pluxo.net/` shows JSON like `Application not found`, or the site says **network error**, the **domain is pointed at Railway but no running service is bound to it**.
+That page means **DNS reaches Railway**, but **no running deployment is linked to your custom domain** (`pluxo.net` / `www.pluxo.net`). The code can be fine; Railway just has nothing to route to.
 
-## Fix (5 minutes)
+## Fix checklist (do in this order)
 
-1. Open [Railway](https://railway.com) → project **discerning-unity** (or your Pluxo project) → **the web service** that runs `gunicorn pluxo_backend:app`.
-2. **Deployments** → latest must be **Success / Active** (not crashed). Open logs if it restarts.
-3. **Settings → Networking → Public networking** → **Generate domain** if you do not have one yet.  
-   Open `https://YOUR-SERVICE.up.railway.app/pluxo-ok` — you must see JSON with `"pluxo": true`.
-4. **Custom domain** → add **`pluxo.net`** and **`www.pluxo.net`** on **that same service** (copy the CNAME/target Railway shows).
-5. **DNS** (Cloudflare/registrar):
-   - **`pluxo.net`** → Railway target (CNAME or A/AAAA as Railway instructs).
-   - **`www.pluxo.net`** → **same Railway target** (not `nbtnate100k.github.io`).
-6. GitHub → **nbtnate100k/Pluxo** → **Settings → Pages** → **Disable** (Source: None).
+### 1. Get the default Railway URL working first
 
-Do **not** use `api.pluxo.net` unless you create a DNS record for it. The shop uses **`https://pluxo.net`** for the API when `www` is static.
+1. [Railway](https://railway.com) → your **Pluxo** project (e.g. **discerning-unity**).
+2. Click the **web service** (the one connected to GitHub repo `nbtnate100k/Pluxo`), not the empty project shell.
+3. **Settings → Networking → Public networking → Generate domain** (if you do not already have `something.up.railway.app`).
+4. Open **`https://YOUR-SERVICE.up.railway.app/pluxo-ok`** in a browser.  
+   You **must** see JSON like: `{"pluxo": true, ...}`  
+   If this fails, open **Deployments → latest → View logs** and fix the crash (missing env vars usually still start the web app; look for Python tracebacks).
 
-## Env + volume (same service)
+### 2. Attach custom domains to **that same service**
 
-- `TELEGRAM_BOT_TOKEN`, `OWNER_TELEGRAM_ID`, `PLUXO_WEBHOOK_SECRET`
-- Volume mount `/app/data`, `PLUXO_STATE_PATH=/app/data/state.json`
-- One replica, `--workers 1` (see `Procfile`)
+Still on **that service** (not project-level DNS only):
 
-## Verify
+1. **Settings → Networking → Custom domain**
+2. Add **`pluxo.net`**
+3. Add **`www.pluxo.net`**
+4. Copy the **CNAME / target** Railway shows for each.
+
+### 3. Fix DNS (Cloudflare or registrar)
+
+| Host | Should point to |
+|------|------------------|
+| `pluxo.net` | Railway target from step 2 (often `*.up.railway.app` CNAME) |
+| `www.pluxo.net` | **Same Railway target** — **not** `nbtnate100k.github.io` |
+
+**Cloudflare:** After it works, you can proxy (orange cloud). If verification stalls, try **DNS only** (grey cloud) until Railway shows the domain as active.
+
+### 4. Turn off GitHub Pages
+
+GitHub → **nbtnate100k/Pluxo** → **Settings → Pages** → **Source: None**.
+
+Otherwise `www` keeps hitting GitHub instead of your shop.
+
+### 5. Wait and verify
+
+Provisioning can take a few minutes. Then:
 
 ```bash
 curl -s https://pluxo.net/pluxo-ok
-curl -sI https://pluxo.net/ | head -5   # should be text/html from Flask, not application/json 404
+curl -sI https://pluxo.net/ | head -3
 ```
+
+- `/pluxo-ok` → JSON with `"pluxo": true`
+- `/` → **`content-type: text/html`** (the login shop), not JSON `Application not found`
+
+## Env + volume (same service)
+
+| Variable | Notes |
+|----------|--------|
+| `TELEGRAM_BOT_TOKEN` | Pluxo bot only |
+| `OWNER_TELEGRAM_ID` | Your Telegram numeric id |
+| `PLUXO_WEBHOOK_SECRET` | e.g. match frontend default or set both |
+| `PLUXO_STATE_PATH` | `/app/data/state.json` |
+| Volume | Mount **`/app/data`** on this service |
+
+One replica, Gunicorn **1 worker** (`Procfile` / `railway.json`).
+
+## Still stuck?
+
+- Domain added on **project** but not on the **service** → remove domain and re-add under the **service** Networking tab.
+- Two services in the project → domain may be on the wrong one; move it to the service that runs `gunicorn pluxo_backend:app`.
+- Deploy **Failed** → fix logs first; the train page stays until a deploy is **Active** and linked.
+
+Request IDs like `7ZYjWNCAQRO85O4Z8u2xcg` are from Railway’s edge when no backend is bound — fixing steps 1–2 resolves them.
