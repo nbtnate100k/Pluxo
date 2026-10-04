@@ -2963,7 +2963,8 @@ def _pan_lines_from_multiline_export(blob: str) -> list[str]:
 _AKE_SERVICE_LABELS: dict[str, str] = {
     "card scheme": "scheme",
     "card type": "card_type",
-    "brand": "level",
+    "brand": "network_brand",
+    "type": "ticket_type",
     "issuing bank": "issuer",
     "country": "country_name",
     "name": "name",
@@ -3011,7 +3012,7 @@ def _parse_ake_labeled_fields(block: str) -> dict[str, str]:
 
 
 def _ake_block_to_enriched_card_line(pan_line: str, fields: dict[str, str]) -> str:
-    """Build PAN|…|Name|Phone|Email — SCHEME TYPE LEVEL — ISSUER — CC for shop parser."""
+    """Build mm_yy_email pipe row: PAN|…|Email|Brand|Type|Level|Issuer|Country|CC."""
     parts = [p.strip() for p in pan_line.strip().split("|")]
     while len(parts) < 4:
         parts.append("")
@@ -3027,7 +3028,16 @@ def _ake_block_to_enriched_card_line(pan_line: str, fields: dict[str, str]) -> s
         cc = normalize_stock_upload_country(fields["country_name"])
     if not cc:
         cc = "US"
-    pipe = "|".join(
+    scheme = (fields.get("scheme") or "").strip().upper() or _brand_from_bin(parts[0])
+    if scheme == "MC":
+        scheme = "MASTERCARD"
+    ctype = (fields.get("card_type") or "").strip()
+    network_brand = (fields.get("network_brand") or "").strip()
+    ticket_type = (fields.get("ticket_type") or "").strip()
+    issuer = (fields.get("issuer") or "").strip()
+    level = network_brand or ticket_type
+    country_name = (fields.get("country_name") or "").strip() or cc
+    return "|".join(
         [
             parts[0],
             parts[1],
@@ -3040,24 +3050,14 @@ def _ake_block_to_enriched_card_line(pan_line: str, fields: dict[str, str]) -> s
             zip_code,
             phone,
             email,
+            scheme,
+            ctype,
+            level,
+            issuer,
+            country_name,
             cc,
         ]
     )
-    scheme = (fields.get("scheme") or "").strip()
-    ctype = (fields.get("card_type") or "").strip()
-    level = (fields.get("level") or "").strip()
-    issuer = (fields.get("issuer") or "").strip()
-    meta_chunks: list[str] = []
-    scheme_line = " ".join(x for x in (scheme, ctype, level) if x).strip()
-    if scheme_line:
-        meta_chunks.append(scheme_line)
-    if issuer:
-        meta_chunks.append(issuer)
-    if cc:
-        meta_chunks.append(cc)
-    if not meta_chunks:
-        return pipe
-    return pipe + " — " + " — ".join(meta_chunks)
 
 
 def _parse_ake_card_service_blocks(blob: str) -> list[str]:
@@ -3065,13 +3065,14 @@ def _parse_ake_card_service_blocks(blob: str) -> list[str]:
     Multi-block exports: Card N of M, PAN|MM|YY|CVV, then labeled BIN/scheme/bank fields.
     """
     text = blob.replace("\r\n", "\n")
-    if not _BIN_DETAIL_BLOCK_MARK.search(text):
-        return []
     if not re.search(r"(?mi)^Issuing Bank\s*$", text) and not re.search(
         r"(?mi)^Card Scheme\s*$", text
     ):
         return []
-    chunks = re.split(r"(?mi)(?=^Card\s+\d+\s+of\s+\d+\s*$)", text)
+    if _BIN_DETAIL_BLOCK_MARK.search(text):
+        chunks = re.split(r"(?mi)(?=^Card\s+\d+\s+of\s+\d+\s*$)", text)
+    else:
+        chunks = re.split(r"(?m)(?=^\d{6,19}\|)", text)
     out: list[str] = []
     for chunk in chunks:
         chunk = chunk.strip()
@@ -3599,6 +3600,9 @@ def api_products():
                 continue
             out = dict(row)
             out["base_label"] = stock_base_label(str(out.get("base") or ""))
+            ctype = str(out.get("card_type") or "").strip()
+            out["type"] = ctype
+            out["bank"] = str(out.get("bank") or out.get("issuer") or "").strip()
             rows.append(out)
         body = jsonify(rows)
     body.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"

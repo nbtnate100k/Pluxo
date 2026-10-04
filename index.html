@@ -6896,6 +6896,41 @@ function getBrandFromBin(bin) {
             return 'VISA';
         }
 
+        function mapApiProductRow(p, index) {
+            const cardType = String(p.type || p.card_type || p.cardType || '').trim();
+            const bankName = String(p.bank || p.issuer || '').trim();
+            const country = p.country && typeof p.country === 'object'
+                ? p.country
+                : { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' };
+            return {
+                id: p.id || (index + 1),
+                bin: p.bin,
+                brand: p.brand || getBrandFromBin(p.bin),
+                type: cardType,
+                country: country,
+                hasName: !!(p.has_name ?? p.hasName),
+                hasAddress: !!(p.has_address ?? p.hasAddress),
+                hasZip: !!(p.has_zip ?? p.hasZip),
+                hasPhone: !!(p.has_phone ?? p.hasPhone),
+                hasMail: !!(p.has_mail ?? p.hasMail),
+                hasSSN: true,
+                hasDOB: true,
+                bank: bankName,
+                base: p.base || 'MONEY_BASE',
+                base_label: p.base_label || '',
+                refundable: p.refundable !== undefined ? p.refundable : true,
+                price: p.price || '10.00',
+                key: '',
+                seller_id: p.seller_id || '',
+                full_info: p.full_info || '',
+                card_type: cardType,
+                level: p.level || '',
+                issuer: p.issuer || bankName,
+                state: p.state || '',
+                zip: p.zip || ''
+            };
+        }
+
         async function generateProducts() {
             // Load products from bot API (Railway)
             apiProductsLoaded = false;
@@ -6917,30 +6952,7 @@ function getBrandFromBin(bin) {
                 if (response.ok) {
                     const shopProducts = await response.json();
                     if (Array.isArray(shopProducts)) {
-                        allProducts = shopProducts.map((p, index) => ({
-                            id: p.id || (index + 1),
-                            bin: p.bin,
-                            brand: p.brand || getBrandFromBin(p.bin),
-                            country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
-                            hasName: !!p.has_name,
-                            hasAddress: !!p.has_address,
-                            hasZip: !!p.has_zip,
-                            hasPhone: !!p.has_phone,
-                            hasMail: !!p.has_mail,
-                            hasSSN: true,
-                            hasDOB: true,
-                            base: p.base || 'MONEY_BASE',
-                            refundable: p.refundable !== undefined ? p.refundable : true,
-                            price: p.price || '10.00',
-                            key: '',
-                            seller_id: p.seller_id || '',
-                            full_info: p.full_info || '',
-                            card_type: p.card_type || p.cardType || '',
-                            level: p.level || '',
-                            issuer: p.issuer || '',
-                            state: p.state || '',
-                            zip: p.zip || ''
-                        }));
+                        allProducts = shopProducts.map((p, index) => mapApiProductRow(p, index));
                         originalProducts = [...allProducts];
                         filteredProducts = [...allProducts];
                         apiProductsLoaded = true;
@@ -6956,30 +6968,7 @@ function getBrandFromBin(bin) {
                 if (localResponse.ok) {
                     const shopProducts = await localResponse.json();
                     if (shopProducts && shopProducts.length > 0) {
-                        allProducts = shopProducts.map((p, index) => ({
-                            id: p.id || (index + 1),
-                            bin: p.bin,
-                            brand: p.brand || getBrandFromBin(p.bin),
-                            country: p.country || { flag: '🇺🇸', flagClass: 'fi-us', code: 'US', name: 'USA' },
-                            hasName: !!p.has_name,
-                            hasAddress: !!p.has_address,
-                            hasZip: !!p.has_zip,
-                            hasPhone: !!p.has_phone,
-                            hasMail: !!p.has_mail,
-                            hasSSN: true,
-                            hasDOB: true,
-                            base: p.base || 'MONEY_BASE',
-                            refundable: p.refundable !== undefined ? p.refundable : true,
-                            price: p.price || '10.00',
-                            key: '',
-                            seller_id: p.seller_id || '',
-                            full_info: p.full_info || '',
-                            card_type: p.card_type || p.cardType || '',
-                            level: p.level || '',
-                            issuer: p.issuer || '',
-                            state: p.state || '',
-                            zip: p.zip || ''
-                        }));
+                        allProducts = shopProducts.map((p, index) => mapApiProductRow(p, index));
                         originalProducts = [...allProducts];
                         filteredProducts = [...allProducts];
                         console.log('Loaded ' + allProducts.length + ' products from local file');
@@ -7013,7 +7002,7 @@ function getBrandFromBin(bin) {
                     <td><input type="checkbox" class="product-check" data-id="${p.id}"></td>
                     <td>${p.bin}</td>
                     <td>${p.brand}</td>
-                    <td>${p.type}</td>
+                    <td>${p.type || p.card_type || '—'}</td>
                     <td>
                         <div class="country-cell">
                             <span class="fi ${p.country.flagClass} flag-icon"></span>
@@ -7027,7 +7016,7 @@ function getBrandFromBin(bin) {
                     <td><span class="${p.hasMail ? 'check-yes' : 'check-no'}">${p.hasMail ? '✓' : '✗'}</span></td>
                     <td><span class="${p.hasSSN ? 'check-yes' : 'check-no'}">${p.hasSSN ? '✓' : '✗'}</span></td>
                     <td><span class="${p.hasDOB ? 'check-yes' : 'check-no'}">${p.hasDOB ? '✓' : '✗'}</span></td>
-                    <td><span class="bank-name">${p.bank}</span></td>
+                    <td><span class="bank-name">${p.bank || p.issuer || '—'}</span></td>
                     <td>${p.base}</td>
                     <td><span class="refund-yes">Yes</span></td>
                     <td><span class="price-cell">$ ${p.price}</span></td>
