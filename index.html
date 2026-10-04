@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <!-- If this HTML is NOT served by Flask (e.g. static www.pluxo.net), set content to your Railway app URL so /api/products hits the same DB as Telegram. Example: https://web-production-xxxx.up.railway.app -->
-    <!-- Leave empty when Flask serves HTML + API on the same host (pluxo.net on Railway). -->
+    <!-- Same host on Railway; override if HTML is static elsewhere -->
     <meta name="pluxo-api-base" content="">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.googleapis.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' http://127.0.0.1:5000 http://localhost:5000 https://pluxo.net https://www.pluxo.net https://api.pluxo.net https://*.railway.app https://*.up.railway.app https://*.github.io https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://www.gstatic.com https://*.gstatic.com https://www.google-analytics.com https://*.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com;">
     <title>Pluxo</title>
@@ -7817,7 +7817,7 @@
                     <label>Confirm Password</label>
                     <input type="password" class="input-field" id="regPassConfirm" placeholder="Confirm password" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Create Account</button>
+                <button type="submit" class="btn btn-primary" id="registerSubmitBtn">Create Account</button>
             </form>
         </div>
     </div>
@@ -9267,22 +9267,23 @@
             } catch (eMeta) {}
             var explicit = (RAILWAY_API_URL || '').replace(/\/$/, '');
             if (explicit) return explicit;
-            if (h === 'www.pluxo.net' || h === 'pluxo.net') {
-                var prodHost = (PLUXO_API_HOST || '').replace(/\/$/, '');
-                if (prodHost) return prodHost;
-                /* API on apex; www often static — CORS is open on /api/* */
-                return 'https://pluxo.net';
+            if (h.endsWith('.up.railway.app') || h.endsWith('.railway.app')) {
+                return String(window.location.origin || '').replace(/\/$/, '');
+            }
+            if (h === 'pluxo.net' || h === 'www.pluxo.net') {
+                var prod = (PLUXO_API_HOST || '').replace(/\/$/, '');
+                if (prod) return prod;
+                return String(window.location.origin || 'https://pluxo.net').replace(/\/$/, '');
             }
             return String(window.location.origin || '').replace(/\/$/, '');
         })();
 
         function pluxoFormatApiError(err) {
             var m = (err && err.message) ? err.message : String(err || 'Request failed');
-            if (/failed to fetch|networkerror|network error|load failed/i.test(m)) {
+            if (/failed to fetch|networkerror|network error|load failed|application not found/i.test(m)) {
                 return (
-                    'Cannot reach the Pluxo server at ' + BOT_WEBHOOK_URL + '. ' +
-                    'In Railway: open your Pluxo service → Settings → Networking → confirm ' +
-                    'pluxo.net is attached to this service and https://pluxo.net/pluxo-ok opens in your browser.'
+                    'Pluxo server is not reachable at ' + BOT_WEBHOOK_URL + '. ' +
+                    'Open your Railway service URL (…up.railway.app/pluxo-ok) first, then attach pluxo.net in Networking.'
                 );
             }
             return m;
@@ -9291,25 +9292,23 @@
         function pluxoCheckBackendOnce() {
             if (window.__pluxoBackendChecked) return;
             window.__pluxoBackendChecked = true;
-            var base = BOT_WEBHOOK_URL;
-            fetch(base + '/pluxo-ok', { cache: 'no-store' })
+            fetch(BOT_WEBHOOK_URL + '/pluxo-ok', { cache: 'no-store' })
                 .then(function (r) { return r.json().then(function (d) { return { r: r, d: d }; }); })
                 .then(function (x) {
                     if (x.r.ok && x.d && x.d.pluxo) return;
-                    throw new Error(x.d && x.d.message ? x.d.message : 'Backend not ready');
+                    throw new Error((x.d && x.d.message) || 'Backend offline');
                 })
                 .catch(function () {
                     if (typeof showAnimatedPopup === 'function') {
                         showAnimatedPopup(
-                            'Backend offline',
-                            'Railway is not serving the Pluxo app at ' + base + ' yet. ' +
-                            'Use the *.up.railway.app URL from your service until custom domain works, ' +
-                            'or attach pluxo.net under Networking on the running service (not an empty project).',
+                            'Server offline',
+                            'Login and signup need the Railway backend. Until https://pluxo.net/pluxo-ok works, accounts cannot be created.',
                             'error'
                         );
                     }
                 });
         }
+
         var WEBHOOK_SECRET = 'pluxo_secret_2024';
         console.log('API URL:', BOT_WEBHOOK_URL);
 
@@ -9912,11 +9911,6 @@
             if (typeof loadUserBalanceFromFirestore === 'function') {
                 await loadUserBalanceFromFirestore();
             }
-            var ud = null;
-            try { ud = JSON.parse(localStorage.getItem('pluxoUser')); } catch (_) {}
-            if (ud && ud.firebaseUID && typeof loadOrdersFromFirestore === 'function') {
-                await loadOrdersFromFirestore();
-            }
             if (typeof showDashboard === 'function') {
                 showDashboard();
             } else {
@@ -9950,7 +9944,6 @@
                     showAnimatedPopup('Error', 'Enter email, username, or account number', 'error');
                     return;
                 }
-
                 if (passStep && passStep.hidden) {
                     passStep.hidden = false;
                     if (idStep) idStep.hidden = true;
@@ -9965,21 +9958,23 @@
                     if (passwordEl) setTimeout(function () { passwordEl.focus(); }, 0);
                     return;
                 }
-
                 if (!password) {
                     showAnimatedPopup('Error', 'Enter password', 'error');
                     return;
                 }
-
                 if (!window.loginPluxoAPI) {
                     showAnimatedPopup('Error', 'Still loading… refresh and try again.', 'error');
                     return;
                 }
+                var continueBtn = document.getElementById('loginContinueBtn');
+                if (continueBtn) { continueBtn.disabled = true; continueBtn.textContent = 'signing in…'; }
                 window.loginPluxoAPI(username, password).then(async function () {
                     await pluxoCompleteLoginUi();
                     showAnimatedPopup('Success', 'Login successful!', 'success');
                 }).catch(function (err) {
                     showAnimatedPopup('Error', pluxoFormatApiError(err), 'error');
+                }).finally(function () {
+                    if (continueBtn) { continueBtn.disabled = false; continueBtn.textContent = 'sign in →'; }
                 });
             });
         }
@@ -10084,17 +10079,21 @@
                 if (pass.length < 6) { showAnimatedPopup('Error', 'Password must be at least 6 characters', 'error'); return; }
                 if (!user || user.length < 3) { showAnimatedPopup('Error', 'Username at least 3 characters', 'error'); return; }
 
+                var regBtn = document.getElementById('registerSubmitBtn');
+                if (regBtn) { regBtn.disabled = true; regBtn.textContent = 'Creating account…'; }
                 try {
+                    if (!window.signupPluxoAPI) {
+                        throw new Error('Still loading… refresh and try again.');
+                    }
                     await signupPluxoAPI(user.toLowerCase(), email, pass);
                     closeRegister();
-                    await loadUserBalanceFromFirestore();
-                    showDashboard();
-                    pluxoMaybePromptAdminStockBase();
-                    pluxoSyncAdminStockForm();
+                    await pluxoCompleteLoginUi();
                     showAnimatedPopup('Success', 'Account created! You are logged in.', 'success');
                     document.getElementById('username').value = user;
                 } catch (err) {
                     showAnimatedPopup('Error', pluxoFormatApiError(err), 'error');
+                } finally {
+                    if (regBtn) { regBtn.disabled = false; regBtn.textContent = 'Create Account'; }
                 }
             });
         }
@@ -16355,7 +16354,7 @@ const requestRef = doc(firestoreDb, 'balanceRequests', requestId);
         };
 
         const app = initializeApp(firebaseConfig);
-        try { getAnalytics(app); } catch (_) { /* optional; do not break auth UI */ }
+        try { getAnalytics(app); } catch (_) {}
         const auth = getAuth(app);
         const db = getFirestore(app);
         const storage = getStorage(app);
