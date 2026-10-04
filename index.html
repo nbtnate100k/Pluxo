@@ -644,6 +644,10 @@
             display: none;
             min-height: 100vh;
             background: var(--black);
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            box-sizing: border-box;
         }
 
         /* Grand Opening Banner */
@@ -956,12 +960,6 @@
             max-width: 100%;
             min-width: 0;
             box-sizing: border-box;
-        }
-
-        .dashboard-page {
-            width: 100%;
-            max-width: 100vw;
-            overflow-x: hidden;
         }
 
         .page-header {
@@ -3372,6 +3370,317 @@
             }
         }
 
+        /* Add Funds — multi-step crypto top-up */
+        .funds-modal-animated {
+            max-width: min(600px, calc(100vw - 24px)) !important;
+            max-height: none;
+            overflow: visible;
+        }
+
+        .funds-step-title {
+            font-family: var(--goat-terminal), ui-monospace, monospace;
+            font-size: clamp(22px, 5.5vw, 32px);
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .funds-step-sub {
+            color: var(--gray);
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .funds-step {
+            animation: slideInRight 0.4s ease forwards;
+        }
+
+        .funds-modal-animated .input-field {
+            max-width: none;
+            font-size: 16px;
+        }
+
+        .funds-modal-actions {
+            margin-top: 16px;
+            padding-top: 4px;
+        }
+
+        #fundsStep2 .funds-modal-actions {
+            position: sticky;
+            bottom: 0;
+            padding-top: 12px;
+            padding-bottom: 4px;
+            background: linear-gradient(180deg, transparent 0%, var(--black-light) 40%);
+        }
+
+        #topUpAfterPaidPanel .funds-modal-actions {
+            position: static;
+            background: transparent;
+            margin-top: 8px;
+        }
+
+        .funds-step3-proof-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #d4d4d8;
+            font-size: 13px;
+        }
+
+        .funds-step3-proof-hint {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .funds-step3-proof-hint code {
+            font-size: 11px;
+            word-break: break-all;
+            color: var(--blue-light);
+        }
+
+        #topUpAfterPaidPanel .input-field {
+            margin-bottom: 14px;
+        }
+
+        #fundsStep3PrimaryActions {
+            margin-top: 8px;
+        }
+
+        .funds-display-box {
+            padding: 14px 16px;
+            background: var(--black-lighter);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--blue-light);
+            font-size: 15px;
+        }
+
+        .funds-display-box--amount {
+            font-size: 22px;
+        }
+
+        #paymentInstructions.payment-instructions {
+            background: var(--black-lighter);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+
+        .payment-instructions-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--blue);
+            font-size: 14px;
+        }
+
+        .payment-instructions-body {
+            font-size: 14px;
+            color: var(--gray);
+            line-height: 1.55;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .funds-topup-warning {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.45);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+
+        .funds-topup-warning strong {
+            color: #fca5a5;
+        }
+
+        .funds-topup-warning p {
+            margin: 8px 0 0;
+            font-size: 13px;
+            color: var(--gray);
+            line-height: 1.55;
+        }
+
+        .btn-secondary-plain {
+            background: #27272a;
+            border: 1px solid #3f3f46;
+            color: #e4e4e7;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .topup-submit-loading,
+        .topup-submit-success {
+            text-align: center;
+            padding: 28px 12px 20px;
+        }
+
+        .topup-inline-spinner {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 16px;
+            border: 3px solid #3f3f46;
+            border-top-color: #a1a1aa;
+            border-radius: 50%;
+            animation: topupSpin 0.85s linear infinite;
+        }
+
+        @keyframes topupSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .topup-submit-loading p,
+        .topup-submit-success p {
+            color: var(--gray);
+            font-size: 14px;
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        .topup-submit-success h3 {
+            font-family: var(--goat-terminal), ui-monospace, monospace;
+            font-size: 18px;
+            color: #e4e4e7;
+            margin: 0 0 10px;
+        }
+
+        .topup-submit-error {
+            display: none;
+            margin: 0 0 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .topup-submit-error.visible {
+            display: block;
+        }
+
+        .payment-method-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .payment-method-card {
+            background: var(--black-lighter);
+            border: 2px solid var(--gray-border);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-method-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(156, 163, 175, 0.3);
+        }
+
+        .payment-method-card.selected {
+            border-color: var(--blue);
+            background: rgba(156, 163, 175, 0.1);
+            box-shadow: 0 0 20px rgba(156, 163, 175, 0.4);
+        }
+
+        .payment-icon {
+            font-size: 64px;
+            margin-bottom: 12px;
+        }
+
+        .payment-name {
+            font-family: var(--goat-terminal), ui-monospace, monospace;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--white);
+        }
+
+        .payment-code {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .amount-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .amount-card {
+            background: var(--black-lighter);
+            border: 2px solid var(--gray-border);
+            border-radius: 12px;
+            padding: 16px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 0;
+        }
+
+        .amount-card:hover {
+            border-color: var(--blue);
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(156, 163, 175, 0.3);
+        }
+
+        .amount-card.selected {
+            border-color: var(--blue);
+            background: rgba(156, 163, 175, 0.15);
+            box-shadow: 0 0 20px rgba(156, 163, 175, 0.4);
+        }
+
+        .amount-value {
+            font-family: var(--goat-terminal), ui-monospace, monospace;
+            font-size: clamp(18px, 4.5vw, 28px);
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .custom-amount .amount-value {
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .payment-method-grid {
+                gap: 12px;
+            }
+            .payment-method-card {
+                padding: 20px 12px;
+            }
+            .payment-icon {
+                font-size: 48px;
+            }
+        }
+
         /* Scroll Reveal Animation */
         .reveal {
             opacity: 0;
@@ -4580,30 +4889,104 @@
             </div>
         </div>
 
-        <!-- Add Funds Modal -->
+        <!-- Add Funds Modal — BTC/LTC crypto top-up -->
         <div class="modal-overlay" id="fundsModal">
-            <div class="modal">
-                <button class="modal-close" onclick="closeFundsModal()">×</button>
-                <h2>Add Funds</h2>
-                <form onsubmit="addFunds(event)">
-                    <div class="form-group">
-                        <label>Payment Method</label>
-                        <select id="payMethod">
-                            <option value="btc">Bitcoin (BTC)</option>
-                            <option value="cashapp">CashApp</option>
-                            <option value="ltc">Litecoin (LTC)</option>
-                        </select>
+            <div class="modal funds-modal-animated" onclick="event.stopPropagation()">
+                <button type="button" class="modal-close" onclick="closeFundsModal()" aria-label="Close">×</button>
+
+                <div id="fundsStep1" class="funds-step">
+                    <h2 class="funds-step-title">Choose Payment Method</h2>
+                    <p class="funds-step-sub">Select your preferred cryptocurrency</p>
+                    <div class="payment-method-grid">
+                        <div class="payment-method-card" role="button" tabindex="0" onclick="selectPaymentMethod('btc', this)" onkeydown="if(event.key==='Enter')selectPaymentMethod('btc', this)">
+                            <div class="payment-icon">₿</div>
+                            <div class="payment-name">Bitcoin</div>
+                            <div class="payment-code">BTC</div>
+                        </div>
+                        <div class="payment-method-card" role="button" tabindex="0" onclick="selectPaymentMethod('ltc', this)" onkeydown="if(event.key==='Enter')selectPaymentMethod('ltc', this)">
+                            <div class="payment-icon">Ł</div>
+                            <div class="payment-name">Litecoin</div>
+                            <div class="payment-code">LTC</div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Amount (USD)</label>
-                        <input type="number" class="input-field" id="fundAmt" placeholder="Enter amount" min="10" required>
+                </div>
+
+                <div id="fundsStep2" class="funds-step" style="display: none;">
+                    <h2 class="funds-step-title">Select Amount</h2>
+                    <p class="funds-step-sub">Choose an amount or enter custom</p>
+                    <div class="amount-selection-grid">
+                        <div class="amount-card" role="button" tabindex="0" onclick="selectAmount(20, this)" onkeydown="if(event.key==='Enter')selectAmount(20, this)">
+                            <div class="amount-value">$20</div>
+                        </div>
+                        <div class="amount-card" role="button" tabindex="0" onclick="selectAmount(50, this)" onkeydown="if(event.key==='Enter')selectAmount(50, this)">
+                            <div class="amount-value">$50</div>
+                        </div>
+                        <div class="amount-card" role="button" tabindex="0" onclick="selectAmount(75, this)" onkeydown="if(event.key==='Enter')selectAmount(75, this)">
+                            <div class="amount-value">$75</div>
+                        </div>
+                        <div class="amount-card" role="button" tabindex="0" onclick="selectAmount(100, this)" onkeydown="if(event.key==='Enter')selectAmount(100, this)">
+                            <div class="amount-value">$100</div>
+                        </div>
+                        <div class="amount-card custom-amount" role="button" tabindex="0" onclick="focusCustomAmountInput()">
+                            <div class="amount-value">Custom</div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Bonus Code (Optional)</label>
-                        <input type="text" class="input-field" id="bonusCode" placeholder="Enter code">
+                    <div class="form-group" style="margin-top: 12px;">
+                        <input type="number" inputmode="decimal" class="input-field" id="customAmountInput" placeholder="Enter custom amount" min="10" step="1" oninput="syncAmountFromCustomInput(this)">
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%;">Submit Request</button>
-                </form>
+                    <div class="funds-modal-actions">
+                        <button type="button" class="btn btn-primary" style="width:100%;" onclick="proceedToStep3()">Continue</button>
+                    </div>
+                </div>
+
+                <div id="fundsStep3" class="funds-step" style="display: none;">
+                    <h2 class="funds-step-title">Payment Details</h2>
+                    <form id="fundsStep3Form" onsubmit="event.preventDefault(); return false;">
+                        <input type="hidden" id="payMethod" value="">
+                        <input type="hidden" id="fundAmt" value="">
+                        <div id="fundsStep3Main">
+                            <div class="form-group">
+                                <label>Selected Method</label>
+                                <div id="selectedMethodDisplay" class="funds-display-box"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Selected Amount</label>
+                                <div id="selectedAmountDisplay" class="funds-display-box funds-display-box--amount"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Bonus Code (Optional)</label>
+                                <input type="text" class="input-field" id="bonusCode" placeholder="Enter code">
+                            </div>
+                            <div class="payment-instructions" id="paymentInstructions">
+                                <div class="payment-instructions-title">Payment Instructions:</div>
+                                <div id="instructionText" class="payment-instructions-body"></div>
+                            </div>
+                            <div class="funds-modal-actions" id="fundsStep3PrimaryActions">
+                                <button type="button" class="btn btn-primary" id="btnIHavePaidCrypto" style="width:100%; background: linear-gradient(135deg, #4b5563, #3f3f46); font-size: 17px; font-weight: 700; padding: 14px;" onclick="markAsPaid()">✓ I Have Paid</button>
+                            </div>
+                        </div>
+                        <div id="topUpAfterPaidPanel" style="display: none;">
+                            <div id="topUpSubmitLoading" class="topup-submit-loading" hidden>
+                                <div class="topup-inline-spinner" aria-hidden="true"></div>
+                                <p>Sending confirmation…</p>
+                            </div>
+                            <div id="topUpProofFormFields">
+                                <div id="topUpSubmitError" class="topup-submit-error" role="alert"></div>
+                                <div class="funds-topup-warning">
+                                    <strong>Important</strong>
+                                    <p>
+                                        Too many bogus submissions can flag abuse and may lead to your <strong>account or IP being restricted or banned from this site.</strong>
+                                    </p>
+                                </div>
+                                <label class="funds-step3-proof-label" for="cryptoConfirmationUrl">Blockchain confirmation link</label>
+                                <p class="funds-step3-proof-hint">Paste your public explorer link showing the transaction (BTC example):<br><code>https://mempool.space/tx/…</code></p>
+                                <input type="url" class="input-field" id="cryptoConfirmationUrl" placeholder="https://mempool.space/tx/..." autocomplete="off" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false">
+                                <button type="button" class="btn btn-primary" id="btnSubmitTopUpProof" style="width:100%; margin-top: 4px; background: linear-gradient(135deg, #3f3f46, #18181b); font-size: 16px; font-weight: 700; padding: 14px;" onclick="submitCryptoTopUpRequest()">Submit for verification</button>
+                                <button type="button" class="btn btn-secondary-plain" style="width:100%; margin-top: 10px;" onclick="hideTopUpAfterPaidPanel()">Back</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -7000,97 +7383,331 @@
         // Make globally accessible
         window.toggleCart = toggleCart;
 
-        function openFundsModal() { document.getElementById('fundsModal').classList.add('active'); }
-        function closeFundsModal() { 
-            document.getElementById('fundsModal').classList.remove('active');
-            document.getElementById('fundAmt').value = '';
-            document.getElementById('bonusCode').value = '';
+        let selectedPaymentMethod = '';
+        let selectedAmountValue = 0;
+        var _topUpSubmitInFlight = false;
+
+        function updatePaymentInstructions() {
+            var method = document.getElementById('payMethod').value;
+            var instructionText = document.getElementById('instructionText');
+            var instructions = {
+                btc: 'Send the exact amount to:\n\nbc1qvykus2xjawptxwz7qp0mwn5zxdetvzydv40eml\n\nAfter sending, tap “I Have Paid” and paste your public tx link from a block explorer (e.g. mempool.space/tx/…).',
+                ltc: 'Send the exact amount to:\n\nltc1qugzzl82j354mr69f3qtrm2fshhczpmxvh2vxrn\n\nAfter sending, tap “I Have Paid” and paste your public transaction URL from blockchair, mempool.space (LTC), or similar explorer.'
+            };
+            if (instructionText) {
+                instructionText.textContent = instructions[method] || 'Please complete the payment.';
+            }
         }
-        
+
+        function resetTopUpSubmitUi() {
+            var loading = document.getElementById('topUpSubmitLoading');
+            var fields = document.getElementById('topUpProofFormFields');
+            var err = document.getElementById('topUpSubmitError');
+            var btn = document.getElementById('btnSubmitTopUpProof');
+            if (loading) loading.hidden = true;
+            if (fields) fields.style.display = '';
+            if (err) {
+                err.textContent = '';
+                err.classList.remove('visible');
+            }
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Submit for verification';
+            }
+            _topUpSubmitInFlight = false;
+        }
+
+        function setTopUpInlineError(msg) {
+            var err = document.getElementById('topUpSubmitError');
+            if (!err) {
+                showAnimatedPopup('Error', msg, 'error');
+                return;
+            }
+            err.textContent = msg;
+            err.classList.add('visible');
+        }
+
+        function showTopUpSubmitLoadingState() {
+            var loading = document.getElementById('topUpSubmitLoading');
+            var fields = document.getElementById('topUpProofFormFields');
+            var err = document.getElementById('topUpSubmitError');
+            var btn = document.getElementById('btnSubmitTopUpProof');
+            if (err) err.classList.remove('visible');
+            if (fields) fields.style.display = 'none';
+            if (loading) loading.hidden = false;
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Sending…';
+            }
+        }
+
+        function hideTopUpAfterPaidPanel() {
+            var panel = document.getElementById('topUpAfterPaidPanel');
+            var main = document.getElementById('fundsStep3Main');
+            if (panel) panel.style.display = 'none';
+            if (main) main.style.display = '';
+            resetTopUpSubmitUi();
+            var inp = document.getElementById('cryptoConfirmationUrl');
+            if (inp) inp.value = '';
+        }
+
+        function isExplorerTxHttpsUrl(raw) {
+            var s = String(raw || '').trim();
+            if (s.length < 24 || s.length > 480) return false;
+            var u;
+            try { u = new URL(s); } catch (e) { return false; }
+            if (u.protocol !== 'https:') return false;
+            var h = u.hostname.toLowerCase();
+            if (h === 'localhost' || h.indexOf('127.') === 0) return false;
+            var p = (u.pathname || '').toLowerCase();
+            return p.indexOf('/tx/') !== -1 || p.indexOf('/transaction/') !== -1 || p.indexOf('/transactions/') !== -1;
+        }
+
+        function markAsPaid() {
+            var paymentMethod = document.getElementById('payMethod').value;
+            var amt = parseFloat(document.getElementById('fundAmt').value);
+            if (!paymentMethod || (paymentMethod !== 'btc' && paymentMethod !== 'ltc')) {
+                showAnimatedPopup('Error', 'Please select a payment method', 'error');
+                return;
+            }
+            if (!amt || amt < 10) {
+                showAnimatedPopup('Error', 'Please select an amount (minimum $10)', 'error');
+                return;
+            }
+            var panel = document.getElementById('topUpAfterPaidPanel');
+            var main = document.getElementById('fundsStep3Main');
+            if (panel && main) {
+                resetTopUpSubmitUi();
+                main.style.display = 'none';
+                panel.style.display = 'block';
+                var inp = document.getElementById('cryptoConfirmationUrl');
+                if (inp) {
+                    inp.value = '';
+                    setTimeout(function () {
+                        try { inp.focus(); } catch (_) {}
+                    }, 120);
+                }
+            }
+        }
+
+        function submitCryptoTopUpRequest() {
+            if (_topUpSubmitInFlight) return;
+            if (!userData || !pluxoGetAuthToken() || pluxoIsSessionExpired()) {
+                setTopUpInlineError('Your session ended. Close this window, sign in again, then resubmit.');
+                return;
+            }
+            var paymentMethod = document.getElementById('payMethod').value;
+            var amt = parseFloat(document.getElementById('fundAmt').value);
+            var confirmation_url = (document.getElementById('cryptoConfirmationUrl') || {}).value || '';
+            if (!paymentMethod || (paymentMethod !== 'btc' && paymentMethod !== 'ltc')) {
+                setTopUpInlineError('Please select a payment method.');
+                return;
+            }
+            if (!amt || amt < 10) {
+                setTopUpInlineError('Please select an amount (minimum $10).');
+                return;
+            }
+            if (!isExplorerTxHttpsUrl(confirmation_url)) {
+                setTopUpInlineError('Paste a full https explorer URL with /tx/ in the path, e.g. https://mempool.space/tx/…');
+                return;
+            }
+            _topUpSubmitInFlight = true;
+            showTopUpSubmitLoadingState();
+            try {
+                localStorage.setItem('pluxo_topup_submit_notice', JSON.stringify({ t: Date.now(), amount: amt, method: paymentMethod }));
+            } catch (_) {}
+            var payload = {
+                username: String(userData.username).toLowerCase().trim(),
+                amount_usd: amt,
+                method: paymentMethod,
+                confirmation_url: confirmation_url.trim()
+            };
+            var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+            var timer = ctrl ? setTimeout(function () { try { ctrl.abort(); } catch (_) {} }, 28000) : null;
+            fetch(BOT_WEBHOOK_URL + '/api/topup/submit', {
+                method: 'POST',
+                headers: pluxoAuthHeaders(),
+                signal: ctrl ? ctrl.signal : undefined,
+                body: JSON.stringify(payload)
+            }).then(function (r) {
+                if (timer) clearTimeout(timer);
+                return r.json().catch(function () { return {}; }).then(function (d) {
+                    if (r.status === 401) {
+                        var e401 = new Error('Your sign-in expired. Sign in again, then resubmit your link.');
+                        e401.authExpired = true;
+                        throw e401;
+                    }
+                    if (!r.ok || !d.ok) {
+                        throw new Error(d.error || ('Request failed (' + r.status + ')'));
+                    }
+                    return d;
+                });
+            }).then(function (d) {
+                try { localStorage.removeItem('pluxo_topup_submit_notice'); } catch (_) {}
+                resetTopUpSubmitUi();
+                closeFundsModal();
+                var msg = (d && d.message) ? d.message : (
+                    'Please wait 5–15 minutes while staff verifies your payment on Telegram. ' +
+                    'Your balance updates automatically once approved.'
+                );
+                showAnimatedPopup('Confirmation sent', msg, 'success');
+            }).catch(function (err) {
+                if (timer) clearTimeout(timer);
+                try { localStorage.removeItem('pluxo_topup_submit_notice'); } catch (_) {}
+                var msg = (err && err.message) ? err.message : String(err);
+                if (msg.indexOf('abort') !== -1 || msg.indexOf('Abort') !== -1) {
+                    msg = 'Request timed out. Check your connection and try again.';
+                }
+                resetTopUpSubmitUi();
+                var panel = document.getElementById('topUpAfterPaidPanel');
+                var fields = document.getElementById('topUpProofFormFields');
+                if (panel) panel.style.display = 'block';
+                if (fields) fields.style.display = '';
+                setTopUpInlineError(msg || 'Submit failed. Try again.');
+                if (err && err.authExpired) {
+                    window.setTimeout(function () {
+                        closeFundsModal();
+                        pluxoForceLogout('Your sign-in expired. Please sign in again and resubmit your payment link.');
+                    }, 1800);
+                }
+            });
+        }
+
+        function focusCustomAmountInput() {
+            var inp = document.getElementById('customAmountInput');
+            if (inp) inp.focus();
+        }
+
+        function syncAmountFromCustomInput(el) {
+            var raw = el && el.value !== undefined ? el.value : (document.getElementById('customAmountInput') || {}).value;
+            var amount = parseFloat(String(raw || '').replace(',', '.'));
+            if (!isFinite(amount)) return;
+            if (amount >= 10) selectAmount(amount, null);
+        }
+
+        function selectPaymentMethod(method, el) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-method-card').forEach(function (card) {
+                card.classList.remove('selected');
+            });
+            if (el && el.classList) el.classList.add('selected');
+            setTimeout(function () {
+                document.getElementById('fundsStep1').style.display = 'none';
+                document.getElementById('fundsStep2').style.display = 'block';
+            }, 200);
+        }
+
+        function selectAmount(amount, el) {
+            amount = parseFloat(amount);
+            if (!isFinite(amount) || amount < 10) {
+                if (el) showAnimatedPopup('Error', 'Minimum amount is $10', 'error');
+                return;
+            }
+            selectedAmountValue = amount;
+            document.querySelectorAll('.amount-card').forEach(function (card) {
+                card.classList.remove('selected');
+            });
+            if (el && el.classList) el.classList.add('selected');
+            var customInput = document.getElementById('customAmountInput');
+            if (customInput) customInput.value = String(amount);
+        }
+
+        function proceedToStep3() {
+            syncAmountFromCustomInput();
+            if (!selectedAmountValue || selectedAmountValue < 10) {
+                showAnimatedPopup('Error', 'Please select an amount (minimum $10)', 'error');
+                return;
+            }
+            if (!selectedPaymentMethod) {
+                showAnimatedPopup('Error', 'Please choose BTC or LTC first', 'error');
+                document.getElementById('fundsStep2').style.display = 'none';
+                document.getElementById('fundsStep1').style.display = 'block';
+                return;
+            }
+            document.getElementById('fundsStep2').style.display = 'none';
+            document.getElementById('fundsStep3').style.display = 'block';
+            document.getElementById('payMethod').value = selectedPaymentMethod;
+            document.getElementById('fundAmt').value = selectedAmountValue;
+            var methodNames = { btc: 'Bitcoin (BTC)', ltc: 'Litecoin (LTC)' };
+            document.getElementById('selectedMethodDisplay').textContent = methodNames[selectedPaymentMethod] || selectedPaymentMethod.toUpperCase();
+            document.getElementById('selectedAmountDisplay').textContent = '$' + selectedAmountValue.toFixed(2);
+            updatePaymentInstructions();
+            hideTopUpAfterPaidPanel();
+        }
+
+        function closeFundsModal() {
+            document.getElementById('fundsModal').classList.remove('active');
+            document.body.style.overflow = '';
+            hideTopUpAfterPaidPanel();
+            resetTopUpSubmitUi();
+            document.getElementById('fundsStep1').style.display = 'block';
+            document.getElementById('fundsStep2').style.display = 'none';
+            document.getElementById('fundsStep3').style.display = 'none';
+            selectedPaymentMethod = '';
+            selectedAmountValue = 0;
+            document.querySelectorAll('.payment-method-card, .amount-card').forEach(function (card) {
+                card.classList.remove('selected');
+            });
+            var customInput = document.getElementById('customAmountInput');
+            if (customInput) customInput.value = '';
+            var bonusCodeInput = document.getElementById('bonusCode');
+            if (bonusCodeInput) bonusCodeInput.value = '';
+        }
+
+        function pluxoShowPendingTopUpNoticeAfterReload() {
+            var raw = null;
+            try { raw = localStorage.getItem('pluxo_topup_submit_notice'); } catch (_) { return; }
+            if (!raw) return;
+            try { localStorage.removeItem('pluxo_topup_submit_notice'); } catch (_) {}
+            var rec = null;
+            try { rec = JSON.parse(raw); } catch (_) { return; }
+            if (!rec || !rec.t || (Date.now() - Number(rec.t)) > 15 * 60 * 1000) return;
+            showAnimatedPopup(
+                'Confirmation sent',
+                'Your top-up was submitted. Please wait 5–15 minutes while staff verifies it — your balance updates after approval.',
+                'success'
+            );
+        }
+
+        function openFundsModal() {
+            if (!userData || !pluxoGetAuthToken() || pluxoIsSessionExpired()) {
+                pluxoForceLogout('Please sign in to add funds.');
+                return;
+            }
+            if (!window.matchMedia('(max-width: 1024px)').matches) {
+                document.body.style.overflow = 'hidden';
+            }
+            document.getElementById('fundsModal').classList.add('active');
+            document.getElementById('fundsStep1').style.display = 'block';
+            document.getElementById('fundsStep2').style.display = 'none';
+            document.getElementById('fundsStep3').style.display = 'none';
+            selectedPaymentMethod = '';
+            selectedAmountValue = 0;
+            hideTopUpAfterPaidPanel();
+        }
+
         function showApprovalAnimation() {
             document.getElementById('approvalAnimationModal').classList.add('active');
         }
-        
+
         function closeApprovalAnimation() {
             document.getElementById('approvalAnimationModal').classList.remove('active');
         }
-        
-        // Make globally accessible
-        window.closeApprovalAnimation = closeApprovalAnimation;
 
-        async function addFunds(e) {
-            e.preventDefault();
-            if (!userData || !userData.firebaseUID) {
-                alert('Please login to add funds');
-                return;
-            }
-            
-            const amt = parseFloat(document.getElementById('fundAmt').value);
-            const paymentMethod = document.getElementById('payMethod').value;
-            const bonusCode = document.getElementById('bonusCode').value.trim();
-            
-            if (amt < 10) {
-                alert('Minimum amount is $10');
-                return;
-            }
-            
-            // Create pending balance request
-            const requestId = 'BR' + Date.now() + Math.random().toString(36).substr(2, 9);
-            const balanceRequest = {
-                id: requestId,
-                userId: userData.firebaseUID,
-                username: userData.username,
-                amount: amt,
-                paymentMethod: paymentMethod,
-                bonusCode: bonusCode || null,
-                status: 'pending',
-                createdAt: new Date().toISOString(),
-                approvedBy: null,
-                approvedAt: null
-            };
-            
-            try {
-                // Check if db and Firestore functions are available
-                let firestoreDb = window.db;
-                let firestore = window.firestoreFunctions;
-                
-                if (!firestoreDb || !firestore) {
-                    // Wait a bit for Firebase to initialize
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    firestoreDb = window.db;
-                    firestore = window.firestoreFunctions;
-                    if (!firestoreDb || !firestore) {
-                        throw new Error('Firebase not initialized. Please refresh the page and try again.');
-                    }
-                }
-                
-                // Use the db and functions from window
-                const { collection, doc, setDoc } = firestore;
-                
-                // Save to Firestore
-                const requestsRef = collection(firestoreDb, 'balanceRequests');
-                await setDoc(doc(requestsRef, requestId), balanceRequest);
-                
-                // Show approval animation
-                closeFundsModal();
-                showApprovalAnimation();
-                
-                // Reset form
-                document.getElementById('fundAmt').value = '';
-                document.getElementById('bonusCode').value = '';
-            } catch (error) {
-                console.error('Error submitting balance request:', error);
-                let errorMsg = 'Error submitting request. ';
-                if (error.message) {
-                    errorMsg += error.message;
-                } else if (error.code) {
-                    errorMsg += `Error code: ${error.code}`;
-                } else {
-                    errorMsg += 'Please make sure you are logged in and try again.';
-                }
-                alert(errorMsg);
-            }
-        }
+        window.openFundsModal = openFundsModal;
+        window.closeFundsModal = closeFundsModal;
+        window.selectPaymentMethod = selectPaymentMethod;
+        window.selectAmount = selectAmount;
+        window.proceedToStep3 = proceedToStep3;
+        window.focusCustomAmountInput = focusCustomAmountInput;
+        window.syncAmountFromCustomInput = syncAmountFromCustomInput;
+        window.markAsPaid = markAsPaid;
+        window.hideTopUpAfterPaidPanel = hideTopUpAfterPaidPanel;
+        window.submitCryptoTopUpRequest = submitCryptoTopUpRequest;
+        window.updatePaymentInstructions = updatePaymentInstructions;
+        window.pluxoShowPendingTopUpNoticeAfterReload = pluxoShowPendingTopUpNoticeAfterReload;
+        window.closeApprovalAnimation = closeApprovalAnimation;
+        pluxoShowPendingTopUpNoticeAfterReload();
 
         function openSettings() { document.getElementById('settingsModal').classList.add('active'); }
         function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
