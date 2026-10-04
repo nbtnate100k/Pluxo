@@ -85,6 +85,16 @@ def _auth_token_max_age_seconds() -> int:
 # reload does not drop the session mid-checkout.
 AUTH_TOKEN_MAX_AGE_SECONDS = _auth_token_max_age_seconds()
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+# Pluxo Railway Variables only — never share TELEGRAM_BOT_TOKEN with goat3x/goatys (separate deploys).
+_PLUXO_EXPECTED_BOT_USERNAME = (
+    os.environ.get("PLUXO_EXPECTED_BOT_USERNAME", "pluxoadminbot").strip().lower().lstrip("@")
+)
+_PLUXO_SKIP_BOT_USERNAME_CHECK = os.environ.get("PLUXO_SKIP_BOT_USERNAME_CHECK", "").strip().lower() in (
+    "1",
+    "true",
+    "yes",
+    "on",
+)
 # PLUXO Telegram folder (add-list); override via env on deploy if the link rotates.
 _PLUXO_TG_CHAT_LIST_RAW = os.environ.get(
     "PLUXO_TELEGRAM_CHAT_LIST_URL",
@@ -8107,7 +8117,16 @@ def run_bot_thread(reason: str = "auto") -> str:
             TELEGRAM_SPAWN_RESULT = "not_polling_leader"
             return "not_polling_leader"
 
-        print(f"[telegram] launching bot thread ({reason}, token {masked}) — {leader_detail}", flush=True)
+        ok_bot, bot_detail = _telegram_validate_bot_identity()
+        if not ok_bot:
+            print(f"[telegram] {bot_detail}", flush=True)
+            TELEGRAM_SPAWN_RESULT = "wrong_bot_token"
+            return "wrong_bot_token"
+
+        print(
+            f"[telegram] launching bot thread ({reason}, token {masked}) — {leader_detail}; {bot_detail}",
+            flush=True,
+        )
         threading.Thread(
             target=run_telegram_bot, name="telegram-bot", daemon=True
         ).start()
@@ -8155,6 +8174,26 @@ _telegram_getme_cache: dict[str, Any] | None = None
 _telegram_getme_cache_at: float = 0.0
 
 
+def _telegram_validate_bot_identity() -> tuple[bool, str]:
+    """Ensure this Pluxo deploy polls the Pluxo bot token (Railway Variables on Pluxo service only)."""
+    if _PLUXO_SKIP_BOT_USERNAME_CHECK:
+        return True, "username check skipped"
+    ident = _telegram_bot_identity()
+    if not ident:
+        return True, "getMe unavailable — starting poll anyway"
+    if ident.get("error"):
+        return True, f"getMe warning: {ident.get('error')}"
+    un = str(ident.get("username") or "").lower().lstrip("@")
+    if _PLUXO_EXPECTED_BOT_USERNAME and un != _PLUXO_EXPECTED_BOT_USERNAME:
+        return (
+            False,
+            f"TELEGRAM_BOT_TOKEN on this Pluxo service is for @{ident.get('username')}, not "
+            f"@{_PLUXO_EXPECTED_BOT_USERNAME}. In Railway open the **Pluxo** project/service (not goat3x), "
+            "set TELEGRAM_BOT_TOKEN to the Pluxo @BotFather token, redeploy. Goatys token stays on goat3x only.",
+        )
+    return True, f"bot @{ident.get('username')} OK"
+
+
 def _telegram_bot_identity() -> dict[str, Any] | None:
     """Resolve @username for the configured token (helps verify Railway has the right bot)."""
     global _telegram_getme_cache, _telegram_getme_cache_at
@@ -8195,6 +8234,7 @@ def telegram_status():
     with state_lock:
         owner_in_state = state.get("owner_telegram_id")
     bot_identity = _telegram_bot_identity()
+    ok_bot, bot_check = _telegram_validate_bot_identity()
     return jsonify(
         {
             "token_set": bool(TELEGRAM_BOT_TOKEN),
@@ -8202,13 +8242,17 @@ def telegram_status():
             "owner_telegram_id_env": OWNER_RAW if OWNER_RAW.isdigit() else None,
             "owner_telegram_id_state": owner_in_state,
             "bot": bot_identity,
+            "bot_token_ok_for_pluxo": ok_bot,
+            "bot_token_check": bot_check,
+            "expected_bot_username": _PLUXO_EXPECTED_BOT_USERNAME or None,
             "disabled": TELEGRAM_BOT_DISABLED,
             "bot_thread_started": _telegram_bootstrapped,
             "bot_thread_alive": telegram_worker_alive(),
             "spawn_result": TELEGRAM_SPAWN_RESULT,
             "polling_env": os.environ.get("PLUXO_TELEGRAM_POLL", "").strip() or None,
             "hints": [
-                "Chat the bot shown in bot.username (not goat3x's bot). /start should reply even before OWNER_TELEGRAM_ID is set.",
+                "Pluxo service: TELEGRAM_BOT_TOKEN = Pluxo bot (@pluxoadminbot). Goatys token stays on goat3x service only.",
+                "Chat the bot shown in bot.username. /start should reply even before OWNER_TELEGRAM_ID is set.",
                 "Stock/admin commands need OWNER_TELEGRAM_ID = your numeric id from /myid on this bot, then redeploy.",
                 "If messages show two checkmarks but no reply: nothing is polling this bot token, or a second server also polls (Telegram returns 409 Conflict).",
                 "Only one machine/process may call getUpdates per bot. Extra Gunicorn workers: set PLUXO_TELEGRAM_POLL=never on workers that should not poll.",
@@ -8254,6 +8298,19 @@ def api_telegram_start_bot():
                 }
             ),
             409,
+        )
+    if st == "wrong_bot_token":
+        _, detail = _telegram_validate_bot_identity()
+        return (
+            jsonify(
+                {
+                    "ok": False,
+                    "status": "wrong_bot_token",
+                    "error": detail,
+                    "bot": _telegram_bot_identity(),
+                }
+            ),
+            400,
         )
     return jsonify(
         {"ok": True, "status": "started", "detail": "Telegram polling thread started on this worker."}
