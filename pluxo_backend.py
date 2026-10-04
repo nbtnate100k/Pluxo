@@ -4700,6 +4700,7 @@ def api_checkout():
                     "kind": "stock",
                     "bin": row.get("bin"),
                     "base": row.get("base"),
+                    "bank": str(row.get("bank") or row.get("issuer") or "").strip(),
                     "price": pr,
                     "refundable": row.get("refundable", True),
                     "full_info": row.get("full_info", ""),

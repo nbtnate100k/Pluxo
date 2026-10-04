@@ -4262,6 +4262,67 @@
         .animated-popup .popup-message { font-size: 14px; color: #a1a1aa; margin-bottom: 16px; }
         .animated-popup .popup-button { background: #2563eb; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
 
+        .shop-checkout-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.78);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10080;
+            padding: 16px;
+        }
+        .shop-checkout-overlay.active { display: flex; }
+        .shop-checkout-modal {
+            background: #18181b;
+            border: 1px solid #3f3f46;
+            border-radius: 14px;
+            padding: 26px 22px 20px;
+            max-width: 340px;
+            width: 100%;
+            text-align: center;
+            color: #f4f4f5;
+            font-family: var(--goat-terminal), ui-monospace, monospace;
+        }
+        .shop-checkout-icon { font-size: 36px; margin-bottom: 8px; line-height: 1; }
+        .shop-checkout-title { font-size: 17px; font-weight: 700; margin: 0 0 8px; }
+        .shop-checkout-sub { font-size: 13px; color: #a1a1aa; margin: 0 0 14px; line-height: 1.45; }
+        .shop-checkout-amount { font-size: 28px; font-weight: 800; color: #f97316; margin: 0 0 18px; }
+        .shop-checkout-actions { display: flex; gap: 10px; }
+        .shop-checkout-actions button {
+            flex: 1;
+            border-radius: 10px;
+            padding: 12px 10px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid #3f3f46;
+        }
+        .shop-checkout-cancel { background: #27272a; color: #e4e4e7; }
+        .shop-checkout-confirm { background: #14532d; color: #86efac; border-color: #166534 !important; }
+        .shop-checkout-confirm:disabled { opacity: 0.55; cursor: wait; }
+        .shop-checkout-processing {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10090;
+        }
+        .shop-checkout-processing.active { display: flex; }
+        .shop-checkout-processing-box {
+            background: rgba(24, 24, 27, 0.96);
+            border: 1px solid #3f3f46;
+            border-radius: 12px;
+            padding: 22px 28px;
+            text-align: center;
+            font-family: var(--goat-terminal), ui-monospace, monospace;
+            color: #e4e4e7;
+        }
+        .shop-checkout-processing-box p { margin: 12px 0 0; font-size: 13px; color: #a1a1aa; }
+
     </style>
 </head>
 <body>
@@ -5102,6 +5163,26 @@
     </div>
 
 
+        <!-- Cart checkout confirm (Goat-style) -->
+        <div class="shop-checkout-overlay" id="shopCheckoutOverlay" onclick="if(event.target===this)closeShopCheckoutConfirm(false)">
+            <div class="shop-checkout-modal" onclick="event.stopPropagation()">
+                <div class="shop-checkout-icon" aria-hidden="true">🛒</div>
+                <h3 class="shop-checkout-title">Complete purchase</h3>
+                <p class="shop-checkout-sub" id="shopCheckoutSub">Confirm purchase of items from your cart.</p>
+                <p class="shop-checkout-amount" id="shopCheckoutAmount">$0.00</p>
+                <div class="shop-checkout-actions">
+                    <button type="button" class="shop-checkout-cancel" id="shopCheckoutCancelBtn" onclick="closeShopCheckoutConfirm(false)">Cancel</button>
+                    <button type="button" class="shop-checkout-confirm" id="shopCheckoutConfirmBtn" onclick="closeShopCheckoutConfirm(true)">Confirm</button>
+                </div>
+            </div>
+        </div>
+        <div class="shop-checkout-processing" id="shopCheckoutProcessing" aria-live="polite">
+            <div class="shop-checkout-processing-box">
+                <div class="topup-inline-spinner" aria-hidden="true"></div>
+                <p>Completing purchase…</p>
+            </div>
+        </div>
+
         <!-- Animated Popup Modal -->
         <div class="animated-popup-overlay" id="animatedPopupOverlay" style="display: none;" onclick="if(event.target===this)closeAnimatedPopup()">
             <div class="animated-popup" id="animatedPopup" onclick="event.stopPropagation()">
@@ -5140,6 +5221,42 @@
         }
         window.showAnimatedPopup = showAnimatedPopup;
         window.closeAnimatedPopup = closeAnimatedPopup;
+
+        var _shopCheckoutConfirmResolver = null;
+        function showShopCheckoutConfirm(itemCount, total) {
+            return new Promise(function (resolve) {
+                _shopCheckoutConfirmResolver = resolve;
+                var overlay = document.getElementById('shopCheckoutOverlay');
+                var sub = document.getElementById('shopCheckoutSub');
+                var amt = document.getElementById('shopCheckoutAmount');
+                var confirmBtn = document.getElementById('shopCheckoutConfirmBtn');
+                var cancelBtn = document.getElementById('shopCheckoutCancelBtn');
+                var n = Math.max(0, parseInt(itemCount, 10) || 0);
+                var t = parseFloat(total) || 0;
+                if (sub) {
+                    sub.textContent = 'Confirm purchase of ' + n + ' item' + (n === 1 ? '' : 's') + ' from your cart.';
+                }
+                if (amt) amt.textContent = '$' + t.toFixed(2);
+                if (confirmBtn) confirmBtn.disabled = false;
+                if (cancelBtn) cancelBtn.disabled = false;
+                if (overlay) overlay.classList.add('active');
+            });
+        }
+        function closeShopCheckoutConfirm(confirmed) {
+            var overlay = document.getElementById('shopCheckoutOverlay');
+            if (overlay) overlay.classList.remove('active');
+            if (_shopCheckoutConfirmResolver) {
+                var fn = _shopCheckoutConfirmResolver;
+                _shopCheckoutConfirmResolver = null;
+                fn(!!confirmed);
+            }
+        }
+        function setShopCheckoutProcessing(active) {
+            var el = document.getElementById('shopCheckoutProcessing');
+            if (el) el.classList.toggle('active', !!active);
+        }
+        window.showShopCheckoutConfirm = showShopCheckoutConfirm;
+        window.closeShopCheckoutConfirm = closeShopCheckoutConfirm;
 
         // Admin system - NBTNate is the owner
         const OWNER = 'NBTNate';
@@ -7781,7 +7898,9 @@
             closeSettings();
         }
 
+        var _checkoutInFlight = false;
         async function checkout() {
+            if (_checkoutInFlight) return;
             if (!userData || !pluxoGetAuthToken() || pluxoIsSessionExpired()) {
                 pluxoForceLogout('Please sign in to complete your purchase.');
                 return;
@@ -7814,10 +7933,11 @@
             }
             
             const itemCount = userData.cart.length;
-            const cartItems = [...userData.cart]; // Copy cart items
+            const cartItems = [...userData.cart];
+            _checkoutInFlight = true;
+            setShopCheckoutProcessing(true);
             
             try {
-                // Atomic checkout: deduct balance + remove sold rows from server inventory
                 const checkoutResponse = await fetch(BOT_WEBHOOK_URL + '/api/purchase/checkout', {
                     method: 'POST',
                     headers: pluxoAuthHeaders(),
@@ -7847,6 +7967,7 @@
                     const product = {
                         bin: row.bin || '000000',
                         base: row.base || 'MONEY_BASE',
+                        bank: row.bank || '',
                         price: parseFloat(row.price) || 0,
                         refundable: row.refundable !== undefined ? row.refundable : true,
                         full_info: row.full_info || ''
@@ -7856,23 +7977,24 @@
                 
                 userData.cart = [];
                 localStorage.setItem('pluxoUser', JSON.stringify(userData));
-                await saveUserBalanceToFirestore();
                 updateUI();
                 updateCartDisplay();
                 await generateProducts();
                 renderProducts();
                 renderPagination();
                 
-                showAnimatedPopup('Success', `Purchase complete! ${itemCount} item(s) added to your orders. Open the Orders page for full details.`, 'success');
                 toggleCart();
+                showAnimatedPopup('Success', `Purchase complete! ${itemCount} item(s) added to your orders. Open the Orders page for full details.`, 'success');
                 
-                // Refresh orders page if it's open
                 if (document.getElementById('page-orders') && document.getElementById('page-orders').style.display !== 'none') {
                     renderOrders();
                 }
             } catch (error) {
                 console.error('Checkout error:', error);
                 showAnimatedPopup('Error', `Purchase failed: ${error.message}`, 'error');
+            } finally {
+                _checkoutInFlight = false;
+                setShopCheckoutProcessing(false);
             }
         }
         window.checkout = checkout;
@@ -8510,7 +8632,92 @@ function getBrandFromBin(bin) {
         const states = ['NY', 'CA', 'TX', 'FL', 'IL', 'PA', 'OH', 'GA', 'NC', 'MI', 'ON', 'BC', 'QC', 'NSW', 'VIC'];
         const emailDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'proton.me'];
 
+        function pluxoParseStockFullInfo(fullInfo, productMeta) {
+            productMeta = productMeta || {};
+            var raw = String(fullInfo || '').trim();
+            var id = 'ORD' + Date.now() + Math.floor(Math.random() * 10000);
+            var baseOrder = {
+                id: id,
+                cardNo: productMeta.bin || '—',
+                expDate: '—',
+                cvv: '—',
+                name: '—',
+                address: '—',
+                state: '—',
+                city: '—',
+                zip: '—',
+                mail: '—',
+                phone: '—',
+                ip: '—',
+                emailPassword: '',
+                bank: productMeta.bank || '—',
+                base: productMeta.base || '—',
+                price: productMeta.price || 0,
+                refundable: productMeta.refundable !== false,
+                purchaseDate: new Date().toISOString(),
+                full_info: raw
+            };
+            if (!raw) return baseOrder;
+
+            var line = raw.split('\n')[0].trim();
+            var dashIdx = line.indexOf('—');
+            if (dashIdx > 12) line = line.slice(0, dashIdx).trim();
+            var parts = line.split('|').map(function (p) { return String(p || '').trim(); });
+            if (parts.length < 4) return baseOrder;
+
+            var pan = parts[0];
+            var expDate = '';
+            var cvv = '';
+            var off = 4;
+            if (/^\d{1,2}\/\d{2,4}$/.test(parts[1])) {
+                expDate = parts[1];
+                cvv = parts[2] || '';
+                off = 3;
+            } else {
+                var mm = parts[1];
+                var yy = parts[2];
+                cvv = parts[3] || '';
+                var yyStr = String(yy);
+                if (yyStr.length <= 2) yyStr = yyStr.padStart(2, '0');
+                else yyStr = yyStr.slice(-2);
+                expDate = String(mm).padStart(2, '0') + '/' + yyStr;
+            }
+
+            var name = parts[off] || '—';
+            var address = parts[off + 1] || '—';
+            var city = parts[off + 2] || '—';
+            var state = parts[off + 3] || '—';
+            var zip = parts[off + 4] || '—';
+            var phone = parts[off + 5] || '—';
+            var mail = parts[off + 6] || '—';
+
+            if (parts.length > off + 7 && mail.indexOf('@') === -1 && /^[A-Za-z]{2,3}$/.test(phone)) {
+                phone = parts[off + 6] || phone;
+                mail = parts[off + 7] || mail;
+            }
+
+            var ip = '—';
+            var last = parts[parts.length - 1];
+            if (/^\d{1,3}(\.\d{1,3}){3}$/.test(last)) ip = last;
+
+            baseOrder.cardNo = pan || baseOrder.cardNo;
+            baseOrder.expDate = expDate || baseOrder.expDate;
+            baseOrder.cvv = cvv || baseOrder.cvv;
+            baseOrder.name = name;
+            baseOrder.address = address;
+            baseOrder.city = city;
+            baseOrder.state = state;
+            baseOrder.zip = zip;
+            baseOrder.phone = phone;
+            baseOrder.mail = mail.indexOf('@') !== -1 ? mail : baseOrder.mail;
+            baseOrder.ip = ip;
+            return baseOrder;
+        }
+
         function generateOrderDetails(product) {
+            if (product && product.full_info) {
+                return pluxoParseStockFullInfo(product.full_info, product);
+            }
             const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
             const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
             const streetNum = Math.floor(Math.random() * 9999) + 1;
