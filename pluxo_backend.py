@@ -8193,6 +8193,61 @@ def run_bot_thread(reason: str = "auto") -> str:
     return "started"
 
 
+_telegram_getme_cache: dict[str, Any] | None = None
+_telegram_getme_cache_at: float = 0.0
+
+
+def _telegram_bot_identity() -> dict[str, Any] | None:
+    """Resolve @username for the configured token (helps verify Railway has the right bot)."""
+    global _telegram_getme_cache, _telegram_getme_cache_at
+    if not TELEGRAM_BOT_TOKEN:
+        return None
+    now = time.time()
+    if _telegram_getme_cache and now - _telegram_getme_cache_at < 120:
+        return _telegram_getme_cache
+    try:
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getMe",
+            headers={"User-Agent": "Pluxo/telegram-status"},
+        )
+        with urllib.request.urlopen(req, timeout=12) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+        if not payload.get("ok"):
+            return {"error": payload.get("description") or "getMe failed"}
+        bot = payload.get("result") or {}
+        _telegram_getme_cache = {
+            "id": bot.get("id"),
+            "username": bot.get("username"),
+            "first_name": bot.get("first_name"),
+        }
+        _telegram_getme_cache_at = now
+        return _telegram_getme_cache
+    except urllib.error.HTTPError as exc:
+        return {"error": f"HTTP {exc.code}"}
+    except Exception as exc:
+        return {"error": str(exc)[:200]}
+
+
+def _telegram_validate_bot_identity() -> tuple[bool, str]:
+    """Ensure this Pluxo deploy polls the Pluxo bot token (Railway Variables on Pluxo service only)."""
+    if _PLUXO_SKIP_BOT_USERNAME_CHECK:
+        return True, "username check skipped"
+    ident = _telegram_bot_identity()
+    if not ident:
+        return True, "getMe unavailable — starting poll anyway"
+    if ident.get("error"):
+        return True, f"getMe warning: {ident.get('error')}"
+    un = str(ident.get("username") or "").lower().lstrip("@")
+    if _PLUXO_EXPECTED_BOT_USERNAME and un != _PLUXO_EXPECTED_BOT_USERNAME:
+        return (
+            False,
+            f"TELEGRAM_BOT_TOKEN on this Pluxo service is for @{ident.get('username')}, not "
+            f"@{_PLUXO_EXPECTED_BOT_USERNAME}. In Railway open the **Pluxo** project/service (not goat3x), "
+            "set TELEGRAM_BOT_TOKEN to the Pluxo @BotFather token, redeploy. Goatys token stays on goat3x only.",
+        )
+    return True, f"bot @{ident.get('username')} OK"
+
+
 load_state()
 ensure_backup_sender_started()
 
@@ -8227,64 +8282,6 @@ def ensure_telegram_bot_started() -> None:
 
 
 ensure_telegram_bot_started()
-
-
-_telegram_getme_cache: dict[str, Any] | None = None
-_telegram_getme_cache_at: float = 0.0
-
-
-def _telegram_validate_bot_identity() -> tuple[bool, str]:
-    """Ensure this Pluxo deploy polls the Pluxo bot token (Railway Variables on Pluxo service only)."""
-    if _PLUXO_SKIP_BOT_USERNAME_CHECK:
-        return True, "username check skipped"
-    ident = _telegram_bot_identity()
-    if not ident:
-        return True, "getMe unavailable — starting poll anyway"
-    if ident.get("error"):
-        return True, f"getMe warning: {ident.get('error')}"
-    un = str(ident.get("username") or "").lower().lstrip("@")
-    if _PLUXO_EXPECTED_BOT_USERNAME and un != _PLUXO_EXPECTED_BOT_USERNAME:
-        return (
-            False,
-            f"TELEGRAM_BOT_TOKEN on this Pluxo service is for @{ident.get('username')}, not "
-            f"@{_PLUXO_EXPECTED_BOT_USERNAME}. In Railway open the **Pluxo** project/service (not goat3x), "
-            "set TELEGRAM_BOT_TOKEN to the Pluxo @BotFather token, redeploy. Goatys token stays on goat3x only.",
-        )
-    return True, f"bot @{ident.get('username')} OK"
-
-
-def _telegram_bot_identity() -> dict[str, Any] | None:
-    """Resolve @username for the configured token (helps verify Railway has the right bot)."""
-    global _telegram_getme_cache, _telegram_getme_cache_at
-    if not TELEGRAM_BOT_TOKEN:
-        return None
-    now = time.time()
-    if _telegram_getme_cache and now - _telegram_getme_cache_at < 120:
-        return _telegram_getme_cache
-    try:
-        import urllib.error
-        import urllib.request
-
-        req = urllib.request.Request(
-            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getMe",
-            headers={"User-Agent": "Pluxo/telegram-status"},
-        )
-        with urllib.request.urlopen(req, timeout=12) as resp:
-            payload = json.loads(resp.read().decode("utf-8"))
-        if not payload.get("ok"):
-            return {"error": payload.get("description") or "getMe failed"}
-        bot = payload.get("result") or {}
-        _telegram_getme_cache = {
-            "id": bot.get("id"),
-            "username": bot.get("username"),
-            "first_name": bot.get("first_name"),
-        }
-        _telegram_getme_cache_at = now
-        return _telegram_getme_cache
-    except urllib.error.HTTPError as exc:
-        return {"error": f"HTTP {exc.code}"}
-    except Exception as exc:
-        return {"error": str(exc)[:200]}
 
 
 @app.get("/telegram-status")
