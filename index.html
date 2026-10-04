@@ -15,9 +15,12 @@
             --black: #0a0a0a;
             --black-light: #141414;
             --black-lighter: #1a1a1a;
-            --blue: #6b7280;
-            --blue-light: #9ca3af;
-            --blue-glow: rgba(156, 163, 175, 0.35);
+            --blue: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-glow: rgba(37, 99, 235, 0.35);
+            --auth-accent: #6b7280;
+            --auth-accent-light: #9ca3af;
+            --auth-glow: rgba(156, 163, 175, 0.35);
             --white: #f3f4f6;
             --gray: #9ca3af;
             --gray-dark: #6b7280;
@@ -36,10 +39,10 @@
         body {
             font-family: var(--goat-terminal), ui-monospace, Consolas, monospace;
             letter-spacing: 0.052em;
-            /* Pluxo — grey / black base + subtle grain */
-            background-color: #050505;
+            /* Pluxo — black base + subtle grain (dashboard accents use --blue) */
+            background-color: #030712;
             background-image:
-                linear-gradient(165deg, rgba(28, 28, 28, 0.95) 0%, rgba(5, 5, 5, 0.98) 45%, rgba(18, 18, 18, 0.96) 100%),
+                linear-gradient(165deg, rgba(15, 23, 42, 0.92) 0%, rgba(3, 7, 18, 0.98) 45%, rgba(10, 10, 10, 0.96) 100%),
                 radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.12), transparent),
                 radial-gradient(2px 2px at 60px 70px, rgba(255,255,255,0.08), transparent),
                 radial-gradient(1px 1px at 50px 50px, rgba(255,255,255,0.1), transparent),
@@ -341,6 +344,45 @@
             margin-top: 8px;
             font-size: 12px;
             color: #71717a;
+        }
+
+        /* Auth chrome stays grey; shop/dashboard uses :root --blue */
+        .login-page .graphic-ring:nth-child(2) {
+            border-color: var(--auth-accent);
+        }
+
+        .login-page .toggle-pass:hover {
+            color: #a1a1aa;
+        }
+
+        #registerModal .modal-box {
+            border-color: var(--auth-accent);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px var(--auth-glow);
+        }
+
+        #registerModal .modal-box::before {
+            background: linear-gradient(90deg, transparent, rgba(156, 163, 175, 0.1), transparent);
+        }
+
+        #registerModal .modal-box h2 {
+            background: linear-gradient(135deg, var(--white) 0%, var(--auth-accent-light) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        #registerModal .modal-box .input-field:focus {
+            border-color: #71717a;
+            box-shadow: 0 0 0 4px var(--auth-glow), 0 0 20px rgba(156, 163, 175, 0.25);
+        }
+
+        #registerModal .modal-box .btn {
+            background: linear-gradient(135deg, #8b8b8b 0%, #9d9d9d 100%);
+            color: #111;
+            box-shadow: 0 4px 15px rgba(156, 163, 175, 0.4);
+        }
+
+        #registerModal .modal-box .btn:hover {
+            box-shadow: 0 6px 25px rgba(156, 163, 175, 0.6);
         }
 
         .form-group {
@@ -1047,9 +1089,9 @@
         }
 
         .sidebar-link.active {
-            background: linear-gradient(90deg, #27272a 0%, #18181b 100%);
+            background: linear-gradient(90deg, rgba(37, 99, 235, 0.14) 0%, #0c0c0f 100%);
             color: #fafafa;
-            box-shadow: inset 2px 0 0 var(--blue-light);
+            box-shadow: inset 3px 0 0 var(--blue-light);
         }
 
         .sidebar-spacer-h {
@@ -1091,7 +1133,9 @@
             min-width: 0;
             display: flex;
             flex-direction: column;
-            background: radial-gradient(1200px 500px at 15% -10%, #1a1a1c 0%, #050506 52%);
+            background:
+                radial-gradient(900px 420px at 12% -8%, rgba(37, 99, 235, 0.18) 0%, transparent 55%),
+                radial-gradient(1200px 500px at 85% 0%, rgba(15, 23, 42, 0.9) 0%, #030712 52%);
         }
 
         .dashboard-main-pane {
@@ -3014,7 +3058,7 @@
         .ticket-tab {
             padding: 12px 28px;
             border: none;
-            background: #6b7280;
+            background: #1e3a8a;
             color: white;
             font-size: 14px;
             font-weight: 600;
@@ -3035,12 +3079,12 @@
         }
 
         .ticket-tab:hover:not(.active) {
-            background: #4b5563;
+            background: #1d4ed8;
         }
 
         .btn-create-ticket {
             padding: 12px 24px;
-            background: #4b5563;
+            background: var(--blue);
             color: white;
             border: none;
             border-radius: 6px;
@@ -3051,7 +3095,7 @@
         }
 
         .btn-create-ticket:hover {
-            background: #3f3f46;
+            background: var(--blue-light);
         }
 
         .tickets-table-container {
@@ -3882,7 +3926,7 @@
             font-family: var(--goat-terminal), ui-monospace, monospace;
             font-size: 28px;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--blue-light) 0%, #4b5563 100%);
+            background: linear-gradient(135deg, #93c5fd 0%, var(--blue) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -4204,7 +4248,7 @@
             content: '';
             width: 3px;
             height: 14px;
-            background: #4b5563;
+            background: var(--blue);
             border-radius: 2px;
         }
 
