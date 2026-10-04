@@ -87,32 +87,7 @@ AUTH_TOKEN_MAX_AGE_SECONDS = _auth_token_max_age_seconds()
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 # Pluxo Railway Variables only — never share TELEGRAM_BOT_TOKEN with goat3x/goatys (separate deploys).
 _PLUXO_EXPECTED_BOT_USERNAME = (
-    os.environ.get("PLUXO_EXPECTED_BOT_USERNAME", "").strip().lower().lstrip("@")
-)
-# When @GoatysBot is shared: Pluxo shop uses /pluxoshop then /pluxostock, /pluxonewbase, …
-_PLUXO_SHARED_GOATYS_BOT_RAW = os.environ.get("PLUXO_SHARED_GOATYS_BOT", "").strip().lower()
-# Set at Telegram post_init from getMe when env is unset.
-TELEGRAM_IS_GOATYS_BOT: bool = False
-
-_PLUXO_SHOP_COMMANDS = frozenset(
-    {
-        "stock",
-        "stockcountry",
-        "stockbase",
-        "newbase",
-        "done",
-        "cancelstock",
-        "txt",
-        "cancel",
-        "viewbasepay",
-        "soldstock",
-        "removestockslot",
-        "clearstock",
-        "leads",
-        "mystock",
-        "viewallstock",
-        "allkeys",
-    }
+    os.environ.get("PLUXO_EXPECTED_BOT_USERNAME", "pluxoadminbot").strip().lower().lstrip("@")
 )
 _PLUXO_SKIP_BOT_USERNAME_CHECK = os.environ.get("PLUXO_SKIP_BOT_USERNAME_CHECK", "").strip().lower() in (
     "1",
@@ -5280,107 +5255,6 @@ def _brand_from_bin(bin6: str) -> str:
     return "VISA"
 
 
-def _pluxo_shared_goatys_mode() -> bool:
-    if _PLUXO_SHARED_GOATYS_BOT_RAW in ("0", "false", "no", "off"):
-        return False
-    if _PLUXO_SHARED_GOATYS_BOT_RAW in ("1", "true", "yes", "on"):
-        return True
-    return TELEGRAM_IS_GOATYS_BOT
-
-
-def _tg_effective_text(update, context) -> str:
-    override = context.user_data.get("_tg_effective_text")
-    if isinstance(override, str):
-        return override
-    msg = update.effective_message
-    if not msg:
-        return ""
-    return msg.text or msg.caption or ""
-
-
-def _tg_set_pluxo_shop_context(uid: int, context) -> None:
-    context.user_data["shop_context"] = "pluxo"
-    with state_lock:
-        state.setdefault("telegram_shop_context", {})[str(int(uid))] = "pluxo"
-        save_state(merge_stock_from_disk=False)
-
-
-def _tg_pluxo_shop_context_active(uid: int, context) -> bool:
-    if context.user_data.get("shop_context") == "pluxo":
-        return True
-    with state_lock:
-        return state.get("telegram_shop_context", {}).get(str(int(uid))) == "pluxo"
-
-
-_SHARED_GOATYS_SHOP_HINT = (
-    "This chat uses shared <b>@GoatysBot</b>.\n\n"
-    "<b>Pluxo</b> (pluxo.net inventory): <code>/pluxoshop</code> then "
-    "<code>/pluxostock</code>, <code>/pluxonewbase</code>, <code>/pluxodone</code>, …\n\n"
-    "<b>Goat</b> shop: unprefixed <code>/stock</code>, <code>/newbase</code>, … on the "
-    "goat3x bot service — not here."
-)
-
-
-def _tg_wrap_pluxo_shop_command(goat_cmd: str, handler):
-    async def wrapped(update, context):
-        user = update.effective_user
-        if not user:
-            return
-        _tg_set_pluxo_shop_context(user.id, context)
-        msg = update.effective_message
-        raw = (msg.text or msg.caption or "") if msg else ""
-        pat = rf"^/pluxo{re.escape(goat_cmd)}(?:@[A-Za-z0-9_]+)?"
-        new_text = re.sub(pat, f"/{goat_cmd}", raw, count=1, flags=re.IGNORECASE)
-        if new_text != raw:
-            context.user_data["_tg_effective_text"] = new_text
-        try:
-            await handler(update, context)
-        finally:
-            context.user_data.pop("_tg_effective_text", None)
-
-    return wrapped
-
-
-def _tg_wrap_shared_goat_shop_guard(goat_cmd: str, handler):
-    async def wrapped(update, context):
-        if _pluxo_shared_goatys_mode() and goat_cmd in _PLUXO_SHOP_COMMANDS:
-            user = update.effective_user
-            msg = update.effective_message
-            if user and msg and not _tg_pluxo_shop_context_active(user.id, context):
-                await msg.reply_text(_SHARED_GOATYS_SHOP_HINT, parse_mode="HTML")
-                return
-        await handler(update, context)
-
-    return wrapped
-
-
-async def tg_pluxoshop(update, context) -> None:
-    msg = update.effective_message
-    user = update.effective_user
-    if not msg or not user:
-        return
-    if not _is_staff(user.id):
-        await msg.reply_text(TG_AUTH_FAIL)
-        return
-    _tg_set_pluxo_shop_context(user.id, context)
-    await msg.reply_text(
-        "🛍 <b>Pluxo shop mode</b> — commands apply to <b>pluxo.net</b> inventory.\n\n"
-        "<b>Stock upload</b>\n"
-        "<code>/pluxostockcountry US</code>\n"
-        "<code>/pluxostockbase BASE_ID</code>\n"
-        "<code>/pluxostock &lt;price&gt;</code> → paste or .txt → <code>/pluxodone</code>\n"
-        "<code>/pluxotxt</code> · <code>/pluxocancelstock</code>\n\n"
-        "<b>Bases</b>\n"
-        "<code>/pluxonewbase</code> · <code>/pluxocancel</code>\n"
-        "<code>/pluxoviewbasepay</code> · <code>/pluxosoldstock</code>\n\n"
-        "<b>Other</b>\n"
-        "<code>/pluxoleads</code> · <code>/pluxomystock</code> · "
-        "<code>/pluxoviewallstock</code> · <code>/pluxoallkeys</code>\n\n"
-        "<i>On shared @GoatysBot, Goat shop keeps unprefixed /stock on goat3x.</i>",
-        parse_mode="HTML",
-    )
-
-
 async def tg_start(update, context) -> None:
     user = update.effective_user
     msg = update.effective_message
@@ -5415,8 +5289,6 @@ async def tg_start(update, context) -> None:
         "<b>🔒 System</b> (OWNER: /lockdown)\n"
         "/status · /logs\n\n"
         "<b>📦 Shop stock</b>\n"
-        "Shared @GoatysBot: <code>/pluxoshop</code> first, then "
-        "<code>/pluxostock</code>, <code>/pluxodone</code>, …\n"
         "/stock — pick base, <code>/stockcountry US</code>, then "
         "<code>/stock &lt;price&gt;</code> → paste lines (many messages OK) → <code>/done</code>\n"
         "You can also send a <code>.txt/.csv</code> stock file after <code>/stock &lt;price&gt;</code>.\n"
@@ -5451,8 +5323,6 @@ async def tg_help(update, context) -> None:
         "/addpurchase &lt;user&gt; &lt;item&gt; &lt;amt&gt;\n"
         "/purchases &lt;user&gt; /recentpurchases\n\n"
         "<b>Shop</b>\n"
-        "Shared @GoatysBot: <code>/pluxoshop</code> then <code>/pluxostock</code>, "
-        "<code>/pluxodone</code>, <code>/pluxonewbase</code>, …\n"
         "/stockcountry — US, DE, FR, … for next batch\n"
         "/stock &lt;price&gt; → paste or send .txt/.csv file(s) → /done · /cancelstock\n"
         "/txt — guided flow: send file, pick base, send amount\n"
@@ -6481,13 +6351,11 @@ async def tg_stock_batch_message(update, context) -> None:
         return
     if not _is_staff(update.effective_user.id):
         return
-    if _pluxo_shared_goatys_mode() and not _tg_pluxo_shop_context_active(uid, context):
-        return
     chat_id = int(getattr(update.effective_chat, "id", 0) or 0)
     text = (msg.text or "").strip()
     if not text:
         return
-    if text.lower() in {"done", ".done", "done.", "/done", "/pluxodone", "pluxodone"}:
+    if text.lower() in {"done", ".done", "done.", "/done"}:
         await tg_done(update, context)
         return
     txt_wizard = _stock_txt_wizard_get(context, chat_id=chat_id)
@@ -6574,8 +6442,6 @@ async def tg_stock_document_message(update, context) -> None:
         return
 
     uid = int(update.effective_user.id)
-    if _pluxo_shared_goatys_mode() and not _tg_pluxo_shop_context_active(uid, context):
-        return
     chat_id = int(getattr(update.effective_chat, "id", 0) or 0)
     doc = msg.document
     stock_base_kb = _build_stock_base_kb()
@@ -6778,7 +6644,7 @@ async def tg_stock(update, context) -> None:
     if not _is_staff(update.effective_user.id):
         await msg.reply_text(TG_AUTH_FAIL)
         return
-    text = _tg_effective_text(update, context)
+    text = msg.text or ""
     mo = re.match(r"^/stock(?:@[A-Za-z0-9_]+)?\s*(.*)$", text, flags=re.IGNORECASE | re.DOTALL)
     body = (mo.group(1) if mo else "").strip()
     stock_base_kb = _build_stock_base_kb()
@@ -7475,7 +7341,7 @@ async def tg_leads(update, context) -> None:
     if not _is_staff(update.effective_user.id):
         await msg.reply_text(TG_AUTH_FAIL)
         return
-    raw_full = _tg_effective_text(update, context).strip()
+    raw_full = (msg.text or msg.caption or "").strip()
     mo = re.match(r"^/leads(?:@[A-Za-z0-9_]+)?\s*(.*)$", raw_full, flags=re.IGNORECASE | re.DOTALL)
     blob = ((mo.group(1) if mo else "") or "").strip()
     if not blob:
@@ -7997,13 +7863,7 @@ def run_telegram_bot() -> None:
     connect_read_write, pool_t = _telegram_http_timeouts()
 
     async def post_init(app) -> None:
-        global TELEGRAM_IS_GOATYS_BOT
         await app.bot.delete_webhook(drop_pending_updates=True)
-        try:
-            me = await app.bot.get_me()
-            TELEGRAM_IS_GOATYS_BOT = (me.username or "").strip().lower() == "goatysbot"
-        except Exception:
-            TELEGRAM_IS_GOATYS_BOT = False
         # Persist OWNER_TELEGRAM_ID from env into state.json so owner survives restarts consistently.
         if OWNER_RAW.isdigit():
             oid = int(OWNER_RAW)
@@ -8013,7 +7873,8 @@ def run_telegram_bot() -> None:
                 if oid not in lst:
                     lst.append(oid)
                 save_state()
-        bot_commands = [
+        await app.bot.set_my_commands(
+            [
                 BotCommand("start", "Main menu"),
                 BotCommand("help", "All commands"),
                 BotCommand("myid", "Your Telegram user id"),
@@ -8057,16 +7918,8 @@ def run_telegram_bot() -> None:
                 BotCommand("ticket", "Support tickets (list / detail)"),
                 BotCommand("treply", "Reply to a ticket (/treply id text)"),
                 BotCommand("tresolve", "Close a ticket"),
-        ]
-        if _pluxo_shared_goatys_mode():
-            pluxo_cmds = [
-                BotCommand("pluxoshop", "Pluxo shop mode (pluxo.net inventory)"),
-                BotCommand("pluxostock", "Pluxo: add stock"),
-                BotCommand("pluxodone", "Pluxo: finish stock upload"),
-                BotCommand("pluxonewbase", "Pluxo: new shop base"),
             ]
-            bot_commands = pluxo_cmds + bot_commands
-        await app.bot.set_my_commands(bot_commands)
+        )
 
     async def on_error(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
         err = context.error
@@ -8116,25 +7969,15 @@ def run_telegram_bot() -> None:
     application.add_handler(CommandHandler("addbalance", tg_addbalance))
     application.add_handler(CommandHandler("removebalance", tg_removebalance))
     application.add_handler(CommandHandler("users", tg_users))
-    application.add_handler(CommandHandler("pluxoshop", tg_pluxoshop))
-
-    def _add_shop_command(name: str, handler) -> None:
-        application.add_handler(
-            CommandHandler(name, _tg_wrap_shared_goat_shop_guard(name, handler))
-        )
-        application.add_handler(
-            CommandHandler(f"pluxo{name}", _tg_wrap_pluxo_shop_command(name, handler))
-        )
-
-    _add_shop_command("stockcountry", tg_stockcountry)
-    _add_shop_command("stock", tg_stock)
-    _add_shop_command("txt", tg_txt)
-    _add_shop_command("done", tg_done)
-    _add_shop_command("cancelstock", tg_cancelstock)
-    _add_shop_command("stockbase", tg_stockbase)
-    _add_shop_command("newbase", tg_newbase)
-    _add_shop_command("cancel", tg_cancel)
-    _add_shop_command("viewbasepay", tg_viewbasepay)
+    application.add_handler(CommandHandler("stockcountry", tg_stockcountry))
+    application.add_handler(CommandHandler("stock", tg_stock))
+    application.add_handler(CommandHandler("txt", tg_txt))
+    application.add_handler(CommandHandler("done", tg_done))
+    application.add_handler(CommandHandler("cancelstock", tg_cancelstock))
+    application.add_handler(CommandHandler("stockbase", tg_stockbase))
+    application.add_handler(CommandHandler("newbase", tg_newbase))
+    application.add_handler(CommandHandler("cancel", tg_cancel))
+    application.add_handler(CommandHandler("viewbasepay", tg_viewbasepay))
     application.add_handler(
         MessageHandler(
             filters.Document.ALL,
@@ -8165,9 +8008,9 @@ def run_telegram_bot() -> None:
             tg_stock_batch_message,
         )
     )
-    _add_shop_command("soldstock", tg_soldstock)
-    _add_shop_command("removestockslot", tg_removestockslot)
-    _add_shop_command("clearstock", tg_clearstock)
+    application.add_handler(CommandHandler("soldstock", tg_soldstock))
+    application.add_handler(CommandHandler("removestockslot", tg_removestockslot))
+    application.add_handler(CommandHandler("clearstock", tg_clearstock))
     application.add_handler(CommandHandler("addadmin", tg_addadmin))
     application.add_handler(CommandHandler("removeadmin", tg_removeadmin))
     application.add_handler(CommandHandler("admins", tg_admins))
@@ -8181,12 +8024,12 @@ def run_telegram_bot() -> None:
     application.add_handler(CommandHandler("status", tg_status))
     application.add_handler(CommandHandler("logs", tg_logs))
     application.add_handler(CommandHandler("lockdown", tg_lockdown))
-    _add_shop_command("mystock", tg_mystock)
-    _add_shop_command("viewallstock", tg_viewallstock)
-    _add_shop_command("allkeys", tg_allkeys)
+    application.add_handler(CommandHandler("mystock", tg_mystock))
+    application.add_handler(CommandHandler("viewallstock", tg_viewallstock))
+    application.add_handler(CommandHandler("allkeys", tg_allkeys))
     application.add_handler(CommandHandler("stats", tg_stats))
     application.add_handler(CommandHandler("redeem", tg_redeem))
-    _add_shop_command("leads", tg_leads)
+    application.add_handler(CommandHandler("leads", tg_leads))
     application.add_handler(CommandHandler("ticket", tg_ticket_cmd))
     application.add_handler(CommandHandler("treply", tg_treply))
     application.add_handler(CommandHandler("tresolve", tg_tresolve))
