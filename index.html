@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <!-- If this HTML is NOT served by Flask (e.g. static www.pluxo.net), set content to your Railway app URL so /api/products hits the same DB as Telegram. Example: https://web-production-xxxx.up.railway.app -->
-    <meta name="pluxo-api-base" content="https://api.pluxo.net">
+    <!-- Leave empty when Flask serves HTML + API on the same host (pluxo.net on Railway). -->
+    <meta name="pluxo-api-base" content="">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.googleapis.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' http://127.0.0.1:5000 http://localhost:5000 https://pluxo.net https://www.pluxo.net https://api.pluxo.net https://*.railway.app https://*.up.railway.app https://*.github.io https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://www.gstatic.com https://*.gstatic.com https://www.google-analytics.com https://*.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com;">
     <title>Pluxo</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -9266,13 +9267,11 @@
             } catch (eMeta) {}
             var explicit = (RAILWAY_API_URL || '').replace(/\/$/, '');
             if (explicit) return explicit;
-            if (h === 'www.pluxo.net') {
-                var prodWww = (PLUXO_API_HOST || '').replace(/\/$/, '');
-                return prodWww || 'https://api.pluxo.net';
-            }
-            if (h === 'pluxo.net') {
-                var prodApex = (PLUXO_API_HOST || '').replace(/\/$/, '');
-                return prodApex || String(window.location.origin || '').replace(/\/$/, '');
+            if (h === 'www.pluxo.net' || h === 'pluxo.net') {
+                var prodHost = (PLUXO_API_HOST || '').replace(/\/$/, '');
+                if (prodHost) return prodHost;
+                /* API on apex; www often static — CORS is open on /api/* */
+                return 'https://pluxo.net';
             }
             return String(window.location.origin || '').replace(/\/$/, '');
         })();
@@ -9280,9 +9279,36 @@
         function pluxoFormatApiError(err) {
             var m = (err && err.message) ? err.message : String(err || 'Request failed');
             if (/failed to fetch|networkerror|network error|load failed/i.test(m)) {
-                return 'Cannot reach the Pluxo API. Deploy the backend on Railway and point api.pluxo.net (or pluxo.net) to that service.';
+                return (
+                    'Cannot reach the Pluxo server at ' + BOT_WEBHOOK_URL + '. ' +
+                    'In Railway: open your Pluxo service → Settings → Networking → confirm ' +
+                    'pluxo.net is attached to this service and https://pluxo.net/pluxo-ok opens in your browser.'
+                );
             }
             return m;
+        }
+
+        function pluxoCheckBackendOnce() {
+            if (window.__pluxoBackendChecked) return;
+            window.__pluxoBackendChecked = true;
+            var base = BOT_WEBHOOK_URL;
+            fetch(base + '/pluxo-ok', { cache: 'no-store' })
+                .then(function (r) { return r.json().then(function (d) { return { r: r, d: d }; }); })
+                .then(function (x) {
+                    if (x.r.ok && x.d && x.d.pluxo) return;
+                    throw new Error(x.d && x.d.message ? x.d.message : 'Backend not ready');
+                })
+                .catch(function () {
+                    if (typeof showAnimatedPopup === 'function') {
+                        showAnimatedPopup(
+                            'Backend offline',
+                            'Railway is not serving the Pluxo app at ' + base + ' yet. ' +
+                            'Use the *.up.railway.app URL from your service until custom domain works, ' +
+                            'or attach pluxo.net under Networking on the running service (not an empty project).',
+                            'error'
+                        );
+                    }
+                });
         }
         var WEBHOOK_SECRET = 'pluxo_secret_2024';
         console.log('API URL:', BOT_WEBHOOK_URL);
@@ -9959,9 +9985,13 @@
         }
 
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', pluxoWireLoginForm);
+            document.addEventListener('DOMContentLoaded', function () {
+                pluxoWireLoginForm();
+                pluxoCheckBackendOnce();
+            });
         } else {
             pluxoWireLoginForm();
+            pluxoCheckBackendOnce();
         }
 
         async function gamesApi(path, method = 'GET', body = null) {
