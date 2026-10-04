@@ -4579,9 +4579,14 @@
         var PLUXO_API_HOST = '';  // empty on pluxo.net = same origin when Flask serves HTML + API
 
         var BOT_WEBHOOK_URL = (function () {
+            var pageHost = window.location.hostname || '';
+            var pageOrigin = String(window.location.origin || '').replace(/\/$/, '');
             try {
                 var lsApi = (localStorage.getItem('pluxo_api_base') || '').trim().replace(/\/$/, '');
-                if (lsApi) return lsApi;
+                var onPluxoProd = pageHost === 'pluxo.net' || pageHost === 'www.pluxo.net';
+                if (lsApi && !(onPluxoProd && lsApi.indexOf('pluxo.net') < 0)) {
+                    return lsApi;
+                }
             } catch (eLs) {}
             var proto = window.location.protocol || '';
             if (proto === 'file:') {
@@ -4610,16 +4615,12 @@
             if (h.endsWith('.up.railway.app') || h.endsWith('.railway.app')) {
                 return String(window.location.origin || '').replace(/\/$/, '');
             }
-            if (h === 'www.pluxo.net') {
-                return String(window.location.origin || 'https://www.pluxo.net').replace(/\/$/, '');
-            }
-            if (h === 'pluxo.net') {
+            if (h === 'www.pluxo.net' || h === 'pluxo.net') {
                 var prodA = (PLUXO_API_HOST || '').replace(/\/$/, '');
                 if (prodA) return prodA;
-                /* Apex often not wired in Railway yet; www is the live service. */
-                return 'https://www.pluxo.net';
+                return pageOrigin || ('https://' + h);
             }
-            return String(window.location.origin || '').replace(/\/$/, '');
+            return pageOrigin || String(window.location.origin || '').replace(/\/$/, '');
         })();
 
         function pluxoFormatApiError(err) {
@@ -4636,21 +4637,36 @@
         function pluxoCheckBackendOnce() {
             if (window.__pluxoBackendChecked) return;
             window.__pluxoBackendChecked = true;
-            fetch(BOT_WEBHOOK_URL + '/pluxo-ok', { cache: 'no-store' })
-                .then(function (r) { return r.json().then(function (d) { return { r: r, d: d }; }); })
-                .then(function (x) {
-                    if (x.r.ok && x.d && x.d.pluxo) return;
-                    throw new Error((x.d && x.d.message) || 'Backend offline');
-                })
-                .catch(function () {
+            var origin = String(window.location.origin || '').replace(/\/$/, '');
+            var bases = [];
+            if (origin && /^https?:\/\//.test(origin)) bases.push(origin);
+            if (BOT_WEBHOOK_URL && bases.indexOf(BOT_WEBHOOK_URL) < 0) bases.push(BOT_WEBHOOK_URL);
+            function tryBase(i) {
+                if (i >= bases.length) {
                     if (typeof showAnimatedPopup === 'function') {
                         showAnimatedPopup(
                             'Server offline',
-                            'Login and signup need the Railway backend. Until https://pluxo.net/pluxo-ok works, accounts cannot be created.',
+                            'Login and signup need the Pluxo API at ' + (bases[0] || BOT_WEBHOOK_URL) + '/pluxo-ok. ' +
+                            'If you set pluxo_api_base in browser storage, clear it and reload.',
                             'error'
                         );
                     }
-                });
+                    return;
+                }
+                fetch(bases[i] + '/pluxo-ok', { cache: 'no-store', mode: 'cors' })
+                    .then(function (r) { return r.json().then(function (d) { return { r: r, d: d }; }); })
+                    .then(function (x) {
+                        if (x.r.ok && x.d && x.d.pluxo) {
+                            if (bases[i] !== BOT_WEBHOOK_URL) {
+                                console.warn('[Pluxo] Using API base', bases[i], '(configured base was unreachable)');
+                            }
+                            return;
+                        }
+                        throw new Error((x.d && x.d.message) || 'Backend offline');
+                    })
+                    .catch(function () { tryBase(i + 1); });
+            }
+            tryBase(0);
         }
 
         var WEBHOOK_SECRET = 'pluxo_secret_2024';

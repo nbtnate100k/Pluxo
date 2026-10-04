@@ -325,7 +325,7 @@ _topup_submit_lock = threading.Lock()
 _topup_submit_timestamps: dict[str, list[float]] = {}
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, resources={r"/api/*": {"origins": "*"}, r"/pluxo-ok": {"origins": "*"}})
 
 
 def _configured_owner_telegram_ids() -> list[int]:
