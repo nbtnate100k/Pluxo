@@ -57,7 +57,7 @@ USER_BACKUP_TXT_PATH = BACKUP_DIR / "users_backup_latest.txt"
 def resolve_index_html() -> Path | None:
     """Find the main Pluxo HTML file next to this script (handles odd names like 'index (27).html')."""
     root = ROOT_DIR
-    for name in ("index.html", "index (27).html"):
+    for name in ("index.html", "index (19).html", "index (27).html"):
         p = root / name
         if p.is_file():
             return p
